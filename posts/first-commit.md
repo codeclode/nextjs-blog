@@ -1,3 +1,6 @@
-# 这是第一次提交
+---
+title: "这是第一次提交"
+date: "2023-01-08"
+---
 
-![](..\public\images\前端复习.png)
+![](/assets/images/前端复习.png)
