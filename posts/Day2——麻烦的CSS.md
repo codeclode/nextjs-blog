@@ -1,6 +1,6 @@
 ---
 title: "麻烦的CSS"
-date: "2023-01-09"
+date: "2023-01-10"
 ---
 
 # @import与link引入
@@ -170,7 +170,7 @@ date: "2023-01-09"
   - 设置浮动，注意是浮动元素本体是BFC
   - 设置绝对定位absolute、fixed
   - display：grid、flex、inlin-block、table。。。
-  - overfloe：hidden、auto、scroll
+  - overflow：hidden、auto、scroll
 - 浮动问题不想再说了。。。简而言之就是注意clear并没有清除浮动，而是清除了浮动造成的影响。
 
 ### 元素层叠次序
