@@ -317,3 +317,52 @@ date: "2023-01-11"
 - Navigator浏览器信息
 - Screen屏幕信息，pixelDepth，颜色分辨率
 - History，forward、back、go，操作浏览器前进后退
+
+# 几个关键词
+
+```javascript
+var obj = {
+    a: 1,
+    b: 2,
+    c: 3
+};
+// 重复引用obj进行属性赋值
+obj.a = 3;
+obj.b = 4;
+obj.c = 5;
+// 等价于以下代码
+with (obj) {
+    a = 3;
+    b = 4;
+    c = 5;
+}//with关键词不建议使用，会产生内存泄漏
+
+for(xxx in xxx);//遍历keys
+console.log(4 in [1,2,3,4,5],'a' in {a:1})//查询是否有对应的key
+
+var obj={name:'张三',age:22,job:'软件开发'}
+console.log(obj.name)//张三
+
+var result=delete obj.name;
+console.log(result) //true 表示删除成功
+var result_1=delete obj.name;
+console.log(result_1) //true  表示删除的属性不存在
+console.log(obj);//{age:22,job:'软件开发'}
+
+let arr = [1,2,3,4,5,6];
+let flag1 = delete arr[5];
+let flag2 = delete arr[5];
+console.log(flag1);//true
+console.log(flag2);//true
+console.log(arr);//[1, 2, 3, 4, 5, empty]
+
+xxx = 3
+delete xxx//true，这是因为xxx被绑定到了全局变量window上，可以删除
+var xxx=3//这是全局变量
+delete xxx//false
+
+void 2 === '2';   // (void 2) === '2'，返回 false
+void (2 === '2'); // void (2 === '2')，返回 undefined
+//void让后面的语句强制返回undefined，他的优先级比较高哦！
+```
+
