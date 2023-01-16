@@ -77,10 +77,12 @@ date: "2023-01-11"
 
     - substring类似slice，但是参数不能为负（不支持倒着数）
 
+    - substr(start,length)
+
     - toLowerCase、toUpperCasse、trim、trimStart、trimEnd不解释
 
     - \[Symbol.iterator\]() 返回一个新的 Iterator 对象，它遍历字符串的代码点，返回每一个代码点的字符串值。 
-
+    
     - ```javascript
       var strIter = string[Symbol.iterator]();
       
@@ -233,7 +235,7 @@ date: "2023-01-11"
   - 其次遍历所有字符串键，按照加入时间升序排列
   - 最后遍历所有Symbol键，按照加入时间升序排列
 
-### for (let index in arr)
+### for (let index of arr)
 
 - 遍历所有的拥有迭代器的对象（ES6+），如数组、map、set、字符串
 - 他遍历的是值，依据的是迭代器
