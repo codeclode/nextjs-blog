@@ -270,3 +270,70 @@ app.use(all);
 - redirect(url,alt) 当 url不存在时，使用 alt或 “/”。
 - attachment，和express一样
 - lastModified，设置或读取上一次修改的日期 
+
+# NodeJS中的websocket
+
+### 基于
+
+- 原生
+
+- socket.io
+- expressWs
+- koa-websocket(好久没人维护了)
+
+### socket.io的一个实现
+
+```javascript
+//客户端
+<script src="/socket.io/socket.io.js"></script>
+  <script>
+    //连接socket服务
+    let socket = io('http://127.0.0.1:3000');
+    //浏览器注册服务端
+    socket.on('send', data => {
+      console.log(data);
+    });
+
+    socket.on("transform", data => {
+      console.log(data);
+    })
+
+    let name = window.prompt("输入名称");
+
+    //向服务器发送数据
+    socket.emit('clientData', { name: name });
+
+    function sendDate(toUser, content) {
+      socket.emit("sendData", { name: toUser, fromName: name, content: content })
+    }
+</script>
+```
+
+```javascript
+const io = require('socket.io')(app);
+//监听用户连接的事件
+//socket表示用户的连接
+//socket emit表示触发某个事件   如果向浏览器发送一个数据，需要触发浏览器注册的某个事件
+//socket on表示注册某个事件，如果需要获取浏览器数据，就需要注册一个事件，等待浏览器触发
+var sockets = {}
+io.on('connection', socket => {
+  console.log('新用户连接');
+  //给浏览器发送数据emit('发送的事件','发送的事件')
+  socket.emit('send', { name: 'jack' });
+
+  //获取浏览器发送的数据,注册事件只要和触发事件一样就行
+  socket.on('clientData', data => {
+    console.log(data);
+    if (!sockets[data.name]) {
+      sockets[data.name] = socket
+    }
+  })
+
+  socket.on("sendData", data => {
+    if (sockets[data.name]) {
+      sockets[data.name].emit("transform", { name: data.fromName, content: data.content })
+    }
+  })
+});
+```
+
