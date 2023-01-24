@@ -367,7 +367,7 @@ date: "2023-01-14"
 
 ### 两种任务
 
-- macroTask宏任务，包括全部代码，定时器，IO，UI绘制
+- macroTask宏任务，包括全部代码，定时器，IO，UI绘制，RAF有时候也可以认为是
 - microTask微任务， Process.nextTick（Node独有）、Promise、Object.observe(废弃)、MutationObserver
 - 这里的MutationObserver可用异步的监听DOM的增删改，从而减少一些在DOM上频繁操作导致无用的重排问题
 
