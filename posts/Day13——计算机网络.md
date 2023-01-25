@@ -199,6 +199,20 @@ TLS实际用的是两种算法的混合加密。通过非对称加密算法交�
 - TCP只能点对点，UDP可以121，n2n，12n，n21（2->to）
 - TCP是面向字节流的，UDP是面向报文的，也就是说TCP可分片，UDP只能一次送完
 - TCP主要用在网站、邮件上，UDP则是RPC、game等
+- TCP比UDP更适合局域网，UDP更适合广域网
+- TCP上的协议
+  - http、https
+  - ftp
+  - pop3收邮件、smtp发又见
+  - ssh
+- udp上
+  - bootp应用于无盘设备
+  - ntp网络同步
+  - dhcp动态ip
+- 都可以
+  - dns
+  - arp
+  - dhcp
 
 # 鉴权问题
 

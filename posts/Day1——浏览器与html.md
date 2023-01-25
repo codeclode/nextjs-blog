@@ -160,6 +160,8 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 
 ### base规定页面相对地址的目标 
 
+### HREF="mailto:xxx" 这个a标签可以直接打开设备的邮件应用 
+
 ### meta
 
 - http-dquiv属性

@@ -149,8 +149,22 @@ date: "2023-01-10"
 ### 盒模型
 
 - margin+padding+border+content
+
 - 现代浏览器默认content-box
+
 - 只有老IE使用border-box
+
+- clientWidth=padding+content
+
+- clientLeft就是边框border大小
+
+- offsetWidth = clientWidth+border
+
+- offsetLeft就是距离父级内边距的距离，父级身上的position：absolute/fixed决定 如果父级元素没有就逐层查找 直到body 
+
+- scrollWidth=clientWidth+margin
+
+  scrollTop/scrollLeft  滚动条卷走的高度和宽度
 
 ### BFC
 
