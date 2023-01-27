@@ -23,7 +23,7 @@ const name = 'Josh Perez';
 const element = <h1>Hello, {name}</h1>;
 ```
 
- React DOM 在渲染所有输入内容之前，默认会进行转义。 
+ React DOM 在渲染所有输入内容之前，默认会进行转义。 本质上是React.createElement()的语法糖。
 
 ### 元素渲染
 
@@ -58,7 +58,7 @@ root.render(element);
 ```react
 <></>
 <React.Fragment></React.Fragment>
-<!--就是这个玩意-->
+<!--就是这个玩意,隐式的无法加入key，显示的可以-->
 ```
 
 ## Context
@@ -74,6 +74,66 @@ const MyContext = React.createContext(defaultValue);//创建一个环境
 ```
 
 如果需要更新value里的东西，就提供一个函数给子组件
+
+## ReactDOM的API
+
+### ReactDOM.render(element,container[,cb])
+
+在container里渲染element（一个react元素），并返回对组件的引用。
+
+如果已经渲染过就执行更新。cb会在渲染或更新之后执行。
+
+### hydrate
+
+和renderer一样，只不过 用于在 ReactDOMServer 渲染的容器中对 HTML 的内容进行 hydrate 操作。React 会尝试在已有标记上绑定事件监听器。 服务端渲染的对象，不看。
+
+### unmountComponentAtNode(container)
+
+ 从 DOM 中卸载组件，会将其事件处理器（event handlers）和 state 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 true，如果没有组件可被移除将会返回 false。 
+
+### createPortal(child,container)
+
+把一个child组件绑定到指定的container上，类似vue的teleport。看似是我的儿子，只不过是为了方便管理，其实早就跳到别的container上了。注意返回值仍然是一个用来render的组件
+
+```react
+  render() {
+    return ReactDOM.createPortal(
+      this.props.children,
+      this.el
+    );
+```
+
+## 事件
+
+事件的参数： SyntheticEvent
+
+```typescript
+boolean bubbles
+boolean cancelable
+DOMEventTarget currentTarget
+boolean defaultPrevented
+number eventPhase
+boolean isTrusted
+DOMEvent nativeEvent
+void preventDefault()
+boolean isDefaultPrevented()
+void stopPropagation()
+boolean isPropagationStopped()
+void persist()
+DOMEventTarget target
+number timeStamp
+string type
+```
+
+注意，在事件中，SyntheticEvent类型的event参数是合并而来的，也就是说他可能被重用，而且在事件回调函数被调用后，所有的属性都会无效。出于性能考虑，你不能通过异步访问事件。 如果希望异步访问事件属性，需在事件上调用 event.persist()保留对事件的引用。
+
+详细的事件直接看文档吧，这里说一下复合事件
+
+```typescript
+onCompositionEnd onCompositionStart onCompositionUpdate
+```
+
+ 利用compositionstart和compositionend可以知道中文输入什么时候开始和结束，比如说用输入法输入中文汉字，使用onInput会出现输入拼音就进行提示的情况，而复合事件则是中文真正落在input里才触发。
 
 ## State
 

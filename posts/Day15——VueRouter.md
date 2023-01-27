@@ -241,7 +241,7 @@ const router = createRouter({
 
 ```javascript
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: [
     //...
   ],
