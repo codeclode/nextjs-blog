@@ -198,7 +198,7 @@ date: "2023-01-10"
 - 避免css表达式calc等
 - 避免多层内联样式
 - 使用经常改变位置的元素绝对定位脱离文档流
-- 使用transform开启硬件加速。
+- 使用transform开启硬件加速(transform使浏览器为元素创建⼀个 GPU 图层)。
 
 # 响应式
 
@@ -208,3 +208,10 @@ date: "2023-01-10"
 - rem根元素字体大小布局
 - vw、vh、vmin、vmax布局
 - 使用flex、grid
+
+# 图片懒加载条件
+
+```javascript
+img.offsetTop < window.innerHeight + document.body.scrollTop;
+```
+
