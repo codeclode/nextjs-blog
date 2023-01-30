@@ -536,3 +536,103 @@ npx create-next-app@latest
 ```
 
 或者手动创建
+
+## 页面
+
+### 数据三函数
+
+- getServerSideProps
+
+  ```javascript
+  export async function getServerSideProps(context) {
+    return {
+      props: {}, // 服务端渲染时的参数
+    }
+  }
+  ```
+
+- getStaticPaths
+
+  ```javascript
+  export async function getStaticPaths() {
+    return {
+      paths: [{ params: { id: '1' } }, { params: { id: '2' } }],//允许的路径
+      fallback: false, // 没有就是404
+    }
+  }
+  ```
+
+- getStaticProps（SSG）
+
+  ```javascript
+  export async function getStaticProps(context) {
+    return {
+      props: {}, // 页面的参数
+    }
+    revalidate: 10,//每隔10s或用户请求时重新验证内容来实现增量生成站点
+  }
+  ```
+
+### 动态路由
+
+- /page->page页面
+- /[id]->/1,/2...
+- /[...slug]->/1/2/3,/3/2...
+
+### 编程式
+
+```javascript
+import { useRouter } from 'next/router'
+
+export default function ReadMore() {
+  const router = useRouter()
+
+  return (
+    <button onClick={() => router.push('/about')}>
+      Click here to read more
+    </button>
+  )
+}
+```
+
+## 内置标签
+
+静态资源都放在public下，默认暴露在/目录下
+
+```java
+<Image src="/me.png" alt="Picture of the author" width={500} height={500} />
+<Link href="/about">About Us</Link>
+<Script src="https://example.com/script.js" />
+<Head>
+  <title>My page title</title>
+  <meta property="xxx" content="xxx" key="title" />
+</Head>
+```
+
+## 样式
+
+### 引入
+
+```javascript
+import styles from './Button.module.css'
+
+export function Button() {
+  return (<button className={styles.error}>
+      Destroy
+    </button>
+  )
+}
+```
+
+### 全局样式
+
+在_app.js页面中直接引入
+
+```javascript
+import 'bootstrap/dist/css/bootstrap.css'
+
+export default function MyApp({ Component, pageProps }) {
+  return <Component {...pageProps} />
+}
+```
+

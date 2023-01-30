@@ -1,6 +1,6 @@
 ---
-sctitle: "canvas和svg"
-date: "2023-01-08"
+title: "canvas和svg"
+date: "2023-01-28"
 ---
 
 # Canva(2d)
