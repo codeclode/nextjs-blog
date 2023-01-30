@@ -6,6 +6,8 @@ import Layout, { siteTitle } from '../components/layout';
 import utilStyles from '../styles/utils.module.css';
 import Date from '../components/date';
 import { getSortedPostsData } from '../lib/post';
+import BlogCard from '../components/blogCard';
+import { useState } from 'react';
 
 export async function getStaticProps() {//SSG对应函数。如果需要SSR那么对应函数getServerSideProps
   const allPostsData = getSortedPostsData();
@@ -15,33 +17,30 @@ export async function getStaticProps() {//SSG对应函数。如果需要SSR那�
     },
   };
 }
-
+const Logos = ['🥳', '📉', '📊',
+  '📈', '🎉', '✨', '✅', '💯', '🆗', '▶', '🔊'
+  , '🎤', '🖇', '🍾', '😋', '😭', '🥰']
 export default function Home({ allPostsData }) {
+  const [keyWord, setKeyWord] = useState('')
   return (
     <Layout home>
       <Head>
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-        <p>🚀前端复习中</p>
-        <p>
-          😡怎么，你不服气吗？🎇
-          <a href="https://github.com/codeclode" target="__target">myGithub</a>.
-        </p>
+        <input className={utilStyles.searchInput} value={keyWord} onInput={(e) => {
+          setKeyWord(e.target.value)
+        }} placeholder="查询文章"></input>
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
-        <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
-            <li className={utilStyles.listItem} key={id}>
-              <Link href={`/posts/${id}`}>{title}</Link>
-              <br />
-              <small className={utilStyles.lightText}>
-                <Date dateString={date} />
-              </small>
-            </li>
+        <div className={utilStyles.listContainer}>
+          {allPostsData.map(({ id, date, title }, index) => (
+            keyWord.trim() === '' || title.toUpperCase().includes(keyWord.toUpperCase()) ?
+              <BlogCard logo={Logos[index % Logos.length]} key={id} id={id} date={date} title={title}>
+              </BlogCard> : null
           ))}
-        </ul>
+        </div>
       </section>
     </Layout>
   )

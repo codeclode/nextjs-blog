@@ -1,0 +1,37 @@
+.card {
+  box-sizing: border-box;
+  padding: 5px;
+  cursor: pointer;
+  flex: 1 1 30%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  background: linear-gradient(to top right,
+      rgba(162, 193, 224, 0.3),
+      rgba(136, 148, 163, 0.4));
+  transition: all 0.3s ease-in-out;
+}
+
+.card {
+  user-select: none;
+}
+
+.card:nth-of-type(3n+1) {
+  transform-origin: left top;
+}
+
+
+.card:nth-of-type(3n+2) {
+  transform-origin: middle top;
+}
+
+.card:nth-of-type(3n) {
+  transform-origin: right top;
+}
+
+.card:hover {
+  transform: rotate(8deg) scale(1.2)
+}

@@ -636,3 +636,34 @@ export default function MyApp({ Component, pageProps }) {
 }
 ```
 
+## 云函数
+
+定义在pages/api目录下的js文件
+
+```javascript
+export default function handler(req, res) {
+  res.status(200).json({ name: '1111' })
+}
+```
+
+动态参数
+
+- /api/posts/[postId].js->/api/posts/1
+
+  ```javascript
+  export default function handler(req, res) {
+    const { pid } = req.query
+    res.end(`Post: ${pid}`)
+  }
+  ```
+
+- pages/api/post/[...slug].js->/api/post/1/2/3
+
+  ```javascript
+  export default function handler(req, res) {
+    const { slug } = req.query//[1,2,3]
+    res.end(`Post: ${slug.join(', ')}`)
+  }
+  ```
+
+- pages/api/post/[[...slug]].js->/api/post,api/post/1,api/post/1/2,

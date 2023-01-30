@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@tabler/icons-react": "^2.1.2",
     "date-fns": "^2.29.3",
     "gray-matter": "^4.0.3",
     "next": "latest",

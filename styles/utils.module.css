@@ -50,3 +50,33 @@
 .lightText {
   color: #666;
 }
+
+.listContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  column-gap: 10px;
+  row-gap: 10px;
+}
+
+.searchInput {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  height: 2.5rem;
+  font-size: 2rem;
+  border: 1px #6cf solid;
+  border-radius: 1.25rem;
+  padding-left: 1rem;
+  transition: box-shadow 0.2s ease;
+  color: #6cf;
+}
+
+.searchInput::placeholder {
+  color: #6cf;
+}
+
+.searchInput:focus-visible {
+  box-shadow: 0 0 10px 4px #66ccff82;
+  outline: none;
+}

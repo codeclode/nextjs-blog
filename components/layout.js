@@ -3,9 +3,33 @@ import Image from 'next/image';
 import styles from './layout.module.css';
 import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
-
-const name = '李傲松';
-export const siteTitle = 'Next.js 初次尝试';
+import { IconArrowBack, IconBallpen, IconBrandGithub, IconBrandHtml5, IconHome, IconPhone, IconSocial } from '@tabler/icons-react';
+import { useRouter } from 'next/router';
+export const siteTitle = 'Oh!!!';
+const tags = ['js', 'html', 'css', 'Vue', 'Reactjs', 'D3', 'nest', 'next', 'ts', 'uniapp']
+function Tags() {
+  return <div className={styles.tags}>{tags.map((v) => {
+    return <div className={styles.tag} key={v} > {v}</div>
+  })}
+  </div>
+}
+function Infos() {
+  const router = useRouter()
+  return <>
+    <div className={styles.info}><IconBallpen />XDU本科</div>
+    <div className={styles.info}><IconBrandHtml5 />前端</div>
+    <div className={styles.info}><IconPhone />13853849013</div>
+    <div onClick={() => {
+      window.open("https://juejin.cn/user/3839909526244861")
+    }} className={styles.info}><IconSocial />掘金首页</div>
+    <div onClick={() => {
+      window.open("https://github.com/codeclode")
+    }} className={styles.info}><IconBrandGithub />Github首页</div>
+    <div onClick={() => {
+      router.push('/')
+    }} className={styles.info}><IconHome />返回首页</div>
+  </>
+}
 
 export default function Layout({ children, home }) {
   return (
@@ -25,45 +49,29 @@ export default function Layout({ children, home }) {
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <header className={styles.header}>
-        {home ? (
-          <>
-            <Image
-              priority
-              src="/images/profile.png"
-              className={utilStyles.borderCircle}
-              height={144}
-              width={144}
-              alt=""
-            />
-            <h1 className={utilStyles.heading2Xl}>{name}</h1>
-          </>
-        ) : (
-          <>
-            <Link href="/">
-              <Image
-                priority
-                src="/images/profile.png"
-                className={utilStyles.borderCircle}
-                height={108}
-                width={108}
-                alt=""
-              />
-            </Link>
-            <h2 className={utilStyles.headingLg}>
-              <Link href="/" className={utilStyles.colorInherit}>
-                {name}
-              </Link>
-            </h2>
-          </>
+      <nav className={styles.nav}>
+        <a href="https://github.com/codeclode" target="__blank">
+          <Image
+            priority
+            src="/images/profile.png"
+            className={utilStyles.borderCircle}
+            height={144}
+            width={144}
+            alt=""
+          />
+        </a>
+        <h3>codeclode</h3>
+        <Tags></Tags>
+        <Infos></Infos>
+      </nav>
+      <main className={styles.main}>
+        {children}
+        {!home && (
+          <div className={styles.backToHome}>
+            <Link href="/">← Back to home</Link>
+          </div>
         )}
-      </header>
-      <main>{children}</main>
-      {!home && (
-        <div className={styles.backToHome}>
-          <Link href="/">← Back to home</Link>
-        </div>
-      )}
+      </main>
     </div>
   );
 }
