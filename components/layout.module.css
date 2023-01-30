@@ -10,6 +10,7 @@
 @media screen and (max-width:468px) {
   .container {
     flex-direction: column;
+    row-gap: 10px;
   }
 
   .main {
@@ -73,6 +74,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-top: 5px;
 }
 
