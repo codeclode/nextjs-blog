@@ -584,4 +584,94 @@ createRouter({
     </router-view>
     ```
 
-    
+
+# 原理
+
+通过Vue.mixin()方法，全局注册一个混合，影响注册之后所有创建的每个Vue实例，该混合在beforeCreate钩子中通过Vue.util.defineReactive()定义了响应式的\_route属性。所谓响应式属性，即当_route值改变时，会自动调用Vue实例的render()方法，更新视图。
+
+## 哈希模式
+
+```javascript
+HashHistory.prototype.push = function push (location, onComplete, onAbort) {
+    var this$1 = this;
+
+    var ref = this;
+    var fromRoute = ref.current;
+    this.transitionTo(location, function (route) {
+        pushHash(route.fullPath);
+        handleScroll(this$1.router, route, fromRoute, false);
+        onComplete && onComplete(route);
+    }, onAbort);
+};
+function pushHash (path) {    
+  window.location.hash = path
+}//哈希改变不会向服务器请求
+History.prototype.transitionTo = function transitionTo (location, onComplete, onAbort) {
+    var this$1 = this;
+
+    var route = this.router.match(location, this.current);
+    this.confirmTransition(route, function () {
+        this$1.updateRoute(route);
+        ...
+    });
+};
+
+History.prototype.updateRoute = function updateRoute (route) {
+    var prev = this.current;
+    this.current = route;
+    this.cb && this.cb(route);
+    this.router.afterHooks.forEach(function (hook) {
+        hook && hook(route, prev);
+    });
+};
+```
+
+**push调用->pushHash->匹配对应路由->更新路由->_route属性更改->触发render()**
+
+```javascript
+setupListeners () {
+  window.addEventListener('hashchange', () => {
+    if (!ensureSlash()) {
+      return
+    }
+    this.transitionTo(getHash(), route => {
+      replaceHash(route.fullPath)
+    })
+  })
+}
+//监听地址栏
+```
+
+## 历史模式
+
+```javascript
+window.history.pushState(stateObject,title,url)
+window.history,replaceState(stateObject,title,url)
+//HTML5引入了history.pushState()和history.replaceState()方法，他们分别可以添加和修改历史记录条目。这些方法通常与window.onpopstate配合使用。这两个函数会触发popState事件，该事件将携带这个stateObject参数的副本。
+//pushState和replaceState两种方法的共同特点：当调用他们修改浏览器历史栈后，虽然当前url改变了，但浏览器不会立即发送请求该url，这就为单页应用前端路由，更新视图但不重新请求页面提供了基础。
+```
+
+那么历史模式就和哈希模式没有啥区别，我们只是需要修改方法的一些细节而已。
+
+添加对修改浏览器地址栏URL的监听popstate是直接在构造函数中执行的 
+
+```javascript
+window.addEventListener('popstate', e => {
+  const current = this.current
+  this.transitionTo(getLocation(this.base), route => {
+    if (expectScroll) {
+      handleScroll(router, route, current, true)
+    }
+  })
+})
+```
+
+## Router-Link
+
+默认tag其实就是个a标签，然后阻止点击的默认行为，不让他跳转，然后里边还是调用push或者replace
+
+## Router-View
+
+routerView是一个函数式组件，函数式组件没有data，没有组件实例。因此使用了父组件中的$createElement函数，用以渲染组件（h函数）。 
+
+这玩意借助的是$route的matched属性，这个属性是一个数组，因为router-view有个depth属性用来记录嵌套路由深度，matched[depth]就是这个层次匹配到的组件，router-View直接用h(matched[depth],data,children)用来渲染真正需要的组件。而缓存则基于history.current，看看cache[name]有没有缓存，有就直接读缓存数据渲染。

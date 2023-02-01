@@ -115,7 +115,7 @@ date: "2023-01-12"
 
     - splice()返回被删除的元素数组、slice(start=0,end=length)子集
 
-    - flat(depth=1)展平数组，flatMap=flat(depth只能为1)+map
+    - flat(depth=1)展平数组，flatMap=map+flat(depth只能为1)
 
     - ```javascript
       let arr1 = ["it's Sunny in", "", "California"];
@@ -130,7 +130,7 @@ date: "2023-01-12"
   - 其他方法
 
     - at(index)，返回array[index]，如果是负数就从右往左数
-    - every(cb),some(cb)
+    - every(cb),some(cb)判断用的
     - find()、findIndex()、findLast()、findLastIndex()
     - forEach()
     - includes(searchElement,fromIndex=0)查询是否存在某元素、indexOf(searchElement,fromIndex=0)查询第一个是searchElement的元素的索引 lastIndexOf倒着找
@@ -208,7 +208,6 @@ lastIndex = regExpObj.lastIndex;//用来指定下一次匹配的起始索引，�
 如果 lastIndex 等于或小于字符串的长度，则该正则表达式匹配从 lastIndex 位置开始的字符串。
 如果 regexp.test 和 regexp.exec 匹配成功，lastIndex 会被设置为紧随最近一次成功匹配的下一个位置。
 如果 regexp.test 和 regexp.exec 匹配失败，lastIndex 会被设置为 0*/
-
 ```
 
 ### 实例属性
@@ -227,6 +226,8 @@ lastIndex = regExpObj.lastIndex;//用来指定下一次匹配的起始索引，�
 - exec(str) 在一个指定字符串中执行一个搜索匹配。返回一个结果数组或 `null`。  如果匹配成功，`exec()` 方法返回一个数组，并更新正则表达式对象的 `lastIndex`属性。完全匹配成功的文本将作为返回数组的第一项，从第二项起，后续每项都对应一个匹配的捕获组。其实就是原始文本是arr[0],arr[1]及之后都是被匹配到的东西
 
 - test(str) 返回str中是否有对应匹配
+
+- 下面是几个使用Symbol调用的方法
 
 - ```javascript
   var re = /[0-9]+/g;
@@ -514,8 +515,9 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 - getOwnPropertyDescriptor(obj,propkey)，类似Object的同名函数，返回属性描述对象，不过它遇到非对象不会自动转换为对象而是抛异常
 - defineProperty(obj,propKey,attribute)，定义obj.propkey=attribute,返回设置是否成功
 - deleteProperty(obj,propKey)，和delete obj.propkey一样，返回的是boolean
-- construct(obj,argumentsList,newTarget?) 相当于运行 `new target(...args)`. 
-- Reflect.apply(target, thisArgument, argumentsList) 该方法与 Function.prototype.apply()`方法类似：调用一个方法并且显式地指定 `this` 变量和参数列表 (arguments) ，参数列表可以是数组，或类似数组的对象。 
+- construct(target,argumentsList,newTarget?) 相当于运行 `new target(...args)`. 
+  new.target 检测函数或构造方法是否是通过new运算符被调用的。在通过new运算符被初始化的函数或构造方法中，`new.target`返回一个指向构造方法或函数的引用。在普通的函数调用中，`new.target` 的值是undefined。 newTarget 作为新创建对象的原型对象的 `constructor` 属性，默认值为 `target`。 
+- Reflect.apply(target, thisArgument, argumentsList) 该方法与 Function.prototype.apply()方法类似：调用一个方法并且显式地指定 `this` 变量和参数列表 (arguments) ，参数列表可以是数组，或类似数组的对象。 
 
 # Proxy
 

@@ -434,7 +434,7 @@ const obj = {
 
 
 
-### ES10
+# ES10
 
 ### Object.fromEntries，Object.entries的逆运算
 
@@ -444,7 +444,7 @@ const obj = {
 
 ### Symbol实例description方法获取描述
 
-### ES11
+# ES11
 
 ### BigInt
 

@@ -170,7 +170,8 @@ new Vue({
   <input type="radio" id="two" value="Two" v-model="picked">
   <!--单选绑定字符串-->
   <!--选择框根据单选或多选绑定字符串或数组-->
-
+  <input :value="searchText" @input="searchText = $event.target.value"/>
+  <!--其实是这玩意的语法糖-->
 </template>
 ```
 
@@ -988,8 +989,8 @@ emit('inFocus')
 defineProps({
   modelValue: String,
   modelModifiers: { default: () => ({}) }//修饰符
-})//如果不知1个v-model，如v-model:firet,v-model-second
-//那么对应prop为first和second
+})//如果不只是1个v-model，如v-model:firet,v-model:second
+//那么对应prop为first和second,而修饰符则是firstModifiers,secondModifiers
 defineEmits(['update:modelValue'])
 ```
 

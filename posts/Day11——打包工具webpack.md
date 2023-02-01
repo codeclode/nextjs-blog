@@ -373,6 +373,12 @@ devtools选定是否生产sourceMap等来方便对源代码进行监测
 |      hidden-source-map       |   1   |    1    |  源代码  |     有     |     无     |
 |     nosource-source-map      |   1   |    1    |  源代码  |     无     |    文件    |
 
+# Loader和Plugin
+
+loader从字面的意思理解，是 加载 的意思。 由于webpack 本身只能打包commonjs规范的js文件，所以，针对css，图片等格式的文件没法打包，就需要引入第三方的模块进行打包。loader虽然是扩展了 webpack ，但是它只专注于转化文件（transform）这一个领域，完成压缩，打包，语言翻译。他的作用只是打包。运行在打包文件之前（loader为在模块加载时的预处理文件） 
+
+plugin完成的是loader不能完成的功能，是为了扩展webpack的功能，但是 plugin 是作用于webpack本身上的。而且plugin不仅只局限在打包，资源的加载上，它的功能要更加丰富。从打包优化和压缩，到重新定义环境变量，功能强大到可以用来处理各种各样的任务。在整个编译周期都起作用。 
+
 # 优化
 
 ### 持久化缓存
@@ -517,3 +523,80 @@ module.exports = {
 ### SplitChunks插件
 
 提取或分离代码的插件，主要作用是提取公共代码，减少代码被重复打包，拆分过大的js文件，合并零散的js文件 
+
+# 基本原理
+
+### 三个阶段
+
+- 初始化
+  - 读取参数
+  - 创建编译器对象
+  - 初始化编译环境，注册插件、模块等
+  - 开始编译
+  - 确定入口文件
+- 构建
+  -  根据 `entry` 对应的 `dependence` 创建 `module` 对象，调用 `loader` 将模块转译为标准 JS 内容，调用 JS 解释器将内容转换为 AST 对象，从中找出该模块依赖的模块，再 递归 本步骤直到所有入口依赖的文件都经过了本步骤处理 
+  - 上一步递归处理所有能触达到的模块后，得到了每个模块被翻译后的内容以及它们之间的依赖关系图
+- 生成阶段
+  -  根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 `Chunk`，再把每个 `Chunk` 转换成一个单独的文件加入到输出列表，这步是可以修改输出内容的最后机会 
+  - 在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入到文件系统 
+
+### 初始化
+
+1. 将 `process.args + webpack.config.js` 合并成用户配置
+2. 调用 `validateSchema` 校验配置
+3. 调用 `getNormalizedWebpackOptions + applyWebpackOptionsBaseDefaults` 合并出最终配置
+4. 创建 `compiler` 对象
+5. 遍历用户定义的 `plugins` 集合，执行插件的 `apply` 方法
+6. 调用 `new WebpackOptionsApply().process` ，加载各种内置插件
+
+### 构建
+
+ **module => ast => dependences => module** 
+
+- 调用 `handleModuleCreate` ，根据文件类型构建 `module` 子类
+- 调用 loader-runner仓库的 `runLoaders` 转译 `module` 内容，通常是从各类资源类型转译为 JavaScript 文本
+- 调用acorn将 JS 文本解析为AST
+- 遍历 AST，触发各种钩子 
+  - 在 `HarmonyExportDependencyParserPlugin` 插件监听 `exportImportSpecifier` 钩子，解读 JS 文本对应的资源依赖
+  - 调用 `module` 对象的 `addDependency` 将依赖对象加入到 `module` 依赖列表中
+
+- AST 遍历完毕后，调用 `module.handleParseResult` 处理模块依赖
+
+- 对于 `module` 新增的依赖，调用 `handleModuleCreate` ，控制流回到第一步
+
+- 所有依赖都解析完毕后，构建阶段结束
+
+### 生成
+
+构建阶段围绕 `module` 展开，生成阶段则围绕 `chunks` 展开。经过构建阶段之后，webpack 得到足够的模块内容与模块关系信息，接下来开始生成最终资源了。 
+
+1. 构建本次编译的 `ChunkGraph` 对象；
+2. 遍历 `compilation.modules` 集合，将 `module` 按 `entry/动态引入` 的规则分配给不同的 `Chunk` 对象；
+3. `compilation.modules` 集合遍历完毕后，得到完整的 `chunks` 集合对象，调用 `createXxxAssets` 方法
+4. `createXxxAssets` 遍历 `module/chunk` ，调用 `compilation.emitAssets` 方法将资 `assets` 信息记录到 `compilation.assets` 对象中
+5. 触发 `seal` 回调，控制流回到 `compiler` 对象
+
+这一步的关键逻辑是将 `module` 按规则组织成 `chunks` ，webpack 内置的 `chunk` 封装规则比较简单：
+
+- `entry` 及 entry 触达到的模块，组合成一个 `chunk`
+- 使用动态引入语句引入的模块，各自组合成一个 `chunk`
+
+经过构建阶段后，`compilation` 会获知资源模块的内容与依赖关系，也就知道“输入”是什么；而经过 `seal` 阶段处理后， `compilation` 则获知资源输出的图谱，也就是知道怎么“输出”：哪些模块跟那些模块“绑定”在一起输出到哪里。
+
+### devServer
+
+其实就是借助Express开启一个服务器，然后设置两个路由出口：
+
+1. 静态资源出口：可以通过devServer的字段contentBase或statis设置静态资源目录
+2. webpack output的出口：默认是`/`，可以通过devServer的字段`publicPath`设置
+
+webpack output其实就是Express的一个router对象，webpack根据入口文件观察相关的文件，并在它们发生变化的时候，重新编译打包，并输出到router对象上，这样我们就可以访问该router拿到最新的资源，不过这个资源是放在内存上的，并不是文件系统上。
+
+### HMR为什么快
+
+- webpack-dev-server会创建两个服务：提供静态资源的服务（express）和Socket（net.Socket）
+- Express Server负责直接提供静态资源服务（打包后的资源直接被浏览器请求和解析）
+- Socket Server是一个socket长连接，服务器可以直接发送文件到客户端
+- 当服务期间听到对应模块发上变化时，会生成两个文件.json（manifest文件）和.js文件（update chunk）客户端基于hmr runtime来进行更新。
+- HMR的核心就是客户端从服务端拉取更新后的资源,更准确的说法就是 HMR卡去的不是整个资源文件,而是 chunk diff,即 chunk 需要更新的部分 

@@ -782,6 +782,9 @@ FP<FCP，因为背景肯定会比dom先绘制。
      
     document.addEventListener("click", function (e) {
       let t = e.target;
+      //当事件处理程序直接绑定在目标元素上e.target===e.currentTarget，e.target ===this
+      //这种情况，currentTarget会指向绑定的父元素，而target依旧指向目标元素
+      //总之就是，target就是真正的触发人，currentTarget和this是事件的主人
       switch (t.id) {
         case "li1":
           document.title = "事件委托";
@@ -789,10 +792,10 @@ FP<FCP，因为背景肯定会比dom先绘制。
         case "li2":
           location.href = "http://www.baidu.com";
           break;
-    })
+  })
     //会有点问题，如果子元素里边还有子元素，理论上点击孙元素应该也可以触发，但是这种写法无法触发
     ```
-
+    
   - ```javascript
     function delegate(element, eventType, selector, fn) {
       element.addEventListener(eventType, e => {
@@ -968,3 +971,119 @@ CSRF通常从第三方网站发起，被攻击的网站无法防止攻击发生�
 - 验证码、UA校验。。。
 - 花钱解决，升级服务器
 - 服务器设置一个ip防火墙，不让这个ip访问
+
+# PWA和service worker
+
+## 定义
+
+PWA 指的是使用指定技术和标准模式来开发的 Web 应用，这同时赋予它们 Web 应用和原生应用的特性。 网站不仅可以直接pin到桌面上，还可以在离线时读取一些网站的缓存。
+
+## 主屏幕
+
+通过\<link rel="manifest" href="/manifest.json">定义说明文件，定义添加到主屏幕时的信息。
+
+```json
+{
+  "name": "HackerWeb",
+  "short_name": "HackerWeb",
+  "start_url": ".",
+  "display": "standalone",
+    //展示模式，fullscreen全屏、standalone独立的应用程序、minimal-ui独立的应用程序，但会有浏览器地址栏。、browser浏览器模式
+  "background_color": "#fff",
+  "description": "A simply readable Hacker News app.",
+  "icons": [{
+    "src": "images/touch/homescreen48.png",
+    "sizes": "48x48",
+    "type": "image/png"
+  }, {
+    "src": "images/touch/homescreen72.png",
+    "sizes": "72x72",
+    "type": "image/png"
+  }],
+  "related_applications": [{
+    "platform": "web"
+  }, {
+    "platform": "play",
+    "url": "https://play.google.com/store/apps/details?id=cheeaun.hackerweb"
+  }]
+}
+```
+
+```javascript
+window.addEventListener('beforeinstallprompt', (e) => {//支持安装到主屏幕的浏览器安装会在打开页面后触发，e是我们需要的一个自带的安装小帮手
+  e.preventDefault();
+  deferredPrompt = e;
+    //addBtn用来让用户决定安装
+  addBtn.style.display = 'block';
+
+  addBtn.addEventListener('click', (e) => {
+    // 隐藏显示 A2HS 按钮的界面
+    addBtn.style.display = 'none';
+    // 显示安装提示
+    deferredPrompt.prompt();
+    // 等待用户反馈
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        deferredPrompt = null;
+      });
+  });
+});
+```
+
+## Service Worker
+
+ServiceWorker 是一种特化的 Worker，专门来处理跟网页有关的资源（assets），在浏览器和真正的服务端之间扮演一个代理（Proxy）的角色。ServiceWorker 同时引入了缓存（Cache），可以用来存储一个网络响应。 主要负责离线请求和性能优化。
+
+一个页面只能注册一个，当一个可以被多个注册。
+
+```javascript
+//页面脚本
+if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker
+          // .register('./serviceWorker.js', { scope: '/page/' })
+          .register('./serviceWorker.js')
+          .then(function(registration){
+            /*干一些自定义事件*/
+        })
+```
+
+```javascript
+const CACHE_NAME = 'cache-v1';
+const urlsToCache = [
+  '/constant.js',
+  '/serviceWorker.html',
+  '/serviceWorker.js',
+  '/image/131.png',
+];
+self.oninstall = (event) => {
+  event.waitUntil(
+    caches
+      .open(CACHE_NAME) // 这是promise
+      .then(function (cache) {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache); // 返回一个promise
+        //安装时
+      })
+  );
+};
+self.onfetch = (event) => {
+  event.respondWith(
+    caches
+      .match(event.request) // 此方法从服务工作线程所创建的任何缓存中查找缓存的结果
+      .then(function (response) {
+        // response为匹配到的缓存资源，如果没有匹配到则返回undefined，需要fetch资源
+        // fetch就相当于放行请求
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+  );
+};
+```
+

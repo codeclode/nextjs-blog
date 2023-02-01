@@ -283,6 +283,7 @@ TLS实际用的是两种算法的混合加密。通过非对称加密算法交�
 - get参数通过url传递，而post放在请求体中
 - get只能进行url编码，而post支持多种编码方式
 - get只能接收ascii字符参数，post无限制
+- GET产生一个TCP数据包（header+data），POST产生两个TCP数据包（先发header，再发data除非是firefox浏览器）。
 
 ### URL输入后发生了什么
 
@@ -304,17 +305,19 @@ TLS实际用的是两种算法的混合加密。通过非对称加密算法交�
 ### 协商缓存与强缓存
 
 - 强缓存：浏览器不会像服务器发送任何请求，直接从本地缓存中读取文件并返回Status Code: 200 OK，在请求的控制台会说200(from memory|disk cache)
-- 协商缓存: 向服务器发送请求，服务器会根据这个请求的request header的一些参数来判断是否命中协商缓存，如果命中，则返回304状态码并带上新的response header通知浏览器从缓存中读取资源。
+- 协商缓存: 也叫对比缓存，向服务器发送请求，服务器会根据这个请求的request header的一些参数来判断是否命中协商缓存，如果命中，则返回304状态码并带上新的response header通知浏览器从缓存中读取资源。
 - 相关请求头
   - 强缓存
     - expires：过期时间，如果设置了时间，则浏览器会在设置的时间内直接读取缓存，不再请求 
     - cache-control：当值设为Cache-Control:max-age=300时，则代表在这个请求正确返回时间（浏览器也会记录下来）的5分钟内再次加载资源，就会命中强缓存。 
+    - cache-Control:private内容只缓存到私有缓存中,代理服务器不可缓存 public相反
     - Cache-Control:no-store：禁止一切缓存
     - Cache-Control:no-cache：强制客户端直接向服务器发送请求，但这个不是不缓存，而是每次都跟服务器确认是否更新。
   - 协商缓存
-    - **Etag/If-None-Match**：Etag用来帮助服务器控制web端的缓存验证，默认是文件的INode，大小，最后修改时间的hash。if-none-match，当资源过期时，浏览器发现响应头里有Etag，则再次像服务器请求时带上请求头if-none-match(值是Etag的值)。服务器收到请求进行比对，决定返回200或304 （有变化返回200，否则304）
-    - **Last-Modifed/If-Modified-Since**： Last-Modified，浏览器向服务器发送资源最后的修改时间。 If-Modified-Since：当浏览器判断Cache-Control标识的max-age过期，发现响应头具有Last-Modified声明，则再次向服务器请求时带上头if-modified-since，表示请求时间。服务器收到请求后发现有if-modified-since则与被请求资源的最后修改时间进行对比（Last-Modified）,若最后修改时间较新（大），说明资源被改过，则返回最新资源，HTTP 200 OK;若最后修改时间较旧（小），说明资源无新修改，响应HTTP 304 走缓存。
-    - etag优先级高于Last-Modifed，且时间精度更高
+    - **Etag/If-None-Match**：Etag用来帮助服务器控制web端的缓存验证，默认是文件的INode，大小，最后修改时间的hash。if-none-match，当资源变化时，浏览器发现响应头里有Etag，则再次像服务器请求时带上请求头if-none-match(值是Etag的值)。服务器收到请求进行比对，决定返回200或304 （有变化返回200，否则304）
+    - **Last-Modifed/If-Modified-Since**：Last-Modified，浏览器向服务器发送资源最后的修改时间。 If-Modified-Since：当浏览器判断Cache-Control标识的max-age过期，发现响应头具有Last-Modified声明，则再次向服务器请求时带上头if-modified-since，表示请求时间。服务器收到请求后发现有if-modified-since则与被请求资源的最后修改时间进行对比（Last-Modified）,若最后修改时间较新（大），说明资源被改过，则返回最新资源，HTTP 200 OK;若最后修改时间较旧（小），说明资源无新修改，响应HTTP 304 走缓存。
+    - etag优先级高于Last-Modifed，且时间精度更高（Last-Modifed是秒级的）
+    - Etag和Last-Modifed都是服务器返回给浏览器的
 
 ### 再谈跨域问题
 

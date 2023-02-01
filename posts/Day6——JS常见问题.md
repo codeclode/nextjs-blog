@@ -11,7 +11,7 @@ date: "2023-01-14"
 
 - ‘对于一个函数的作用域，函数执行时也会变量提升
 
-- function func; 高版本浏览器中用判断或者循环等包裹起来的函数，在变量提升阶段，不论条件是否成立，只会先声明，进入块以后才会提升定义
+- function func;高版本浏览器中用判断或者循环等包裹起来的函数，在变量提升阶段，不论条件是否成立，只会先声明，进入块以后才会提升定义
 
 - ```javascript
   console.log(func); //=>undefined
@@ -43,7 +43,7 @@ date: "2023-01-14"
 - 私有上下文
   - var x=1，会在私有上下文中的私有变量对象AO中创建x
   - x=1，沿着作用域链一直向上查找，找不到就会给GO设置一个x属性
-  - let x=1，旨在私有上下文里边用
+  - let x=1，仅在私有上下文里边用
 - let的块级作用域
   - 除对象/函数等大括号以外，如果在其余的大括号中（例如：判断和循环）出现 LET/CONST 等，则会把当前大括号包起来的部分形成一个独立的私有上下文，基于 LET/CONST创建的变量是当前块级作用域域中的私有变量;
   - 在循环中，每一个循环都会形成新的子作用域
@@ -101,7 +101,6 @@ date: "2023-01-14"
       this.age = age;
   }
   let f1 = Func('李', 18);//=> 把Func函数执行（当做普通函数执行）
-  //=>方法中的THIS:window
   console.log(f1); //=>undefined 因为没有返回值
   console.log(window.name, window.age); //=>'李'  18
   
@@ -110,7 +109,7 @@ date: "2023-01-14"
   console.log(f2); //=> {name: "李", age: 18}
   console.log(window.name, window.age); //=> window.name是空  window.age是undefined
   ```
-
+  
 - new函数()这种方式就是基于构造函数的方法执行，返回的结果就是一个类的实例
 
 - new Fn,无括号就是无参数的new
@@ -126,7 +125,7 @@ date: "2023-01-14"
 - 每一个对象都是\_\_proto\_\_属性，值是当前实例所属类的prototype原型
 - Object类的\_\_proto\_\_为null
 - 函数的\_\_proto\_\_是Function.prototype，Function构造函数本身的\_proto\_也是Function.prototype
-- Function.prototype的\_\_proto是Object.prototype，而Object构造函数的\_\_proto\_\_是Function.prototype
+- Function.prototype的\_\_proto__是Object.prototype，而Object构造函数的\_\_proto\_\_是Function.prototype
 - 查找属性时，按照先自己，再\_\_proto\_\_逐层查找
 
 ### 如何手动实现继承
@@ -166,15 +165,16 @@ date: "2023-01-14"
   
   var instance = new SubType();
   console.log(instance.getSuperValue()); // true
-  ```
-
+  //注意二者的隐式原型上的那个对象将会是一个东西
+```
+  
 - 不用原型，使用父类的构造函数增强子类实例
 
 - ```javascript
-  function  SuperType(){
+  function SuperType(){
       this.color=["red","green","blue"];
   }
-  function  SubType(){
+  function SubType(){
       //继承自SuperType
       SuperType.call(this);
   }
@@ -279,7 +279,7 @@ date: "2023-01-14"
     var prototype = Object.create(superType.prototype); // 创建对象，创建父类原型的一个副本
     prototype.constructor = subType;// 增强对象，弥补因重写原型而失去的默认的constructor 属性
     subType.prototype = prototype;  // 指定对象，将新创建的对象赋值给子类的原型
-  }
+  }//正确配置原型链同时防止子类公用同一个父类实例
   
   // 父类初始化实例属性和原型属性
   function SuperType(name){
@@ -292,7 +292,7 @@ date: "2023-01-14"
   
   // 借用构造函数传递增强子类实例属性（支持传参和避免篡改）
   function SubType(name, age){
-    SuperType.call(this, name);
+    SuperType.call(this, name);//让属性独立不干扰
     this.age = age;
   }
   
@@ -343,7 +343,7 @@ date: "2023-01-14"
 -  构造函数里的this是当前实例
 -   实例原型上的公有方法里的this一般是当前实例
 
-### apply、call、bind
+### call、apply、bind
 
 - call
 
@@ -398,7 +398,7 @@ date: "2023-01-14"
 - 有一个主线程和一个调用栈(执行栈)，所有的任务都会被放到调用栈等待主线程执行。 
 - 当函数执行的时候，会被添加到栈的顶部，当执行栈执行完成后，就会从栈顶移出，直到栈内被清空。 
 - 同步任务会在调用栈中按照顺序等待主线程依次执行，异步任务会在异步任务有了结果后，将注册的回调函数放入任务队列中等待主线程空闲的时候（调用栈被清空），被读取到栈内等待主线程的执行。 
-- 执行栈在执行完**同步任务**后，查看**执行栈**是否为空，如果执行栈为空，就会去检查**微任务**(`microTask`)队列是否为空，如果为空的话，就执行`Task`（宏任务），否则就一次性执行完所有微任务。每次**单个宏任务**执行完毕后，检查**微任务**(`microTask`)队列是否为空，如果不为空的话，会按照**先入先**出的规则全部执行完**微任务**(`microTask`)后，设置**微任务**(`microTask`)队列为`null`，然后再执行**宏任务**，如此循环。
+- 执行栈在执行完**同步任务**后，就会去检查**微任务**(`microTask`)队列是否为空，如果为空的话，就执行`Task`（宏任务），否则就一次性执行完所有微任务。每次**单个宏任务**执行完毕后，检查**微任务**(`microTask`)队列是否为空，如果不为空的话，会按照**先入先**出的规则全部执行完**微任务**(`microTask`)后，设置**微任务**(`microTask`)队列为`null`，然后再执行**宏任务**，如此循环。
 - 可以认为，所有的同步代码是一个宏任务。
 - RAF，这个东西不是微任务也不是宏任务，要把它理解为下一次重绘之前更新动画帧所调用的函数
 - 事件属于同步任务 
@@ -425,3 +425,31 @@ date: "2023-01-14"
   - loadstart、load加载完成、loadend加载结束或意外中止
   - progress加载中
   - readystatechange
+
+# MutationObserver
+
+- 它等待所有脚本任务完成后，才会运行（即异步触发方式）。
+
+- 它把 DOM 变动记录封装成一个数组进行处理，而不是一条条个别处理 DOM 变动。
+
+- 它既可以观察 DOM 的所有类型变动，也可以指定只观察某一类变动。
+
+- ```javascript
+  var observer = new MutationObserver(function (mutationRecoards, observer) {
+  	// mutationRecoards变动数组
+  	// observer 观察者实例
+  });
+  observer.observe(document.documentElement, {
+    attributes: true,//是否观察属性变动
+    characterData: true,//是否观察文本变动
+    childList: true,//子节点的变动（指新增，删除或者更改）。
+    subtree: true,//是否将该观察器应用于该节点的所有后代节点。
+    attributeOldValue: true,
+    characterDataOldValue: true,//是否记录老值
+    attributeFilter:[‘class’,‘src’]//观察的特定属性
+  });
+  ```
+
+- disconnect()停止观察
+
+- takeRecords()清除变动记录，即不再处理未处理的变动。 

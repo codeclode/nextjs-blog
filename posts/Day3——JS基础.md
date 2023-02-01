@@ -19,10 +19,11 @@ date: "2023-01-11"
     - isSafeInteger
     - parseFloat、parseInt和全局函数相同
   - Number类的实例方法
-    - toEcponential( fractionDigits  可选，用来指定小数点后有几位数字。 )以指数方法表示该数字
+    - toEcponential( fractionDigits  可选，用来指定小数点后有几位数字。 )以指数方法表示该数字(1.2e+1->12)
     - toFixed( digits  小数点后数字的个数；介于 0 到 20) 使用定点表示法表示给定数字的字符串。 
     - toPrecision(  `precision` 一个用来指定有效数个数的整数)
     - toString(radix:指定进制)
+    - 这几个返回都是字符串
 
 - 字符串
 
@@ -42,6 +43,9 @@ date: "2023-01-11"
       String.raw({ raw: 'test' }, 0, 1, 2); // 't0e1s2t'
       // 注意这个测试，传入一个 string，和一个类似数组的对象
       // 下面这个函数和 `foo${2 + 3}bar${'Java' + 'Script'}baz` 是相等的。
+      String.raw({
+        raw: ['foo', 'bar', 'baz']
+      }, 2 + 3, 'Java' + 'Script'); // 'foo5barJavaScriptbaz'
       ```
 
   - 实例方法
@@ -120,19 +124,40 @@ date: "2023-01-11"
     - writable：是否可以用等号修改
     - get：getter
     - set：setter
-- 静态方法
-  
-  - assign(target, ...sources)将sources的属性复制或覆盖到target（内部的引用值不会复制），只能复制可枚举的属性
-    - create(proto,propertiesObject?)根据proto为原型创建对象，propertiesObject为自带的特定属性值
+  - 静态方法
+    - assign(target, ...sources)将sources的属性复制或覆盖到target（内部的引用值不会复制），只能复制可枚举的属性
+    
+    - create(proto,propertiesObject?)根据proto为原型创建对象，propertiesObject为自带的特定属性值，这个特定属性值必须是一个描述符对象。
+    
     - Object.defineProperty(obj, prop, descriptor)，修改或定义prop属性值为descriptor
+    
     - defineProperties(obj,props:{'xxx':描述符,'xxx':描述符})：多次执行defineProperty
+    
     - entries、keys、values返回可枚举属性的k、v
+    
     - setPrototypeOf(obj,prototype)设置新的原型对象getyPrototypeOf获取原型对象
+    
     - getOwnPropertyDescriptor(obj, prop)获取obj身上prop的属性描述
+    
+    - getOwnPropertyDescriptors(obj)获取一个对象的所有自身属性的描述符。 
+    
     - getOwnPropertyNames(obj)获取obj身上的所有非继承的可枚举属性
-    - getOwnPropertySymbols(obj)获取obj身上所有可枚举的symbol键属性
+    
+    - getOwnPropertySymbols(obj)获取obj自身的所有可枚举的symbol键属性
+    
+    - hasOwn(instance, prop)查看instance自身（非继承）上是否有prop属性
+    
     - is(v1,v2)符合人类理解的判断是否一致
-    - preventExtensions 让一个对象永远不能再添加新的属性 、seal 阻止添加新属性并将所有现有属性标记为不可配置。  seal冻结一个对象。冻结了一个对象则不能向这个对象添加新的属性，不能删除已有属性，不能修改该对象已有属性的可枚举性、可配置性、可写性，以及不能修改已有属性的值。同时有对应的isExtensible、isFrozen、isSeal方法
+    
+    - preventExtensions 让一个对象永远不能再添加新的属性 、seal 阻止添加新属性并将所有现有属性标记为不可配置。freeze冻结一个对象。冻结了一个对象则不能向这个对象添加新的属性，不能删除已有属性，不能修改该对象已有属性的可枚举性、可配置性、可写性，以及不能修改已有属性的值。同时有对应的isExtensible、isFrozen、isSeal方法
+    
+    - fromEntries( iterable )，就是entries的逆操作
+    
+      ```javascript
+      const arr = [ ['0', 'a'], ['1', 'b'], ['2', 'c'] ];
+      const obj = Object.fromEntries(arr);
+      console.log(obj); // { 0: "a", 1: "b", 2: "c" }
+      ```
   - 实例属性有constructor和\_\_proto\_\_
   - 实例方法
     - (define|lookup)(Getter|Setter)设置或读取属性的getter或setter，不要过多使用
@@ -185,6 +210,10 @@ date: "2023-01-11"
   - Number(undefined)            // NaN 
 
   - Number(Symbol('s'))          // TypeError...
+
+  - Number([])//0
+
+  - Number([1])//1
 
   - Number(obj)
 
@@ -278,7 +307,7 @@ date: "2023-01-11"
 - encodeURI(URI)上个函数的逆过程
 - eval(string)执行string代码
 - isFinite和isNaN
-- parseInt(string, radix)、parseFloat(string)，注意radix如果为0则假定为10，parseInt会自动截断非数字字符
+- parseInt(string, radix)、parseFloat(string)，注意radix如果为0则假定为10，会自动截断非数字字符，除非没参数或者第一个字符就是非数字
 
 # DOM与BOM
 

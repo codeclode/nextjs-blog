@@ -215,3 +215,53 @@ date: "2023-01-10"
 img.offsetTop < window.innerHeight + document.body.scrollTop;
 ```
 
+# C3新特性
+
+### 新的选择器和伪类
+
+其实，咱们现在用的好多选择器、伪元素、伪类（selection、placeholder）都是C3的
+
+### 新的样式
+
+- border-radius
+- box-shadow
+- filter、backdrop-filter
+- background-clip|origin|sizze
+
+- 。。。
+
+### 渐变
+
+### 文本
+
+- text-overflow
+
+- word-wrap、word-break、text-wrap
+
+- text-shadow。。。
+
+- ```css
+  <style>
+      @font-face{
+          font-family: myFirstFont;
+          src: url(sansation_light.woff);
+      }
+  	/*网络字体*/
+      div{
+          font-family:myFirstFont;
+      }
+  </style>
+  
+  ```
+
+### transform、transition、animation
+
+### 多媒体查询
+
+### flex、grid、column-list
+
+### 盒模型
+
+- resize：none | both | horizontal | vertical | inherit，用户是否可以调整大小
+- box-sizing
+- outline

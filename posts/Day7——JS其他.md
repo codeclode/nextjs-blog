@@ -94,48 +94,7 @@ self.onconnect = function (e) {
 
 ### ServerWorker
 
- ServiceWorker 一般作为 Web 应用程序、浏览器和网络之间的代理服务。他们旨在创建有效的离线体验，拦截网络请求，以及根据网络是否可用采取合适的行动，更新驻留在服务器上的资源。他们还将允许访问推送通知和后台同步 API。 
-
-```javascript
-if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker
-          // .register('./serviceWorker.js', { scope: '/page/' })
-          .register('./serviceWorker.js')
-          .then(
-            function (registration) {
-              // console.log(
-              //   'ServiceWorker registration successful with scope: ',
-              //   registration.scope
-              // );
-              var serviceWorker;
-              if (registration.installing) {
-                serviceWorker = registration.installing;
-                console.log('installing');
-              } else if (registration.waiting) {
-                serviceWorker = registration.waiting;
-                console.log('waiting');
-              } else if (registration.active) {
-                serviceWorker = registration.active;
-                console.log('active');
-              }
-              if (serviceWorker) {
-                // logState(serviceWorker.state);
-                serviceWorker.addEventListener('statechange', function (e) {
-                  console.log('statechange', e.target.state);
-                });
-              }
-            },
-            function (err) {
-              console.log('ServiceWorker registration failed: ', err);
-            }
-          );
-      });
-    }
-
-//worker.js
-//负责缓存...
-```
+详见前端优化之PWA
 
 # IndexedDB
 
@@ -404,4 +363,187 @@ objectStoreRequest.onsuccess = function(event) {
 - g全局匹配
 - m 多行匹配 ，使边界字符 ^ 和 $ 匹配每一行的开头和结尾。
 - s .可以匹配算上换行符的一切
+
+# 文件上传
+
+```html
+<input id="uploadFile" type="file" accept="image/*" />
+```
+
+```javascript
+upload(){
+  const uploadFileEle=document.getElementById("uploadFile")
+  if (!uploadFileEle.files.length) return;
+  // 获取文件
+  const file = uploadFileEle.files[0];
+  // 创建上传数据
+  const formData = new FormData();
+  formData.append("file", file);
+  // 上传文件
+  // 接下来和其他请求一样发送即可（post）xhr.send(formdata)
+}
+
+//拖拽
+document.getElementById("img-container").ondrop = function(event){
+    event.preventDefault();
+    // 数据在event的dataTransfer对象里
+    let file = event.dataTransfer.files[0];
+
+    // 或者是添加到一个FormData
+    let formData = new FormData();
+    formData.append("fileContent", file);
+    console.log(formData)
+}
+document.getElementById("img-container").ondragover = function(event){
+    event.preventDefault();//一定要做，不然会默认下载
+}
+```
+
+## 大文件切片
+
+对于大文件，合理切片加快速度并且防止系统崩溃造成全部重传问题。
+
+### 前端
+
+```html
+<input type="file" id="input">
+<!--form的enctype属性定义content-Type-->
+<!--form中enctype="multipart/form-data"的意思，是设置表单的MIME编码。默认情况，这个编码格式是application/x-www-form-urlencoded，不能用于文件上传；multipart/form-data，才能完整的传递文件数据。enctype="multipart/form-data"是上传二进制数据; form里面的input的值以2进制的方式传过去。-->
+<button id="upload">上传</button>
+<div style="width: 300px" id="progress"></div>
+```
+
+```javascript
+let input = document.getElementById('input')
+let upload = document.getElementById('upload')
+let files = {}//创建一个文件对象
+let chunkList = []//存放切片的数组
+// 读取文件
+input.addEventListener('change', (e) => {
+  files = e.target.files[0]
+  console.log(files);
+    
+    //创建切片
+    //上传切片
+})
+function createChunk(file, size = 2 * 1024 * 1024) {//size:切片大小
+  const chunkList = []
+  let cur = 0
+  while (cur < file.size) {
+    chunkList.push({
+      file: file.slice(cur, cur + size)//使用slice()进行切片
+    })
+    cur += size
+  }
+  return chunkList
+}
+
+async function uploadFile(list) {
+  const requestList = list.map(({file,fileName,index,chunkName}) => {
+    const formData = new FormData() // 创建表单类型数据
+    formData.append('file', file)//该文件
+    formData.append('fileName', fileName)//文件名
+    formData.append('chunkName', chunkName)//切片名
+    return {formData,index}
+  })
+  .map(({formData,index}) =>axiosRequest({
+    method: 'post',
+    url: 'http://localhost:3000/upload',//请求接口，要与后端一一一对应
+    data: formData
+  })
+  .then(res => {
+    console.log(res);
+    //显示每个切片上传进度
+    let p = document.createElement('p')
+    p.innerHTML = `${list[index].chunkName}--${res.data.message}`
+    document.getElementById('progress').appendChild(p)
+  }))
+  await Promise.all(requestList)//保证所有的切片都已经传输完毕
+}
+//请求函数
+function axiosRequest({method = "post",url,data}) {
+    return new Promise((resolve, reject) => {
+        const config = {//设置请求头
+            headers: 'Content-Type:application/x-www-form-urlencoded',
+        }
+        //默认是post请求，可更改
+        axios[method](url,data,config).then((res) => {
+            resolve(res)
+        })
+    })
+}
+upload.addEventListener('click', () => {
+    const uploadList = chunkList.map(({file}, index) => ({
+        file,
+        size: file.size,
+        percent: 0,
+        chunkName: `${files.name}-${index}`,
+        fileName: files.name,
+        index
+    }))
+    //发请求，调用函数
+    uploadFile(uploadList)
+})
+```
+
+### 后端
+
+```javascript
+const multipart = new multiparty.Form() // 解析FormData对象
+multipart.parse(req, async (err, fields, files) => {
+  if (err) { //解析失败
+    return
+  }
+  console.log('fields=', fields);
+  console.log('files=', files);
+            
+  const [file] = files.file
+  const [fileName] = fields.fileName
+  const [chunkName] = fields.chunkName
+            
+  const chunkDir = path.resolve(UPLOAD_DIR, `${fileName}-chunks`)
+  //在qiepian文件夹创建一个新的文件夹，存放接收到的所有切片
+  if (!fse.existsSync(chunkDir)) { //文件夹不存在，新建该文件夹
+    await fse.mkdirs(chunkDir)
+  }
+  // 把切片移动进chunkDir
+  await fse.move(file.path, `${chunkDir}/${chunkName}`)
+  res.end(JSON.stringify({ //向前端输出
+    code: 0,
+    message: '切片上传成功'
+  }))
+})
+```
+
+前端发现所有切片上传成功以后要求后端合并
+
+```javascript
+async function mergeFileChunk(filePath, fileName, size) {
+  const chunkDir = path.resolve(UPLOAD_DIR, `${fileName}-chunks`)
+  let chunkPaths = await fse.readdir(chunkDir)
+  chunkPaths.sort((a, b) => a.split('-')[1] - b.split('-')[1])
+  const arr = chunkPaths.map((chunkPath, index) => {
+    return pipeStream(
+    path.resolve(chunkDir, chunkPath),
+    // 在指定的位置创建可写流
+    fse.createWriteStream(filePath, {
+      start: index * size,
+      end: (index + 1) * size
+    }))
+  })
+  await Promise.all(arr)//保证所有的切片都被读取
+}
+// 将切片转换成流进行合并
+function pipeStream(path, writeStream) {
+  return new Promise(resolve => {
+    // 创建可读流，读取所有切片
+    const readStream = fse.createReadStream(path)
+    readStream.on('end', () => {
+      fse.unlinkSync(path)// 读取完毕后，删除已经读取过的切片路径
+      resolve()
+    })
+    readStream.pipe(writeStream)//将可读流流入可写流
+  })
+}
+```
 
