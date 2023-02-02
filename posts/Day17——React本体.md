@@ -392,6 +392,7 @@ class FileInput extends React.Component {
 
 - static getDerivedStateFromProps(props,state) 
 - shouldComponentUpdate(nextProps, nextState)如果返回false那么取消本次更新
+  - React.Component 并未实现 shouldComponentUpdate()，而 `React.PureComponent` 中以浅层对比 prop 和 state 的方式来实现了该函数。 
 - render()
 - getSnapshotBeforeUpdate(prevProps, prevState)拍快照，返回值就是生成的快照传给componentDidUpdate
 - componentDidUpdate(prevProps,prevState,snapshot)在更新后会被立即调用。首次渲染不会执行此方法。 
@@ -491,7 +492,7 @@ const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
 const memoizedCallback = useCallback(() => {doSomething(a, b);},[a, b],);
 ```
 
-类似vue的计算属性，useMemo获取的值是fn里的返回值，如果没有改变就始终返回缓存值，但是一旦a，b改变就创建新的结果。而useCallback则相当于 useMemo(() => fn, deps)，函数只会在deps改变时更新。 
+类似vue的计算属性，useMemo获取的值是fn里的返回值，如果没有改变就始终返回缓存值，但是一旦a，b改变就创建新的结果。而useCallback(fn,deps)则相当于 useMemo(() => fn, deps)，函数只会在deps改变时更新。 
 
 ## useLayoutEffect
 
@@ -588,5 +589,90 @@ function App() {
 
 React.memo(Component,hotToCompare)
 
-如果你的函数组件在给定相同 props 的情况下渲染相同的结果，那么你可以通过将其包装在 React.memo 中调用，以此通过记忆组件渲染结果的方式来提高组件的性能表现。这意味着在这种情况下，React 将跳过渲染组件的操作并直接复用最近一次渲染的结果。 也就是说整个组件的渲染与否取决于prop。第二个参数默认浅比较，也可以自己传入一个函数进行比较，这个函数的参数是preProp和nextProp。
+如果你的函数组件在给定相同 props 的情况下渲染相同的结果，那么你可以通过将其包装在 React.memo 中调用，以此通过记忆组件渲染结果的方式来提高组件的性能表现。这意味着在这种情况下，React 将跳过渲染组件的操作并直接复用最近一次渲染的结果。 也就是说整个组件的渲染与否取决于prop。第二个参数默认浅比较，也可以自己传入一个函数进行比较，这个函数的参数是preProp和nextProp。其实如果就像是React.PureComponent和shouldComponentUpdate的结合体。请注意第二个参数返回true代表没有改变（不会渲染）。
+
+# 高阶组件
+
+- 复用逻辑：加工`react`组件的工厂，批量对原有组件进行**加工**，**包装**处理。可以复用逻辑。
+
+- 强化props：这个是`HOC`最常用的用法之一，高阶组件返回的组件，可以劫持上一层传过来的`props`,然后混入新的`props`,来增强组件的功能。代表作`react-router`中的`withRouter`。
+
+- 赋能组件：`HOC`有一项独特的特性，就是可以给被`HOC`包裹的业务组件，提供一些拓展功能，比如说**额外的生命周期，额外的事件**，但是这种`HOC`，可能需要和业务组件紧密结合。典型案例`react-keepalive-router`中的 `keepaliveLifeCycle`就是通过`HOC`方式，给业务组件增加了额外的生命周期。
+
+- 控制渲染：劫持渲染是`hoc`一个特性，在`wrapComponent`包装组件中，可以对原来的组件，进行`条件渲染`，`节流渲染`，`懒加载`等功能，典型代表做`react-redux`中`connect`和 `dva`中 `dynamic` 组件懒加载
+
+### 使用
+
+```react
+function classHOC(WrapComponent){
+    return class  Idex extends React.Component{
+        state={
+            name:'alien'
+        }
+        componentDidMount(){
+           console.log('HOC')
+        }
+        render(){
+            return <WrapComponent { ...this.props }  { ...this.state }   />
+        }
+    }
+	//函数式组件也可以
+	return function Index(props){
+        const [ state , setState ] = useState({ name :'alien'  })       
+        return  <WrapComponent { ...props }  { ...state }   />
+    }
+}
+function Index(props){
+  const { name } = props
+  useEffect(()=>{
+     console.log( 'index' )
+  },[])
+  return <div>
+    hello,world , my name is { name }
+  </div>
+}
+
+export default classHOC(Index)
+```
+
+当然，不仅如此，我们还可以这样搞出来一个事件总线
+
+```react
+function classHOC(WrapComponent){
+  return function Index(props){
+    const [ name , setName ] = useState( 'alien'  )       
+    return  <WrapComponent { ...props } name={name} setName={setName}   />
+  }
+}
+function Index(props){
+  const [ value ,setValue ] = useState(null)
+  const { name , setName } = props
+  return <div>
+    <div>   hello,world , my name is { name }</div>
+    改变name <input onChange={ (e)=> setValue(e.target.value)  }  />
+    <button onClick={ ()=>  changeName(value) }  >确定</button>
+  </div>
+}
+export default classHOC(Index)
+```
+
+因为return什么，我们说了算，那么如何渲染、何时渲染、渲染与否，可以在return中自行决定。
+
+而且，我们甚至可以添加生命周期的内容
+
+```react
+function logProps(WrappedComponent) {
+  return class extends React.Component {
+    componentDidUpdate(prevProps) {
+      console.log('Current props: ', this.props);
+      console.log('Previous props: ', prevProps);
+    }
+    render() {
+      return <WrappedComponent {...this.props} />;
+    }
+  }
+}
+```
+
+
 

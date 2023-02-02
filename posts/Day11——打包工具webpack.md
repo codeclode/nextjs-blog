@@ -600,3 +600,74 @@ webpack output其实就是Express的一个router对象，webpack根据入口文�
 - Socket Server是一个socket长连接，服务器可以直接发送文件到客户端
 - 当服务期间听到对应模块发上变化时，会生成两个文件.json（manifest文件）和.js文件（update chunk）客户端基于hmr runtime来进行更新。
 - HMR的核心就是客户端从服务端拉取更新后的资源,更准确的说法就是 HMR卡去的不是整个资源文件,而是 chunk diff,即 chunk 需要更新的部分 
+
+### 自定义的loader和plugin
+
+#### loader
+
+在根配置下写名loader查找路径
+
+```javascript
+resolveLoader: {
+  modules: ['node_modules', './src/loaders']
+},
+```
+
+```javascript
+module.exports = function (source) {
+    const options = this.getOptions();
+    return source.replace('xiong ling', options.name);
+    //这就是一个简易的loader，他的作用是替换xiong ling为loader使用处options的name字符串
+    //当然，如果有异步操作，不要return，而是调用this.callback(null,result)
+}
+```
+
+#### plugin
+
+- 一个 JavaScript 命名函数或 JavaScript 类(所以我们的插件都是new出来的)。
+- 在插件函数的 prototype 上定义一个 `apply` 方法。
+- 在`apply`中可以绑定一个webpack的时间钩子，然后再钩子中执行我们的需求
+
+这个 `apply` 方法在安装插件时，会被 webpack compiler 调用一次。`apply` 方法可以接收一个 webpack compiler 对象的引用，从而可以在回调函数中访问到 compiler 对象。
+
+```javascript
+class FileList {
+    static defaultOptions = {
+        outputFile: 'assets.md',
+    };
+
+    constructor(options = {}) {
+        // 可以接收自定义的options，如文件名等，进行合并
+        this.options = { ...FileList.defaultOptions, ...options };
+    }
+    apply(compiler) {
+      // 在 emit 钩子里执行，他是异步钩子，所以我们需要使用tapAsync来注册，并且必须调用cb函数
+        compiler.hooks.emit.tapAsync('FileList', (compilation, cb) => {
+            const fileListName = this.options.outputFile;
+            // compilation.assets有我们所有的资源文件
+            let len = Object.keys(compilation.assets).length;
+            // 
+            let content = `# 一共有${len}个文件\n\n`;
+            // 遍历资源文件，获取name进行拼接
+            for (let filename in compilation.assets) {
+                content += `- ${filename}\n`
+            }
+             // 在compilation.assets这资源对象中新添加一个名为fileListName的文件
+            compilation.assets[fileListName] = {
+                // 文件内容
+                source: function () {
+                    return content;
+                },
+                // 文件的长度
+                size: function () {
+                    return content.length;
+                }
+            }
+            cb()
+        })
+    }
+}
+
+module.exports = FileList;
+```
+

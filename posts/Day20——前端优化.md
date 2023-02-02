@@ -730,6 +730,27 @@ FP<FCP，因为背景肯定会比dom先绘制。
 
 获取指标，可以通过安装Lighthouse插件或者直接用devTools里的performance实现。
 
+或者也可以通过PerformanceObserver API获取
+
+```javascript
+const observer = new PerformanceObserver((list) => {
+  for(const entry of list.getEntries()){
+    console.groupCollapsed(entry.name);
+	console.log(entry.entryType);
+	console.log(entry.startTime);
+	console.log(entry.duration);
+	console.groupEnd(entry.name);
+  }
+})	
+observer.observe({entryTypes://只有这一个参数，代表要记录的性能字符串
+['longtask','frame','navigation','resource','mark','measure','paint']});
+observer.disconnect()//停止监听
+var records = observer.takeRecords();//返回当前存储在性能观察器中的性能条目列表，并将其清空。
+console.log(records[0].name);
+console.log(records[0].startTime);
+console.log(records[0].duration);
+```
+
 ## 如何优化
 
 首屏优化过程基于浏览器渲染页面的过程

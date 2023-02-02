@@ -1,7 +1,5 @@
----
 title: "Vue2+3"
 date: "2023-01-23"
----
 
 # Vue2
 
@@ -1141,7 +1139,7 @@ const { x, y } = useMouse()
 |    onActivated    |                        -                        |
 |   onDeactivated   |                        -                        |
 
-
+值得注意的是，setup在beforeCreate之前执行
 
 ## API，仅仅比较和v2的差异
 
@@ -1369,4 +1367,220 @@ const { x, y } = useMouse()
   </script>
   ```
 
+
+# 抽象组件
+
+类似React的高阶组件，在抽象组件的生命周期过程中，我们可以对包裹的子组件监听的事件进行拦截，也可以对子组件进行Dom 操作，从而可以对我们需要的功能进行封装，而不需要关心子组件的具体实现。 
+
+要编写一个抽象组件，就要设置他的配置项 **abstract** 为true
+
+```vue
+<script>
+import {get, debounce, set} from 'lodash';
+//一个防抖组件
+export default {
+  name: 'debounce',
+  abstract: true, //标记为抽象组件
+  render() {
+  let vnode = this.$slots.default[0]; // 子组件的vnode
+  if (vnode) {
+    let event = get(vnode, `data.on.click`); // 子组件绑定的click事件
+    if (typeof event === 'function') {
+        set(vnode, `data.on.click`, debounce(event, 1000));
+      }
+    }
+    return vnode;
+  }
+};
+</script>
+<!--使用-->
+<debounce>
+    <button @click="clickHandler">测试</button>
+</debounce>
+```
+
+# 原理
+
+## 虚拟DOM和diff
+
+- 虚拟dom，就是我们在渲染的时候参考的那颗树
+- 里边有很多比如tag、class等标签相关的东西，当然，有子虚拟DOM数组
+- render方法的作用就是递归地创建结点
+- 而diff比较两个虚拟DOM的区别，也就是在比较两个对象的区别。 
+  - diff算法最后会产生补丁包，根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新DOM 
+  - 新的DOM节点不存在{type: 'REMOVE', index}
+  - 文本的变化{type: 'TEXT', text: 1}
+  - 当节点类型相同时，去看一下属性是否相同，产生一个属性的补丁包{type: 'ATTR', attr: {class: 'list-group'}}
+  - 节点类型不相同，直接采用替换模式{type: 'REPLACE', newNode}
+- 最后我们根据产生的补丁包依然递归地进行DOM修改。
+- 而对于key这个东西，如果列表里没有会导致列表通过就地更新，保证他们在原本指定的索引位置上渲染
+  - 对没有 key 的子节点数组更新调用的是`patchUnkeyedChildren`这个方法，核心是就地更新的策略。它会通过**对比新旧子节点数组的长度**，先以比较短的那部分长度为基准，将新子节点的那一部分直接 patch 上去。然后再判断，如果是新子节点数组的长度更长，就直接将新子节点数组剩余部分挂载(mount)；如果是新子节点数组更短，就把旧子节点多出来的那部分给卸载掉（unmount）。也就是说，**没有key我就仅仅凑长度，根据原来位置的DOM赋予新DOM属性。**
+  - 有 key 的子节点更新是调用的`patchKeyedChildren`，大概流程就是同步头部节点、同步尾部节点、处理新增和删除的节点，最后用求解最长递增子序列的方法区处理未知子序列。是为了**最大程度实现对已有节点的复用，减少 DOM 操作的性能开销**，同时避免了就地更新带来的子节点状态错误的问题。
+  - 比对顺序：startOld=>startNew,endOld=>endNew,startOld=>endNew,endOld=>startNew,unkown
+
+## 响应式
+
+### V2
+
+给出几个定义
+
+- Dep是Dep构造函数，这玩意是依赖收集器
+- Watcher是侦听器，用来监听依赖并触发render
+- Dep.target是依赖变化时需要通知的Watcher实例
+
+接下来捋一下过程
+
+- 3个东西：Observer，Watcher，Dep,可以发现，一个Vue实例只有一个Observer
+
+- Watcher在mounte的时候 new Watcher(self, self.render); 
+
+- ```javascript
+  //这是Observer，最顶层的东西
+  const Observer = function(data) {
+    // 循环修改为每个属性添加get set
+    for (let key in data) {
+      defineReactive(data, key);
+    }
+  }
   
+  const defineReactive = function(obj, key) {
+    // 局部变量dep，用于get set内部调用
+    const dep = new Dep();
+    // 获取当前值
+    let val = obj[key];
+    Object.defineProperty(obj, key, {
+      enumerable: true,
+      configurable: true,
+      get() {
+        dep.depend();
+        return val;
+      },
+      set(newVal) {
+        if (newVal === val) {
+          return;
+        }
+        val = newVal;
+        // 当值发生变更时，通知依赖收集器，更新每个需要更新的Watcher，
+        // 这里每个需要更新通过什么断定？dep.subs
+        dep.notify();
+      }
+    });
+  }
+  
+  const observe = function(data) {
+    return new Observer(data);//这个函数会在Vue实例创建时给data调用
+  }
+  ```
+
+- ```javascript
+  const Watcher = function(vm, fn) {
+    const self = this;
+    this.vm = vm;
+    // 将当前Dep.target指向自己
+    Dep.target = this;//注意是构造函数的target
+    // 向Dep方法添加当前Wathcer
+    this.addDep = function(dep) {
+      dep.addSub(self);//dep的sub里边加入watcher
+    }
+    // 更新方法，用于触发vm._render
+    this.update = function() {
+      console.log('in watcher update');
+      fn();
+    }
+    // 这里会首次调用vm._render，从而触发get将当前的Wathcer与Dep关联起来
+    this.value = fn();
+    // 这里清空了Dep.target，为了防止notify触发时，不停的绑定Watcher与Dep，
+    // 造成代码死循环
+    Dep.target = null;
+  }
+  ```
+
+- ```javascript
+  const Dep = function() {
+    const self = this;
+    // 收集目标
+    this.target = null;
+    // 存储收集器中需要通知的Watcher
+    this.subs = [];
+    // 当有目标时，绑定Dep与Wathcer的关系
+    this.depend = function() {
+      if (Dep.target) {
+        Dep.target.addDep(self);
+      }
+    }
+    // 为当前收集器添加Watcher
+    this.addSub = function(watcher) {
+      self.subs.push(watcher);
+    }
+    // 通知收集器中所的所有Wathcer，调用其update方法
+    this.notify = function() {
+      for (let i = 0; i < self.subs.length; i += 1) {
+        self.subs[i].update();
+      }
+    }
+  }
+  ```
+
+- 所以流程就是：new Vue的时候先observe，这样我们就搞出来所有data属性的dep，接下来等到mount环节new了一个Watcher，在watcher首次render，render会调用data的getter从而绑定watcher和deps，最后再解绑target防止多次get不停绑定(target在new Watcher的时候绑定到自己身上，注意这个是Dep构造函数的属性)。每当dep监听的属性set时就会通知watcher来调用render。
+
+### V3
+
+```javascript
+const targetMap = new WeakMap()
+function track(target, key) {
+    // 如果此时activeEffect为null则不执行下面
+    // 这里判断是为了避免例如console.log(person.name)而触发track
+    if (!activeEffect) return
+    let depsMap = targetMap.get(target)
+    if (!depsMap) {
+        targetMap.set(target, depsMap = new Map())
+    }
+
+    let dep = depsMap.get(key)
+    if (!dep) {
+        depsMap.set(key, dep = new Set())
+    }
+    dep.add(activeEffect) // 把此时的activeEffect添加进去
+}
+function trigger(target, key) {
+    let depsMap = targetMap.get(target)
+    if (depsMap) {
+        const dep = depsMap.get(key)
+        if (dep) {
+            dep.forEach(effect => effect())
+        }
+    }
+}
+function reactive(target) {
+    const handler = {
+        get(target, key, receiver) {
+            track(receiver, key) // 访问时收集依赖
+            return Reflect.get(target, key, receiver)
+        },
+        set(target, key, value, receiver) {
+            Reflect.set(target, key, value, receiver)
+            trigger(receiver, key) // 设值时自动通知更新
+        }
+    }
+    return new Proxy(target, handler)
+}
+let activeEffect = null
+function effect(fn) {
+    activeEffect = fn
+    activeEffect()
+    activeEffect = null
+}//这个函数暴露给外边用，fn就是回调函数
+function ref(initValue) {
+    return reactive({
+        value: initValue
+    })
+}
+function computed(fn) {
+    const result = ref()
+    effect(() => result.value = fn())
+    return result
+}
+```
+
+- targetMap->监听的对象，depsMap->被监听的属性，dep->属性改变时的副作用
+- 这个就简单多了，其实就是在模板里确定data的effect，然后首次调用绑定好targetMap、depsMap、dep，set时触发某个属性对应的deps。
