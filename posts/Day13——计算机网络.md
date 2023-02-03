@@ -317,7 +317,7 @@ TLS实际用的是两种算法的混合加密。通过非对称加密算法交�
     - **Etag/If-None-Match**：Etag用来帮助服务器控制web端的缓存验证，默认是文件的INode，大小，最后修改时间的hash。if-none-match，当资源变化时，浏览器发现响应头里有Etag，则再次像服务器请求时带上请求头if-none-match(值是Etag的值)。服务器收到请求进行比对，决定返回200或304 （有变化返回200，否则304）
     - **Last-Modifed/If-Modified-Since**：Last-Modified，浏览器向服务器发送资源最后的修改时间。 If-Modified-Since：当浏览器判断Cache-Control标识的max-age过期，发现响应头具有Last-Modified声明，则再次向服务器请求时带上头if-modified-since，表示请求时间。服务器收到请求后发现有if-modified-since则与被请求资源的最后修改时间进行对比（Last-Modified）,若最后修改时间较新（大），说明资源被改过，则返回最新资源，HTTP 200 OK;若最后修改时间较旧（小），说明资源无新修改，响应HTTP 304 走缓存。
     - etag优先级高于Last-Modifed，且时间精度更高（Last-Modifed是秒级的）
-    - Etag和Last-Modifed都是服务器返回给浏览器的
+    - Etag和Last-Modifed都是服务器返回给浏览器的，也就是先（带着 if-modified-since或if-none-match）请求，然后服务器比对，再决定200|304，200就会替换原来的请求字段
 
 ### 再谈跨域问题
 
@@ -443,3 +443,116 @@ SSO 仅仅是一种架构，一种设计，而 CAS 则是实现 SSO 的一种手
 - 浏览器带 **ST** 重定向到 b 服务器，和第 5 步一样。
 - b 服务器根据票据向 SSO 服务器发送请求，票据验证通过后，b 服务器知道用户已经在 sso 登录了，于是生成 b session，向浏览器写入 b cookie。
 - 注意，TGT就类似session，放在CASserver里，凭借TGC获取。TGT用来签发ST
+
+### 轮询和WS
+
+#### 长轮询
+
+设置xhr.timeout为一个比较大的数，长轮询选择尽可能长的时间保持和客户端连接打开，仅在数据变得可用或达到超时阙值后才提供响应（当然也可以让前端因为timeout502导致error时直接再发一个），而不是在给到客户端的新数据可用之前，让每个客户端多次发起重复的请求。 
+
+```javascript
+async function subscribe() {
+  let response = await fetch("/subscribe");
+
+  if (response.status == 502) {
+    // 状态 502 是连接超时错误，
+    // 让我们重新连接
+    await subscribe();
+  } else if (response.status != 200) {
+    // 一秒后重新连接
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await subscribe();
+  } else {
+    // 获取并显示消息
+    let message = await response.text();
+    await subscribe();
+  }
+}
+
+subscribe();
+```
+
+#### WS 
+
+WebSockets是一个构建在设备TCP/IP协议栈之上的传输层。其目的是向 Web 开发人员提供本质上尽可能接近原始的 TCP 通信层，同时添加一些抽象概念，以消除 Web 工作中存在的一些阻力。 
+
+原生的JS内容
+
+```java
+var ws = new WebSocket(url);
+ws.onopen = function(event) {
+  console.log("WebSocket is open now.");
+};
+ws.onclose = function(event) {
+  console.log("WebSocket is closed now.");
+};
+ws.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+    ws.send("other message")
+});
+ws.addEventListener('error', function (event) {
+  console.log('WebSocket error: ', event);
+});
+ws.send("Hello server!");
+ws.readyState//0 connencting,1 open,2 closing,3 closed
+```
+
+##### socket.io框架
+
+这玩意类似触发器，前后端要约定好事件用来emit（发）和on（接）
+
+而且后端要记住用户的链接
+
+客户端
+
+```html
+<script src="/socket.io/socket.io.js"></script>
+<script>
+//连接socket服务
+let socket = io('http://127.0.0.1:3000');
+//浏览器注册服务端
+socket.on('send', data => {
+  console.log(data);
+});
+
+socket.on("transform", data => {
+  console.log(data);
+})
+
+let name = window.prompt("输入名称");
+
+//向服务器发送数据
+socket.emit('clientData', { name: name });
+
+function sendDate(toUser, content) {
+  socket.emit("sendData", { name: toUser, fromName: name, content: content })
+}
+</script>
+```
+
+node服务端
+
+```javascript
+const app = http.createServer();
+const io = require('socket.io')(app);
+var sockets = {}
+io.on('connection', socket => {
+  console.log('新用户连接');
+  //给浏览器发送数据emit('发送的事件','发送的事件')
+  socket.emit('send', { name: 'jack' });
+  //获取浏览器发送的数据,注册事件只要和触发事件一样就行
+  socket.on('clientData', data => {
+    console.log(data);
+    if (!sockets[data.name]) {
+      sockets[data.name] = socket
+    }
+  })
+
+  socket.on("sendData", data => {
+    if (sockets[data.name]) {
+      sockets[data.name].emit("transform", { name: data.fromName, content: data.content })
+    }
+  })
+});
+```
+

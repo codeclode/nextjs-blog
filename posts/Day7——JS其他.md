@@ -274,7 +274,7 @@ objectStoreRequest.onsuccess = function(event) {
 
 - 只能返回基本的类型，面向对象的继承没发辨别，都返回object
 -  NaN / Infinity都是数字类型的，检测结果都是“number”; 
--  typeof null 的结果“object”; 
+- typeof null 的结果“object”; 因为不同的对象在底层都表示为二进制，在 JavaScript 中二进制前三位都为 0 的话会被判为 object 类型， null 的二进制表示是全 0，自然前三位也是 0，所以执行 typeof 时会返回“ object ”。 
 
 ### instance of
 

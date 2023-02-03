@@ -1064,6 +1064,19 @@ binding = {
 }
 ```
 
+### extends
+
+```vue
+const CompA = { ... }
+
+const CompB = {
+  extends: CompA,
+  ...
+}
+```
+
+和mixin几乎一样，只不过mixin混入一个简单对象，而extends继承一个组件。
+
 ### 插件
 
 ```javascript
@@ -1584,3 +1597,17 @@ function computed(fn) {
 
 - targetMap->监听的对象，depsMap->被监听的属性，dep->属性改变时的副作用
 - 这个就简单多了，其实就是在模板里确定data的effect，然后首次调用绑定好targetMap、depsMap、dep，set时触发某个属性对应的deps。
+
+# 生命周期父子局
+
+### 加载渲染过程
+
+父beforeCreate->父created->父beforeMount->子beforeCreate->子created->子beforeMount->子mounted->父mounted
+
+### 更新过程
+
+父beforeUpdate->子beforeUpdate->子updated->父updated
+
+### 销毁过程
+
+父beforeDestroy->子beforeDestroy->子destroyed->父destroyed
