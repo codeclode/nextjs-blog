@@ -118,6 +118,7 @@ console.log(myEmitter.listeners());//[]
   - 执行输入的同步代码
   - process.nextTick
   - 微任务
+  
 - 进入事件环
   - timers阶段
     - 检查timer队列是否有到期的 timer 回调，如果有，将到期的 timer 回调按照 timerId 升序执行。
@@ -138,7 +139,7 @@ console.log(myEmitter.listeners());//[]
   - poll（无未完成回调）
     - 直接退出
   - check
-    - 如果有immediate回调，则执行所有immediate回调。
+    - 如果有immediate回调，则执行**所有**immediate回调。
     - 所有process.nextTick回调
     - 所有微任务
   - closeing
@@ -146,8 +147,42 @@ console.log(myEmitter.listeners());//[]
   - 最后检查是否有活跃的事件处理器（定时器，IO以及其他事件句柄）
     - 有则进入下一轮loop
     - 没有则结束程序
+  
 - 目前在Node的环境下，当前也就只有promise为微任务，Object.observe属于谨慎使用级别
+
 - 值得注意的是，定时器有两个执行时机，一个为timer阶段，另一个则是poll阶段，其实他们都会把所有可用的timer调完，而且掉完每一个以后都会执行所有nextTick和微任务
+
+- 请注意，这里说的执行完所有，是指已经放在执行队列里的，而不是还在预备队列的
+
+  ```javascript
+  setTimeout(() => {
+    console.log("t1");//timer
+  }, 0);
+  setImmediate(() => {
+    console.log("i0");//check
+    new Promise((resolve, reject) => {
+      console.log("p1")//poll
+      resolve()
+    }).then(() => {
+      console.log("p2");
+      setTimeout(() => {
+        console.log("t2");
+      }, 0);
+      setImmediate(() => {
+        console.log("i1");
+      })
+    })
+  })
+  setImmediate(() => {
+    console.log("t3");//check
+  })
+  setImmediate(() => {
+    console.log("t4");//check
+  })
+  //t1,i0,p1,p2,t3,t4,i1,t2
+  ```
+
+  
 
 ### 一个逆天案例
 

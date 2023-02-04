@@ -279,6 +279,7 @@ objectStoreRequest.onsuccess = function(event) {
 ### instance of
 
 - 定义某个实例是否属于这个类
+- 右值必须是一个对象，其他会报错（比如null）
 - 根据原型链判断
 - 返回true和false
 - 要求检测的实例必须是对象数据类型的 

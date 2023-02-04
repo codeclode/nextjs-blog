@@ -115,7 +115,7 @@ module.exports = {
         port: 3000,
         hot: true,
 		compress:true
-        contentBase: '../dist' // 如果出错，请将 contentBase 替换为 static(w4是contentBase,w5就是static)
+        contentBase: '../dist'//(w4是contentBase,w5就是static)
       },
 }
 
@@ -175,7 +175,7 @@ npm i -D css-loader style-loader sass-loader post-loader postcss-preset-env
 ```javascript
 module.exports = {
     ...
-    module: {
+  module: {
     rules: [
       {
         test: /\.css$/i,
@@ -359,7 +359,12 @@ module.exports = {
 
 # sourceMap
 
-devtools选定是否生产sourceMap等来方便对源代码进行监测
+devtools选项选定是否生产sourceMap等来方便对源代码进行监测
+
+- cheap仅有行
+- eval：使用eval包裹模块代码
+- inline：将`.map`作为DataURI嵌入，不单独生成`.map`文件
+- `module`：包含`loader`的`sourcemap`
 
 |           devtool            | build | rebuild | 代码内容 | sourcemap  |  错误定位  |
 | :--------------------------: | :---: | :-----: | :------: | :--------: | :--------: |
@@ -406,7 +411,7 @@ watchOptions:{"ignored":"/node_modules/"}
 ### resolve优化
 
 - resolve:{extensions:  ['.js', '.json', '.wasm']}, 如此使用，使用以js、json、wasm扩展名文件时可以不加扩展名，会自动从左到右查找
-- resolve: {     modules: [**resolve**('src'), 'node_modules'],  }, 告知解析模块时要查找的目录
+- resolve: {    modules: [**resolve**('src'), 'node_modules'],  }, 告知解析模块时要查找的目录
 
 ### externals
 
@@ -520,9 +525,90 @@ module.exports = {
 
 属于代码层而非配置层优化
 
-### SplitChunks插件
+### 分包
 
-提取或分离代码的插件，主要作用是提取公共代码，减少代码被重复打包，拆分过大的js文件，合并零散的js文件 
+#### 手动版
+
+列一个jquert.manifest.json
+
+```json
+// jquery.manifest.json 
+{
+  "name": "jquery",
+  "content": {
+    "./node_modules/jquery/dist/jquery.js": {
+      "id": 1,
+      "buildMeta": {
+        "providedExports": true
+      }
+    }
+  }
+}
+```
+
+然后新建webpack.dll.config.js
+
+```javascript
+// webpack.dll.config.js
+const webpack = require("webpack");
+const path = require("path");
+
+module.exports = {
+    entry: {
+        //有几个公共文件就写几个入口
+        jquery: ["jquery"],
+        lodash: ["lodash"]
+    },
+    output: {
+        //打包到dist/dll目录下
+        filename: "dll/[name].js",
+        library: "[name]"
+    },
+    plugins: [
+        new webpack.DllPlugin({
+            //资源清单的保存位置
+            path: path.resolve(__dirname, "dll", "[name].manifest.json"),  
+            //资源清单中，暴露的变量名
+            name: "[name]"                                                 
+        }),
+    ]
+};
+```
+
+对公共包进行打包
+
+```bash
+webpack --mode=production --config webpack.dll.config.js
+```
+
+最后才是完整文件的打包，我们要指明公共包文件
+
+```javascript
+new webpack.DllReferencePlugin({
+  manifest: require("./dll/jquery.manifest.json"),
+}),
+// 指明清单文件
+new webpack.DllReferencePlugin({
+  manifest: require("./dll/lodash.manifest.json")
+})
+//在配置里使用DllReferencePlugin插件
+```
+
+### SplitChunks
+
+提取或分离代码的插件，主要作用是提取公共代码，减少代码被重复打包，拆分过大的js文件，合并零散的js文件。这玩意就是自动分包。
+
+```javascript
+optimization: {
+  splitChunks: {
+        //优化配置项...
+    chunks: "all",
+    minChunks:1//模块被chunk引用了多少次才会进行分包
+    minSize:20000//	模块超过多少字节才会进行拆分
+    maxSize:0//分出来的包超过了多少字节需要继续进行拆分
+  }
+},
+```
 
 # 基本原理
 

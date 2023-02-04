@@ -83,7 +83,7 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 - 解析HTML，构建DOM树
 - 解析CSS，构建CSS规则树（与HTML解析同步）
 - 合并DOM和CSS，生成render树
-- 布局render树，负责各元素尺寸位置计算（回流、重排）
+- 布局layout树，负责各元素尺寸位置计算（回流、重排）
 - 绘制render树，绘制像素信息（重绘）
 
 ### HTML解析

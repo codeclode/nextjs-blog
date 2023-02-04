@@ -400,7 +400,7 @@ const obj = { x: 1, ...{ x: 2 } }//obj:{x: 2}
 
 ### 正则更加强大
 
-### Promise加入finally
+### Promise加入finally,finally没有参数
 
 ### 异步迭代器(for-await-of)
 

@@ -353,7 +353,7 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 
 ### 静态方法
 
-- Promise.all(迭代对象)返回一个Promise，等待所有可迭代对象里的Promise执行结束后返回他们处理出来的结果或错误数组，数组顺序按照可迭代对象排列
+- Promise.all(迭代对象)返回一个Promise，等待所有可迭代对象里的Promise执行结束后返回他们处理出来的结果，如果有一个错误就直接catch出第一个错误，数组顺序按照可迭代对象排列
 
 - ```javascript
   var p1 = Promise.resolve(3);
@@ -367,7 +367,7 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
   });
   ```
 
-- Promise.race(可迭代对象)
+- Promise.race(可迭代对象)第一个结束的
 
 - ```javascript
   var p1 = new Promise(function(resolve, reject) {

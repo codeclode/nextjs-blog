@@ -155,9 +155,9 @@ type config={
 ### 四个工作区
 
 - workspace：工作区，目前你的改动都在这里，开发也是在这里
-- Index：暂存区，进行add后就会存入暂存区
+- Index|stage：暂存区，进行add后就会存入暂存区
 - Repository：本地仓库，commit之后暂存区内容入仓
-- Remote，远程仓，本地仓库push后推到远程
+- Remote|origin，远程仓，本地仓库push后推到远程
 
 ### 基本操作
 
@@ -225,6 +225,8 @@ git config --global user.email "youremail@github.com"
 ```shell
 git branch
 #查看本地分支
+git branch <branch-name>
+#新建一个分支但不切换
 git branch -r
 #查看远程分支
 git branch -a
@@ -237,13 +239,18 @@ git branch -v
 #常看各个分支最后一个提交对象的信息
 git branck -m <oldbranck-name> <newbranch-name>
 #重命名分支
+git branch -d dev
+#删除dev分支
 git checkout <branch-name>
 #切换到其他分支
 git checkout -b <branch-name>
-#创建并切换到新建分支
+#从当前分支创建并切换到新建分支
+git checkout -b hotfix remote hotfix	
+#从远端remote的hotfix分支创建本地hotfix分支
 git merge
+#merge会形成树形的结构，小分支直接和主干最后一个commit合并为新的结点
 git rebase
-
+#rebase则会把小分支嫁接到分支前面那个点上，相当于断开主干的新结点，用小分支链接，最后把断掉的那一段主干利用小分支的更改刷新成新主干，然后接到小分支连接后的主干上。
 git push origin -d <branch-name>
 #删除远程分支
 ```
@@ -251,11 +258,15 @@ git push origin -d <branch-name>
 ### 撤销
 
 ```shell
-git checkout --
+git reflog
+#查看所有可用的历史版本记录（实际是HEAD变更记录），包含被回退的记录
+git checkout .|[filename]
 #撤销工作区修改
 git reset HEAD
 #暂存区文件撤销，不会覆盖工作区
 git reset --(soft|mixed|hard)<HEAD~(num)>
+git revert [commit]
+#撤销一个提交，会用一个新的提交（原提交的逆向操作）来完成撤销操作，如果已push则重新push即可
 ```
 
 **HEAD 说明：**
@@ -275,9 +286,9 @@ git reset --(soft|mixed|hard)<HEAD~(num)>
 
 三个参数
 
-- --hard 回退全部，包括HEAD，index，working tree 
-- 回退部分,包括HEAD，index
-- 只回退HEAD
+- --hard 回退全部，包括HEAD，index，working space
+- --mixed回退部分,包括HEAD，index
+- --soft只回退HEAD
 
 ### 文件暂存
 
@@ -329,4 +340,19 @@ git branch
 git checkout 
 #git checkout -b删除
 ```
+
+### 远程操作
+
+|               指令                |                           meaning                            |
+| :-------------------------------: | :----------------------------------------------------------: |
+|          git clone 地址           |                             克隆                             |
+|           git remote -v           |           查看所有远程仓库，不带参数`-v`只显示名称           |
+|     git remote show [remote]      |                    显示某个远程仓库的信息                    |
+|    git remote add [name] [url]    |                 增加一个新的远程仓库，并命名                 |
+|   git remote rename [old] [new]   |                       修改远程仓库名称                       |
+|  **git pull [remote] [branch]**   |             取回远程仓库的变化，并与本地版本合并             |
+|           **git pull**            |                              -                               |
+|        git fetch [remote]         |        获取远程仓库的所有变动到本地仓库，不会自动合并        |
+|          **git push** -u          | 推送当前分支参数–u,表示与远程分支建立关联，第一次执行的时候用，后面就不需要了 |
+| git push [remote] [branch]\|-all? | 推送本地当前分支到远程仓库的指定分支,-all的话会推送所有分支  |
 
