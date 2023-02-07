@@ -144,13 +144,25 @@ type config={
         stringify:boolean//若设置为 true，导入的 JSON 会被转换为 export default JSON.parse("...")，这样会比转译成对象字面量性能更好，尤其是当 JSON 文件较大的时候。会禁用按名导入。
     }
 	assetsInclude:string | RegExp | (string | RegExp)[]//指定额外的 picomatch 模式 作为静态资源处理.
+	assetsDir:"assets"//默认asstes,指定生成静态资源的存放目录。
 	logLevel:'info' | 'warn' | 'error' | 'silent'//控制台输出级别
 	envDir//如其名
     envPrefix:string|string[]//以 envPrefix 开头的环境变量会通过 import.meta.env 暴露在你的客户端源码中。默认VITE_
+	server: {
+   	 host: true, // 监听所有地址
+   	 proxy: {
+		'api':{
+            target: 'http://jsonplaceholder.typicode.com',
+    	    changeOrigin: true,
+    	    rewrite: (path) => path.replace(/api/, '')
+        }
+	}
 }
 ```
 
 # 补一下git
+
+[在线练习](https://learngitbranching.js.org/?locale=zh_CN&NODEMO=)
 
 ### 四个工作区
 

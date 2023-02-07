@@ -511,7 +511,7 @@ class RouteRecodeRaw = {
 
 #### RouteLocationNormalized
 
-路由守卫中to和from的类型
+路由守卫中to和from以及$route的类型
 
 - fullPath
 - hash
@@ -562,7 +562,7 @@ createRouter({
 
   - name：命名视图
 
-  - route： RouteLocationNormalized解析后的路由 
+  - route： RouteLocationNormalized,解析后的路由 
 
   - slot：如果希望配置过度和空状态
 

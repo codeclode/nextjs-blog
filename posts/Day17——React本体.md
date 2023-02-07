@@ -16,7 +16,7 @@ root.render(<h1>Hello, world!</h1>);
 
 ### JSX
 
-JavaScript 的语法扩展。我们建议在 React 中配合使用 JSX，JSX 可以很好地描述 UI 应该呈现出它应有交互的本质形式。 
+JavaScript 的语法扩展。可以描述 UI 应该呈现出它应有交互的本质形式。 
 
 ```react
 const name = 'Josh Perez';
@@ -83,10 +83,6 @@ const MyContext = React.createContext(defaultValue);//创建一个环境
 
 如果已经渲染过就执行更新。cb会在渲染或更新之后执行。
 
-### hydrate
-
-和renderer一样，只不过 用于在 ReactDOMServer 渲染的容器中对 HTML 的内容进行 hydrate 操作。React 会尝试在已有标记上绑定事件监听器。 服务端渲染的对象，不看。
-
 ### unmountComponentAtNode(container)
 
  从 DOM 中卸载组件，会将其事件处理器（event handlers）和 state 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 true，如果没有组件可被移除将会返回 false。 
@@ -96,11 +92,12 @@ const MyContext = React.createContext(defaultValue);//创建一个环境
 把一个child组件绑定到指定的container上，类似vue的teleport。看似是我的儿子，只不过是为了方便管理，其实早就跳到别的container上了。注意返回值仍然是一个用来render的组件
 
 ```react
-  render() {
-    return ReactDOM.createPortal(
-      this.props.children,
-      this.el
-    );
+render() {
+  return ReactDOM.createPortal(
+    this.props.children,
+    this.el
+  );
+}
 ```
 
 ## 事件
@@ -183,7 +180,7 @@ class Clock extends React.Component {
 
 - 唯一的修改state的地方，这个方法会合并修改，没修就是以前的
 - 更新是异步的，啥时候更新取决于React内部实现（也就是说别想着更新完接着用上热乎的）
-- 浅合并，新对象完全替换而就对象完全保留（地址不会变）
+- 浅合并，新对象完全替换而旧对象完全保留（地址不会变）
 
 ## 事件处理
 
@@ -640,7 +637,7 @@ export default classHOC(Index)
 ```react
 function classHOC(WrapComponent){
   return function Index(props){
-    const [ name , setName ] = useState( 'alien'  )       
+    const [ name , setName ] = useState('alien')       
     return  <WrapComponent { ...props } name={name} setName={setName}   />
   }
 }
@@ -673,6 +670,3 @@ function logProps(WrappedComponent) {
   }
 }
 ```
-
-
-

@@ -479,7 +479,7 @@ function Random() {
 
 ```react
 const userIsInactive = useFakeInactiveUser();
-navigate("/session-timed-out"{
+navigate("/session-timed-out",{
       replace?: boolean;
       state?: any;
 });//编程式路由导航

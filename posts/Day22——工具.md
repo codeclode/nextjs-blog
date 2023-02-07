@@ -493,4 +493,3 @@ h1{ @include sexy-border($width:2in,$color:blue)}
   @include box-shadow(0px 4px 5px #666, 2px 6px 10px #999);
 }
 ```
-

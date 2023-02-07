@@ -103,13 +103,16 @@ var vm = new Vue({
   <button v-on:click="say('hi',$event)">Say hi</button>
   <button v-on:click="say('what')">Say what</button>
 
-  <!-- 阻止单击事件继续传播 -->
+  <!-- 阻止单击事件继续冒泡 -->
   <a v-on:click.stop="doThis"></a>
 
-  <!-- 提交事件不再重载页面 -->
+  <!-- 阻止默认行为 -->
   <form v-on:submit.prevent="onSubmit"></form>
 
-  <!-- 修饰符可以串联 -->
+  <!-- 阻止默认行为 -->
+  <form v-on:submit.self="onSubmit"></form>
+
+  <!-- 只有是自己触发的自己才会执行 -->
   <a v-on:click.stop.prevent="doThat"></a>
 
   <!-- 只有修饰符 -->
@@ -199,6 +202,7 @@ new Vue({
 Vue.component('my-component-name', {
   inheritAttrs: false,
   //不希望组件的根元素继承 attribute
+  //一般和$attr一起自定义谁真正得到参数
   prop:{
 	propA: Number,
     // 多个可能的类型
@@ -219,7 +223,7 @@ Vue.component('my-component-name', {
       }
     }//type也可以是自定义类
   }
-  //$attrs代表父亲传入的prop赋予给谁
+  //$attrs代表父亲传入但没有被子组件接收的props
   template: `
     <label>
       {{ label }}
@@ -232,7 +236,6 @@ Vue.component('my-component-name', {
   `
 })
 //组件可以接受任意的 attribute，而这些 attribute 会被添加到这个组件的根元素上。
-
 <my-component-name v-bind="post"></div>
 <!--这样传递的是post对象所有的键值对，类似react的{...v}-->
 ```
@@ -260,7 +263,8 @@ Vue.component('base-checkbox', {
 <base-checkbox @focus.native="onFocus" @change="fatherChange"></base-checkbox>
 <!--可以绑定原生事件.native到组件根元素-->
 <text-document v-bind:title.sync="doc.title"></text-document>
-<!--.sync提供方便地实现双向的数据绑定，类似react的双向的语法糖-->
+<!--.sync提供方便地实现双向的数据绑定，类似react的双向的语法糖,要在组件内进行一些操作，V3会详细说明-->
+<!--this.$emit('update:title', newTitle)-->
 ```
 
 ### 插槽
@@ -497,6 +501,7 @@ Vue.filter('capitalize', function (value) {
 
   ```javascript
   Vue.extend({})//使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件选项的对象。
+  //注意，和Vue.Component不一样的是，这个所谓的子类是一个构造函数，需要调用new才能真正创建对应的组件实例，并挂载到一个元素上。new Profile().$mount('#mount-point')
   Vue,nextTick(cb,context)//在下次 DOM 更新循环结束之后执行延迟回调。也可以以nextTick().then(func)调用
   Vue.set(target:Object,property:string|number,value:value)//向响应式对象中添加一个 property，并确保这个新 property 同样是响应式的，且触发视图更新。
   Vue.delete(target,property)//set的删除过程
@@ -672,7 +677,14 @@ Vue.filter('capitalize', function (value) {
 - 特殊属性
 
   - key
+
   - ref
+
+    - ```vue
+      <input ref="input">
+      this.$refs.input.focus()
+      ```
+
   - is
 
 - 内置指令
@@ -708,6 +720,17 @@ Vue.filter('capitalize', function (value) {
     )
     //unwatch()用来取消监听
     ```
+    
+  - API事件
+  
+    ```javascript
+    vm.$on('test', function (msg) {//$once自动解绑
+      console.log(msg)
+    })
+    vm.$emit('test', 'hi')
+    vm.$off('test')
+    //这样监听器就可以独立在组件之外。
+    ```
 
 ## 生命周期
 
@@ -723,8 +746,6 @@ Vue.filter('capitalize', function (value) {
 |   destoryed   | 实例销毁后调用。该钩子被调用后，对应 Vue 实例的所有指令都被解绑，所有的事件监听器被移除，所有的子实例也都被销毁。 |
 |   activated   |             被 keep-alive 缓存的组件激活时调用。             |
 |  deactivated  |             被 keep-alive 缓存的组件失活时调用。             |
-
-
 
 # Vue3
 
@@ -760,7 +781,7 @@ export default {
     }
   }
 }
-//和v2不一样的是，原始的 newObject 不会变为响应式：确保始终通过 this 来访问响应式状态。
+//和v2不一样的是，原始的 Object 不会变为响应式：确保始终通过 this 来访问响应式状态。
 
 //组合式
 import { reactive } from 'vue'
@@ -844,7 +865,6 @@ export default {
         // 注意：在嵌套的变更中，只要没有替换对象本身，那么这里的 `newValue` 和 `oldValue` 相同
       },
       deep: true,//深层监听
-      
       immediate: true// 强制立即执行回调,
       flush:"post"//想在侦听器回调中能访问被 Vue 更新之后的 DOM
     }
@@ -988,7 +1008,7 @@ emit('inFocus')
 defineProps({
   modelValue: String,
   modelModifiers: { default: () => ({}) }//修饰符
-})//如果不只是1个v-model，如v-model:firet,v-model:second
+})//如果不只是1个v-model，如v-model:first,v-model:second
 //那么对应prop为first和second,而修饰符则是firstModifiers,secondModifiers
 defineEmits(['update:modelValue'])
 ```
@@ -1256,14 +1276,14 @@ const { x, y } = useMouse()
 
   - readonly() 接受一个对象 (不论是响应式还是普通的) 或是一个 ref，返回一个原值的只读代理。 
 
-  - watchEffect(): 立即运行一个函数，同时响应式地追踪其依赖，并在依赖更改时重新执行。 
+  - watchEffect(): 立即运行一个函数，同时响应式地追踪其依赖，并在依赖更改时重新执行。 依赖自动收集
 
     ```typescript
     function watchEffect(
       effect: (onCleanup: OnCleanup) => void,
       options?: WatchEffectOptions
     ): StopHandle
-    type OnCleanup = (cleanupFn: () => void) => void
+    type OnCleanup = (cleanupFn: () => void) => void//用来注册清理回调。可以手动去除无效副作用
     interface WatchEffectOptions {
       flush?: 'pre' | 'post' | 'sync' // 默认：'pre'
       //pre侦听器将在组件渲染之前执行。post使侦听器延迟到组件渲染之后再执行。sync在响应式依赖发生改变时立即触发侦听器
@@ -1275,7 +1295,7 @@ const { x, y } = useMouse()
 
   - watchPostEffect()|watchSyncEffect(),默认flush为post|sync的副作用器
 
-  - watch()不再细说
+  - watch(source,cb,options)不再细说
 
 - 响应式工具
 
@@ -1321,9 +1341,9 @@ const { x, y } = useMouse()
 
 - 高级响应式
 
-  - shallowRef()浅引用ref
+  - shallowRef()浅引用ref,深层结构不是响应式的
 
-  - triggerRef() 强制触发依赖于一个浅层 ref 的副作用，这通常在对浅引用的内部值进行深度变更后使用。 
+  - triggerRef(ref: ShallowRef) 强制触发依赖于一个浅层 ref 的副作用，这通常在对浅引用的内部值进行深度变更后使用。 
 
   - customRef((track,trigger)=>{getter 和 setter}) 创建一个自定义的 ref，显式声明对其依赖追踪和更新触发的控制方式。 
 
@@ -1599,7 +1619,9 @@ function computed(fn) {
 - targetMap->监听的对象，depsMap->被监听的属性，dep->属性改变时的副作用
 - 这个就简单多了，其实就是在模板里确定data的effect，然后首次调用绑定好targetMap、depsMap、dep，set时触发某个属性对应的deps。
 
-# 生命周期父子局
+# 经典问题
+
+## 生命周期父子局
 
 ### 加载渲染过程
 
@@ -1612,3 +1634,12 @@ function computed(fn) {
 ### 销毁过程
 
 父beforeDestroy->子beforeDestroy->子destroyed->父destroyed
+
+## 信息传递
+
+- 公共数据绑定到Vue上（EventBus）
+- 使用pinan或Vuex
+- prop
+- provide+inject
+- $attrs、$listeners(父组件的监听器们)，这个意思就是子组件先设置inherited:false,然后$attrs给孙子，v-on="$listeners"给孙子，这样父组件的东西就传给了孙子。
+- Vue3的defineExpose({obj})可以把组件里的东西暴露出去。

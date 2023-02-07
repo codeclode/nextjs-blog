@@ -3,7 +3,42 @@ title: "React状态管理"
 date: "2023-01-27"
 ---
 
-# Redux中的RTK
+# Redux和RTK
+
+## Redux
+
+redux是最基本的单元，使用的话比较简单和基础
+
+```javascript
+npm install redux -S // 安装
+
+import { createStore } from 'redux' // 引入
+
+const reducer = (state = {count: 0}, action) => {
+  switch (action.type){
+    case 'INCREASE': return {count: state.count + 1};
+    case 'DECREASE': return {count: state.count - 1};
+    case 'SET': return {count:action.number}
+    default: return state;
+  }
+}
+
+const actions = {
+  increase: () => ({type: 'INCREASE'}),
+  decrease: () => ({type: 'DECREASE'},
+  set: (num) => ({type:'SET',number:num})
+}
+
+const store = createStore(reducer);
+
+store.subscribe(() =>
+  console.log(store.getState())
+);
+
+store.dispatch(actions.increase()) // {count: 1}
+store.dispatch(actions.increase()) // {count: 2}
+store.dispatch(actions.set(11)) // {count: 11}
+```
 
 ## 开始
 
@@ -24,7 +59,7 @@ export default configureStore({
 
 通过Provide提供store给整个应用
 
-```javascript
+```jsx
 import store from './app/store'
 import { Provider } from 'react-redux'
 

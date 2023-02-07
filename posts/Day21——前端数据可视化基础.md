@@ -236,6 +236,10 @@ ctx.drawImage(img, 0, 0, 500, 500);
   </svg>
   ```
 
+- preserveAspectRatio ="\<align> [\<meetOrSlice>]" ，和viewBox配合使用，对于width、height和viewBox长宽比不一致的情况，align由[xMin，xMid，xMax]与[YMin，YMid，YMax]两两搭配而成 meetOrSlice有[meet，slice]可选，当align为none时，此项不用填。或者直接取值为none。align为None则意思是拉长宽高以适应svg宽高。一般不用设置就是xMidYMid meet，这种情况就是viewBox全部显示在svg里，且长边为了适应短边而产生空白。
+
+  meetOrSlice有[meet，slice]可选，当align为none时，此项不用填。
+
 - xmlns,xmlns:link：SVG文件是纯粹的XML文件。 在XML中，标签和属性属于命名空间，这是为了防止来自不同技术的标签和属性发生冲突。 xmlns用于声明命名空间，xmlns:xlink 表示前缀为xlink的标签和属性，应该由理解该规范的UA 使用xlink规范 来解释。 
 
 ### 图形标签

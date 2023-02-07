@@ -102,7 +102,7 @@ const school = {
   - 将具名函数赋值给变量：`函数名`(**ES5和ES6**)
   - bind返回的函数：`bound 函数名`(**ES5和ES6**)
   - Function构造函数返回的函数实例：`anonymous`(**ES5和ES6**)
-- 箭头函数：()=>{}、x=>返回值、({x,y})=>{},this是定义时所在对象
+- 箭头函数：()=>{}、x=>返回值、({x,y})=>{},this是定义时所在对象，没有arguments和yield
 
 ### 扩展运算符，\[...arr\]
 
