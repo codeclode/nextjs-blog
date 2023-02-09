@@ -260,6 +260,14 @@ class Developer extends Person {
 }
 ```
 
+#### type和泛型的区别
+
+- type可以定义基本类型别名 type name = string
+- type可以声明联合类型 {stuNo: number} | {classId: number} 
+- type可以声明元组
+- interface重复声明会合并而type报错
+- 
+
 ### 泛型
 
 ```typescript
@@ -389,6 +397,135 @@ p1.name = "kakuqo";
 
 - 方法装饰器，接收三个参数，target被装饰的类，propertyKey：方法名，descriptor：属性描述符
 - 参数装饰器，修饰函数参数，target被装饰的类，propertyKey：方法名， parameterIndex：方法中参数的索引值 
+
+## 内置高级属性
+
+### 可选和必选
+
+```typescript
+interface PhoneType {
+  width?: number;
+  height:  number;
+}
+// type Partial<T> = { [P in keyof T]?: T[P]; }
+//让PhoneType所有属性变成可选的
+const D:Partial<PhoneType>={
+}
+// type Required<T> = { [P in keyof T]-?: T[P]; }
+// 将原本可选的属性变成必选的
+const p: Required<PhoneType> = {
+  width:100
+  height:300
+};
+```
+
+### 提取属性
+
+```typescript
+interface HousesItemType {
+  desc: string;
+  houseCode: string;
+  houseImg: string | string[];
+  price: number | string;
+  tags: string[];
+  title: string;
+}
+
+// 从 HousesItemType 类型中提取出 houseCode houseImg price
+type MiniHousesItemType = Pick<
+  HousesItemType,
+  "houseCode" | "houseImg" | "price"
+>;
+```
+
+### 只读
+
+```typescript
+interface ResultType<T=any>{
+    data:T
+    status:number
+}
+const res2:Readonly<ResultType<string>>={
+    data:'ok',
+    status:200
+}
+const arr:ReadonlyArray<number>=[1,2,3]
+//就是const arr1:Readonly<number[]>=[1,2,3]
+```
+
+### 记录
+
+```typescript
+interface PersonType {
+  name: string;
+  age?: number;
+}
+
+type Names = "_island" | "zhangsan" | "lisi";
+
+// 将Names作为list的属性名称，PersonType作为属性值类型
+// type Record<K extends string | number | symbol, T> = { [P in K]: T; }
+const list: Record<Names, PersonType> = {
+  _island: { age: 10, name: "_island" },
+  zhangsan: { age: 5, name: "zhangsan" },
+  lisi: { age: 16, name: "lisi" },
+};
+```
+
+### 忽视和移除
+
+```typescript
+interface CarType {
+  name: string;
+  type: string;
+  color: string;
+}
+interface EXC{
+  name:string;
+  type:string;
+}
+const C2: Omit<CarType, "color"> = {//移除color属性
+  name: "Car1",
+  type: "mini",
+};
+const C: Exclude<EXC,CarType> = {//CarType减EXC
+  color:"green"
+};
+```
+
+### 非空
+
+```typescript
+type stringType=NonNullable<string|undefined|null>
+// type stringType = string
+```
+
+### 函数返回
+
+```typescript
+function f1(name: string): string {
+  return name;
+}
+type f1Type = ReturnType<typeof f1>;
+// type f1Type = string
+function f2<T>(name: T): T {
+  return name;
+}
+type f2Type = ReturnType<typeof f2>;
+// type f2Type = unknown
+```
+
+### 函数参数
+
+```typescript
+export default function fun1(x: number, y: number, z: number) {}
+type p1=Parameters<(name:number)=>void>
+// type p1 = [name: number]
+type p2=Parameters<<T>(arg:T)=>T>
+// type p2 = [arg: unknown]
+type p3=Parameters<typeof fun1>
+// [x: number, y: number, z: number]
+```
 
 # 响应式
 

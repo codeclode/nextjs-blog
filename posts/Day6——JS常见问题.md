@@ -111,7 +111,7 @@ date: "2023-01-14"
   console.log(f2); //=> {name: "李", age: 18}
   console.log(window.name, window.age); //=> window.name是空  window.age是undefined
   ```
-  
+
 - new函数()这种方式就是基于构造函数的方法执行，返回的结果就是一个类的实例
 
 - new Fn,无括号就是无参数的new
@@ -169,12 +169,11 @@ date: "2023-01-14"
   console.log(instance.getSuperValue()); // true
   //注意二者的隐式原型上的那个对象将会是一个东西
   ```
-```
-  
+
 - 不用原型，使用父类的构造函数增强子类实例
 
 - ```javascript
-  function SuperType(){
+function SuperType(){
       this.color=["red","green","blue"];
   }
   function SubType(){
@@ -188,10 +187,8 @@ date: "2023-01-14"
   var instance2 = new SubType();
   alert(instance2.color);//"red,green,blue"
   //但是这种方法只能继承父类的实例属性和方法，不能继承原型属性/方法
-```
-
+  ```
 - 组合起来用原型链实现对**原型**属性和方法的继承，用借用构造函数技术来实现**实例**属性的继承。
-
 - ```javascript
   function SuperType(name){
     this.name = name;
@@ -339,11 +336,31 @@ date: "2023-01-14"
 ### 使用情况
 
 - 全局下this是window，如果是严格模式则是undefined
+
 - 函数体的this基于有没有点，如果有.就是.前边的东西
+
 - 自执行函数和全局一样，注意，就算他是对象里边的自执行函数也和全局一样
--  回调函数里的this一般情况下是window，除非是DOM事件this是元素本身
+
+- 回调函数里的this一般情况下是window，除非是DOM事件this是元素本身
+
 - 箭头函数没有this，但是要是在箭头函数里使用this，他就会往上一级作用域查找，如果上一级作用域也没有，那就继续往上找，直到找到全局的window为止 ，他的this基于写在哪里而不是谁调用了他。
--  构造函数里的this是当前实例
+
+- ```javascript
+  var name = 'win'
+  obj = {
+      name: "obj",
+      a:() =>{
+      console.log(this.name)
+      },
+  }
+  obj1 = {
+  	name: "obj1"
+  }
+  obj.a.call(obj1)//win因为a定义的地方的this是window
+  ```
+
+- 构造函数里的this是当前实例
+
 -   实例原型上的公有方法里的this一般是当前实例
 
 ### call、apply、bind
@@ -395,6 +412,7 @@ date: "2023-01-14"
 - macroTask宏任务，包括全部代码，定时器，IO，UI绘制，RAF有时候也可以认为是
 - microTask微任务， Process.nextTick（Node独有）、Promise、Object.observe(废弃)、MutationObserver
 - 这里的MutationObserver可用异步的监听DOM的增删改，从而减少一些在DOM上频繁操作导致无用的重排问题
+- 第一个 await 之前的代码会同步执行，await之后的代码会异步执行，看作微任务。
 
 ### 本体
 

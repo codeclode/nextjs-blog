@@ -264,7 +264,7 @@ objectStoreRequest.onsuccess = function(event) {
 - NaN不等于任何值，甚至他自己
 - 除了字符串和对象转字符串，只要数据类型不同就都转为数字
 - 数组：Number(\[\])->0,Number([0])->0,Number([2])->2,Number([1,2])->NaN
-- 字符串：''->0,"1"->0,'1a'->NaN
+- 字符串：''->0,"1"->1,'1a'->NaN
 - Number(undefined)->NaN,Number(null)->0
 - Boolean([])->true,Boolean(null|undefined)->false
 
