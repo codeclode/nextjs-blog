@@ -17,7 +17,7 @@ date: "2023-01-16"
 - 引入Lab.js
 
 - ```javascript
-  $LAB.script("framework.js").wait()    .script("plugin.framework.js")    .script("myplugin.framework.js").wait()    .script("init.js"); 
+  $LAB.script("framework.js").wait().script("plugin.framework.js")    .script("myplugin.framework.js").wait().script("init.js"); 
   
   $LAB
   .script( [ "script1.js", "script2.js", "script3.js"] )
@@ -175,7 +175,22 @@ date: "2023-01-16"
   
   ```
 
--  ES6 模块的运行机制与 CommonJS 不一样。ES6 模块不是对象，而是通过 export 命令显式指定输出的代码，import时采用静态命令的形式。  JS 引擎对脚本静态分析的时候，遇到模块加载命令import，就会生成一个**只读引用**。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。模块内部引用的变化，会反应在外部。 
+- ES6 模块的运行机制与 CommonJS 不一样。ES6 模块不是对象，而是通过 export 命令显式指定输出的代码，import时采用静态命令的形式。JS 引擎对脚本静态分析的时候，遇到模块加载命令import，就会生成一个**只读引用**。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。模块内部引用的变化，会反应在外部。 
+
+  ```javascript
+  import { x } from './m2.js';
+  console.log(x)//1
+  setTimeout(() => {
+    console.log(x)//3
+  }, 3000);
+  
+  //m2.js
+  var x = 1
+  setTimeout(() => {
+    x = 3
+  }, 1500);
+  export var x
+  ```
 
 ### 动静态
 
@@ -194,7 +209,7 @@ date: "2023-01-16"
   export function hello() {return 'world'}
   ```
 
-- ES6：export 命令会有变量声明提前的效果，import 命令会被 JavaScript 引擎静态分析，优先于模块内的其他内容执行。
+- ES6：export 命令会有变量声明提前的效果，import 命令会被 JavaScript 引擎静态分析，优先于模块内的其他内容执行(就是import提升到代码最开始)。
 
 -  export 变量声明提升，为了防止环路引用
 
@@ -228,7 +243,7 @@ date: "2023-01-16"
 - cjs用于服务器端而esm都可以
 - cjs是值的拷贝而esm是值的引用
 - cjs是运行时加载，而esm是静态的
-- cjs同步加载而esm异步加载
+- cjs同步加载（执行到require才加载）而esm异步加载（import('m').then(fn)）
 
 # 从NPM开始
 
@@ -246,6 +261,7 @@ date: "2023-01-16"
 - npm info module 查看模块信息
 - npm run xxx运行package.json中的对应脚本
 - npm remove xxx 移除xxx包
+- npm login + npm publish  --registry http:xxx发布
 
 ### package.json
 
@@ -618,34 +634,31 @@ http
 ### nodeJs发送请求
 
 ```javascript
-//模拟发送http请求
-var request = require("request");
-
-//get请求
-request('http://www.baidu.com', function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-        console.log(body) // Show the HTML for the baidu homepage.
-    }
-});
-
-//post请求
-
-request({
-    url: "xxx",
-    method: "post",//如果是post就涉及到跨域的问题
-    json: true,
+const http = require("http");
+// 发送请求的配置
+let config = {
+    host: "localhost",
+    port: 3000,
+    path:'/',
+    method: "GET",
     headers: {
-        "content-type": "application/json",
-    },
-    body: {
-        account:'admin',
-        pwd:'admin'
+        a: 1
     }
-}, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-        console.log(body);
-    }
+};
+// 创建客户端
+let client = http.request(config, function(res) {
+    // 接收服务端返回的数据
+   let repData='';
+    res.on("data", function(data) {
+        repData=data.toString()
+        console.log(repData)
+    });
+    res.on("end", function() {
+        // console.log(Buffer.concat(arr).toString());
+    });
 });
+// 发送请求
+client.end();//结束请求，否则服务器将不会收到信息
 ```
 
 

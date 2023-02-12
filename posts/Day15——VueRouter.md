@@ -36,10 +36,10 @@ app.use(router)
 
 ```java
 routes:[{
-    path:"/user/:id",component:User
+    path:"/user/:id?",component:User
 }]
-//对应的组件通过this.params.id获取甚至监听id变量
-
+//对应的组件通过this.$router.params.id获取甚至监听id变量
+//?代表可选
 const routes = [
   // /:orderId -> 仅匹配数字
   { path: '/:orderId(\\d+)' },  
@@ -52,7 +52,6 @@ const routes = [
   { path: '/user-:afterUser(.*)', component: UserGeneric },
   
 ]
-    
 //默认不区分大小写，除非定义sensitive:true,默认尾斜线任意，除非定义strict:true
 const router = createRouter({
   history: createWebHistory(),
@@ -151,11 +150,9 @@ const routes=[{
 
 ```javascript
 const routes = [{path:'/home',redirect:'/'}]
-//或这是redirect: { name: 'homepage' }
+//或者redirect: { name: 'homepage' }
 //甚至是方法
 /*redirect: to => {
-      // 方法接收目标路由作为参数
-      // return 重定向的字符串路径/路径对象
       return {path:'/search',query{q:to.params.searchText}}
     },*/
 //相对位置
@@ -252,6 +249,8 @@ const router = createRouter({
 
 ## 路由守卫
 
+beforeEach 前置守卫->beforeEnter 独享守卫->beforeRouteEnter 组件守卫->beforeResolve 解析守卫->afterEach 路由后置守卫 
+
 ### 全局
 
 ```javascript
@@ -279,7 +278,8 @@ router.beforeResolve(async to => {
       }
     }
   }
-})//解析守卫,在导航被确认之前，同时在所有组件内守卫和异步路由组件被解析之后，解析守卫就被正确调用。
+})
+//解析守卫,在导航被确认之前，同时在所有组件内守卫和异步路由组件被解析之后，解析守卫就被正确调用。这类似React-router的loader
 
 router.afterEach((to, from) => {
   sendToAnalytics(to.fullPath)
@@ -511,7 +511,7 @@ class RouteRecodeRaw = {
 
 #### RouteLocationNormalized
 
-路由守卫中to和from以及$route的类型
+路由守卫中to和from以及$route|useRoute() 的类型
 
 - fullPath
 - hash
@@ -562,12 +562,10 @@ createRouter({
 
   - name：命名视图
 
-  - route： RouteLocationNormalized,解析后的路由 
-
-  - slot：如果希望配置过度和空状态
+  - slot：如果希望配置过度和空状态，route参数是RouteLocationNormalized对象 
 
     ```html
-    <router-view v-slot="{ Component, route }">
+  <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'fade'" mode="out-in">
         <keep-alive>
           <suspense>

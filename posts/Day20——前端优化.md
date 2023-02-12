@@ -26,7 +26,6 @@ enum Direction{
   EAST,
   WEST,
 }
-  
 enum Direction {
   NORTH = "NORTH",
   SOUTH = "SOUTH",
@@ -260,13 +259,12 @@ class Developer extends Person {
 }
 ```
 
-#### type和泛型的区别
+#### type和接口的区别
 
 - type可以定义基本类型别名 type name = string
 - type可以声明联合类型 {stuNo: number} | {classId: number} 
 - type可以声明元组
 - interface重复声明会合并而type报错
-- 
 
 ### 泛型
 
@@ -299,6 +297,7 @@ type K3 = keyof { [x: string]: Person };  // string | number
 type ReturnType<T> = T extends (
   ...args: any[]
 ) => infer R ? R : any;
+type b = ReturnType<() => string>; // type b = string
 
 function loggingIdentity<T extends Lengthwise>(arg: T): T {
   console.log(arg.length);
@@ -451,6 +450,7 @@ const res2:Readonly<ResultType<string>>={
 }
 const arr:ReadonlyArray<number>=[1,2,3]
 //就是const arr1:Readonly<number[]>=[1,2,3]
+type Readonly<T> = {readonly [K in typeof T] : T[K]} ;
 ```
 
 ### 记录
@@ -539,6 +539,12 @@ AWD自适应布局：除了媒体查询，要用 Javascript 来操作 HTML 来�
 
 因此RWD可以认为是AWD的子集
 
+## 升和降
+
+渐进增强：一开始就**针对低版本浏览器**进行构建页面，完成基本的功能，然后再针对高级浏览器进行效果、交互、追加功能达到更好的体验。 
+
+优雅降级：一开始就构建**站点的完整功能**，然后针对浏览器测试和修复。比如一开始使用 CSS3 的特性构建了一个应用，然后逐步针对各大浏览器进行 hack 使其可以在低版本浏览器上正常浏览。 
+
 ## 像素问题
 
 ### 设备独立像素DIP
@@ -622,10 +628,10 @@ ideal viewport 的宽度等于移动设备的屏幕宽度，所以其是最适�
 $baseFontSize: 100;
 
 @function px2rem($px) {
-	@return $px / $baseFontSize * 1rem;
+  @return $px / $baseFontSize * 1rem;
 }
 @function px2vw($px) {
-	@return $px / $baseFontSize * 1vw;
+  @return $px / $baseFontSize * 1vw;
 }
 ```
 
@@ -1054,11 +1060,11 @@ console.log(records[0].duration);
   //设值img-src https://*只允许加载https协议图片
   ```
 
-- 设置cookie httpOnly让js无法获取cookie，response.addHeader("Set-Cookie", "uid=112*; Path=/; HttpOnly")* 
+- 设置cookie httpOnly让js无法获取cookie，response.addHeader("Set-Cookie", "uid=112*; Path=/; HttpOnly")
 
 - 当然，React和Vue自身已经配备了防范XSS的内容。
 
-- 浏览器自带防御X-XSS-Protection
+- 浏览器自带防御X-XSS-Protection（这是一个请求头，设置为1代表打开）
 
 ## CSRF
 

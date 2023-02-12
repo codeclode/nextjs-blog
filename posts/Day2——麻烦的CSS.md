@@ -122,7 +122,7 @@ date: "2023-01-10"
 - 相邻兄弟+ 选取某个元素紧邻的兄弟元素 
 - 通用兄弟~ 匹配选择器后面所有符合选择器的元素 
 - 交集 把两个选择器放在一起 .class1.class2
-- 并集，就是逗号,
+- 并集，就是逗号
 
 ### 伪类与伪元素不再赘述
 
@@ -142,7 +142,7 @@ date: "2023-01-10"
 - 后入原则：相同权重以后来者居上
 - [id="x"]的权重依然是10
 - 组合选择器本身不创造权重
-- 不同属性不交叠，比如虽然定义width：300 important，但* max-width：100，那么宽度依然是100
+- 不同属性不交叠，比如虽然定义width：300 important，但max-width：100，那么宽度依然是100
 
 # 盒模型与BFC
 
@@ -191,6 +191,8 @@ date: "2023-01-10"
 
 背景->负z-index->block层级(文档流)->浮动层级（浮动流）->inline层级->z-index（默认绝对定位）=0->正z-index
 
+值得注意的是，脱离文档流的判断标准是元素原本的位置被后继的东西填充，而不是移动后是否挤占其他元素。
+
 ### 重绘与回流
 
 - 尽量重绘而非回流
@@ -213,6 +215,10 @@ date: "2023-01-10"
 
 ```javascript
 img.offsetTop < window.innerHeight + document.body.scrollTop;
+//如果可是窗口不是window
+element.offsetTop - document.documentElement.scrollTop < document.documentElement.clientHeight
+//更好用的其实是getBoundingClientRect,获取到视窗的举例
+element.getBoundingClientRect().top < clientHeight
 ```
 
 # C3新特性
@@ -251,7 +257,6 @@ img.offsetTop < window.innerHeight + document.body.scrollTop;
           font-family:myFirstFont;
       }
   </style>
-  
   ```
 
 ### transform、transition、animation

@@ -106,14 +106,17 @@ self.onconnect = function (e) {
 ### 数据库连接
 
 ```javascript
-const DBOpenRequest = window.indexedDB.open('project', 2);
+const request = window.indexedDB.open('project', 2);
 //使用对应版本查询或者创建数据库，如果已有数据库版本高于给定的 version，中止操作并返回类型为 VersionError 的 DOMError。
 //如果已有数据库版本低于给定的 version，触发一个 versionchange 操作。
 //如果数据库不存在，创建指定名称的数据库，将版本号设置为给定版本，如果未给定版本号，则设置为 1。
 let db;
-  db = request.result;
-  console.log('数据库打开成功');
-};
+
+request.onsuccess = function(event) {
+  db = event.target.result // 数据库对象
+  console.log('数据库打开成功')
+}
+
 request.onupgradeneeded = function (event) {
   db = event.target.result;
 };//到这里获取了数据库
@@ -338,8 +341,8 @@ objectStoreRequest.onsuccess = function(event) {
 - \[^ABC\]除了中括号内字符的字符
 - \[A-Z0-9\]
 - \.匹配除了换行之外的任意单个
-- \[\s\]匹配一切
-- \w匹配字母数字下划线
+- \[\s\]空白
+- \w匹配字母数字下划线。\d数字
 
 ### 定位
 

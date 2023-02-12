@@ -362,8 +362,8 @@ const countStore = makeObservable(state,{
 },{
     autoBind:true,//是否自动绑定事件到正确实例
     deep:false,
-    name:devName,
-    proxy:false
+    name:devName,//调试用的名字
+    proxy:false//使用非 proxy 的实现。
 })
 const countStore = makeAutoObservable(state,{
     double:false//排除double选项
@@ -408,7 +408,7 @@ todos.shift()
 
 ### 用action包裹函数
 
-```javascript
+```jsx
 const ResetButton = ({ formState }) => (
     <button
         onClick={action(e => {

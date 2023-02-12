@@ -43,7 +43,6 @@ module.exports = {
 //package.json
   "scripts": {
     "build": "webpack --config ./build/webpack.config.js",
-    ...
 },
 ```
 
@@ -56,13 +55,12 @@ npm i --save-dev html-webpack-plugin
 ```javascript
 //webpack.config.js
 module.exports = {
-    ...
-    // 新增 plugins 属性
-    plugins: [
-        new HtmlWebpackPlugin({
-          title: '首页'
-        })
-    ]
+  // 新增 plugins 属性
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: '首页'
+    })
+  ]
 }
 ```
 
@@ -74,7 +72,7 @@ module.exports = {
     entry: {
         main: path.resolve(__dirname,'../src/js/index.js'),
 		header:path.resolve(__dirname,'../src/js/header.js'),
-        footer: path.resolve(__dirname, '../src/js/footer.js'),
+        footer:[path.resolve(__dirname, '../src/js/footer1.js'),path.resolve(__dirname, '../src/js/footer2.js')]
     },
     output: {
         filename: '[name].[fullhash].js',
@@ -207,9 +205,7 @@ npm i -D mini-css-extract-plugin css-minimizer-webpack-plugin
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
-    ...
     plugins: [
-        ...
         new MiniCssExtractPlugin()
     ],
     module: {
@@ -290,7 +286,6 @@ webpack5 使用了“资源模块”来代替以上 loader。 官方是这样解
 ```javascript
 module: {
     rules: [
-      ...
       {
         test: /\.(jpe?g|png|svg|gif)/i,
         type: 'asset/resource',
@@ -309,7 +304,7 @@ import img from '../assets/img/simao.jpg'
 document.querySelector('.img').setAttribute('src', img)
 ```
 
-对于asset/inline，如果指定type是东西，会将所有符合规则的资源都变为 base64 字符串，也即是比较大的图片也会转化为 base64 
+对于asset/inline，如果指定type是东西，会将所有符合规则的资源都变为 base64 字符串，即使比较大的图片也会转化为 base64 
 
 对于asset，则是根据资源大小决定是否转化为base64
 
@@ -334,12 +329,12 @@ asset/source，可以理解为“把目标文件的内容输出到 js 变量中�
 
 ```javascript
 module.exports = {
-    resolve: {
-        alias: {
-          '@': path.resolve(__dirname, '../src'),
-          // 下面可以继续新增别名
-        }
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '../src'),
+      // 下面可以继续新增别名
     }
+  }
 }
 ```
 
@@ -415,25 +410,25 @@ watchOptions:{"ignored":"/node_modules/"}
 
 ### externals
 
-externals，在html里面配好CDN引用，然后定义  externals: {    jquery: 'jQuery',  }, 就可以直接使用
+externals，在html里面配好CDN引用，然后定义externals: {    jquery: 'jQuery',  }, 就可以直接使用
 
 ### 指定目录和noParse
 
 ```javascript
-  module: { 
-    noParse: /jquery|lodash/,
-    rules: [
-      {
-        test: /\.js$/i,
-        include: resolve('src'),
-        exclude: /node_modules/,
-        use: [
-          'babel-loader',
-        ]
-      },
-      // ...
-    ]
-  }
+module: { 
+  noParse: /jquery|lodash/,
+  rules: [
+    {
+      test: /\.js$/i,
+      include: resolve('src'),
+      exclude: /node_modules/,
+      use: [
+        'babel-loader',
+      ]
+    },
+    // ...
+  ] 
+}
 ```
 
 ### 多线程
@@ -480,7 +475,7 @@ const config = {
  		new OptimizeCssAssetsPlugin({}),//CSS压缩
     ]
   },
-	plugins:[ // 配置插件
+  plugins:[ // 配置插件
     new PurgecssPlugin({
 		paths: glob.sync(`${PATHS.src}/**/*`, {nodir: true})//清楚无用CSS
     }),
@@ -517,10 +512,12 @@ module.exports = {
 
 ### 代码分割，就是多个打包入口
 
-    entry: {
-        index:'./src/js/index.js',
-        test:'./src/js/test.js'
-    },
+```javascript
+entry: {
+    index:'./src/js/index.js',
+    test:'./src/js/test.js'
+},
+```
 ### 懒加载、预加载、预获取
 
 属于代码层而非配置层优化
@@ -529,7 +526,7 @@ module.exports = {
 
 #### 手动版
 
-列一个jquert.manifest.json
+列一个jquery.manifest.json
 
 ```json
 // jquery.manifest.json 
@@ -712,7 +709,7 @@ module.exports = function (source) {
 
 - 一个 JavaScript 命名函数或 JavaScript 类(所以我们的插件都是new出来的)。
 - 在插件函数的 prototype 上定义一个 `apply` 方法。
-- 在`apply`中可以绑定一个webpack的时间钩子，然后再钩子中执行我们的需求
+- 在`apply`中可以绑定webpack的钩子（监听webpack打包生命周期），然后再钩子中执行我们的需求
 
 这个 `apply` 方法在安装插件时，会被 webpack compiler 调用一次。`apply` 方法可以接收一个 webpack compiler 对象的引用，从而可以在回调函数中访问到 compiler 对象。
 

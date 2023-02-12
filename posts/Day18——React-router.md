@@ -506,7 +506,8 @@ function Child() {
 实现编程式的表单路由导航，并且可以实现不跳转提交数据
 
 ```react
-const fetcher = useFetcher();
+function SomeComponent() {
+  const fetcher = useFetcher();
   React.useEffect(() => {
     fetcher.submit(
       { idle: true },//data
@@ -520,7 +521,7 @@ const fetcher = useFetcher();
   fetcher.formData;//fetcher.Form表单内容的对象，这也解释了为什么是(实例.Form)（防止两个Form冲突）
   fetcher.formMethod;//当前是post
   fetcher.formAction;//当前是/some/route
-  fetcher.data;
+  fetcher.data;//load获取到的数据
   return <fetcher.Form method="post" action="/some/route"/>;
 }
 ```

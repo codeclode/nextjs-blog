@@ -367,7 +367,7 @@ class FileInput extends React.Component {
       <form onSubmit={this.handleSubmit}>
         <label>
           Upload file:
-          <input type="file" ref={this.fileInput} />        </label>
+          <input type="file" ref={this.fileInput} /></label>
         <br />
         <button type="submit">Submit</button>
       </form>
@@ -436,6 +436,7 @@ useEffect(() => {
   document.title = `You clicked hh times`; 
 
 },[]);//新打开时都执行
+//第二个参数要是传对象就会每次都执行
 ```
 
 ## 自定义hook
@@ -584,7 +585,7 @@ function App() {
 
 ## React.memo
 
-React.memo(Component,hotToCompare)
+React.memo(Component,howToCompare)
 
 如果你的函数组件在给定相同 props 的情况下渲染相同的结果，那么你可以通过将其包装在 React.memo 中调用，以此通过记忆组件渲染结果的方式来提高组件的性能表现。这意味着在这种情况下，React 将跳过渲染组件的操作并直接复用最近一次渲染的结果。 也就是说整个组件的渲染与否取决于prop。第二个参数默认浅比较，也可以自己传入一个函数进行比较，这个函数的参数是preProp和nextProp。其实如果就像是React.PureComponent和shouldComponentUpdate的结合体。请注意第二个参数返回true代表没有改变（不会渲染）。
 

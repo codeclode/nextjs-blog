@@ -93,6 +93,27 @@ date: "2023-01-14"
 >  >
 >  > debug：浏览器控制台内存选项
 
+# 深拷贝
+
+```javascript
+function clone(target, map = new WeakMap()) {
+  if (typeof target === 'object') {
+    let cloneTarget = Array.isArray(target) ? [] : {};
+    if (map.get(target)) {
+      return map.get(target);
+    }
+    map.set(target, cloneTarget);
+    //存入target-copy副本,解决循环引用
+    for (const key in target) {
+      cloneTarget[key] = clone(target[key], map);
+    }
+    return cloneTarget;
+  } else {
+    return target;
+  }
+};
+```
+
 # 类
 
 ### 构造函数
@@ -276,7 +297,8 @@ function SuperType(){
 
 - ```javascript
   function inheritPrototype(subType, superType){
-    var prototype = Object.create(superType.prototype); // 创建对象，创建父类原型的一个副本
+    var prototype = Object.create(superType.prototype); 
+    // 创建对象，创建父类原型的一个实例
     prototype.constructor = subType;// 增强对象，弥补因重写原型而失去的默认的constructor 属性
     subType.prototype = prototype;  // 指定对象，将新创建的对象赋值给子类的原型
   }//正确配置原型链同时防止子类公用同一个父类实例
@@ -310,7 +332,8 @@ function SuperType(){
   instance1.colors.push("2"); // ["red", "blue", "green", "2"]
   instance1.colors.push("3"); // ["red", "blue", "green", "3"]
   ```
-
+```
+  
 - maxin多继承
 
 - ```javascript
@@ -329,7 +352,7 @@ function SuperType(){
   MyClass.prototype.myMethod = function() {
        // do something
   };
-  ```
+```
 
 # this问题
 
@@ -346,19 +369,37 @@ function SuperType(){
 - 箭头函数没有this，但是要是在箭头函数里使用this，他就会往上一级作用域查找，如果上一级作用域也没有，那就继续往上找，直到找到全局的window为止 ，他的this基于写在哪里而不是谁调用了他。
 
 - ```javascript
-  var name = 'win'
-  obj = {
-      name: "obj",
-      a:() =>{
+  var name = 'window'
+  
+  var person1 = {
+    name: 'person1',
+    show1: function () {
       console.log(this.name)
-      },
+    },
+    show2: () => console.log(this.name),
+    show3: function () {
+      return function () {
+        console.log(this.name)
+      }
+  },
+    show4: function () {
+      return () => console.log(this.name)
+    }
   }
-  obj1 = {
-  	name: "obj1"
-  }
-  obj.a.call(obj1)//win因为a定义的地方的this是window
+  var person2 = { name: 'person2' }
+  
+  person1.show1()//person1
+  person1.show1.call(person2)//person2
+  
+  person1.show2()//window
+  person1.show2.call(person2)//window
+  
+  person1.show3()()//window
+  person1.show3().call(person2)//person2
+  person1.show4()()//person1
+  //因为这个函数的定义地点就是this=person1时
   ```
-
+  
 - 构造函数里的this是当前实例
 
 -   实例原型上的公有方法里的this一般是当前实例
@@ -412,7 +453,7 @@ function SuperType(){
 - macroTask宏任务，包括全部代码，定时器，IO，UI绘制，RAF有时候也可以认为是
 - microTask微任务， Process.nextTick（Node独有）、Promise、Object.observe(废弃)、MutationObserver
 - 这里的MutationObserver可用异步的监听DOM的增删改，从而减少一些在DOM上频繁操作导致无用的重排问题
-- 第一个 await 之前的代码会同步执行，await之后的代码会异步执行，看作微任务。
+- 第一个 await 之前的代码和new Promise里的函数代码会同步执行，await之后的代码会异步执行，看作微任务。
 
 ### 本体
 
@@ -422,6 +463,7 @@ function SuperType(){
 - 执行栈在执行完**同步任务**后，就会去检查**微任务**(`microTask`)队列是否为空，如果为空的话，就执行`Task`（宏任务），否则就一次性执行完所有微任务。每次**单个宏任务**执行完毕后，检查**微任务**(`microTask`)队列是否为空，如果不为空的话，会按照**先入先**出的规则全部执行完**微任务**(`microTask`)后，设置**微任务**(`microTask`)队列为`null`，然后再执行**宏任务**，如此循环。
 - 可以认为，所有的同步代码是一个宏任务。
 - RAF，这个东西不是微任务也不是宏任务，要把它理解为下一次重绘之前更新动画帧所调用的函数
+- async函数里到第一个await都是同步的，接下来就是异步了
 - 事件属于同步任务 
 
 # 网络编程

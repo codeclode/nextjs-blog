@@ -291,6 +291,7 @@ const { mapState, mapActions } = createNamespacedHelpers('some/nested/module')
 const pinia = createPinia()
 app.use(pinia)
 //和vuex不同的是，app.use(pinia)类似赋能app使得可以使用hook得到定义的store、state、action、getter
+//没有$store了，请自己引入store
 ```
 
 ## store

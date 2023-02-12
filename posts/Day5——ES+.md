@@ -206,7 +206,7 @@ class SmartPhone extends Phone{
 }
 ```
 
-### 模块化，nodeJS详细说明
+### 模块化ESM，nodeJS详细说明
 
 ### 迭代器
 
@@ -415,16 +415,18 @@ function Gen(time) {
 }
 
 async function test() {
-  let arr = [Gen(2000), Gen(1000), Gen(3000)，123]
+  let arr = [Gen(2000), Gen(1000), Gen(3000),123]
   for await(let item of arr) {
     console.log(Date.now(), item)
   }
 }
 
 test()
-
+//首先停2秒
 //1673576763410 2000
+//不会停，马上输出，因为1s已经过去了
 //1673576763410 1000
+//再等1s输出
 //1673576764408 3000
 //1673576764408 123
 //for await of 是可以对异步集合进行操作，这个意思是，先把异步执行获得值再进行操作
@@ -458,8 +460,6 @@ const obj = {
   }
 }
 ```
-
-
 
 # ES10
 

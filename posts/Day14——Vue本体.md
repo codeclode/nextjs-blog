@@ -8,10 +8,10 @@ date: "2023-01-23"
 
 ```javascript
 var vm = new Vue({
-    el:"#app",//指定绑定的模板
-    data:{
-        a:1
-    }
+  el:"#app",//指定绑定的模板
+  data:{
+    a:1
+  }
 })//这个data可以直接vm.a获取
 ```
 
@@ -260,7 +260,8 @@ Vue.component('base-checkbox', {
   `
 })
 
-<base-checkbox @focus.native="onFocus" @change="fatherChange"></base-checkbox>
+<base-checkbox v-model="lovingVue" @focus.native="onFocus" @change="fatherChange"></base-checkbox>
+<!--lovingVue 的值将会传入这个名为 checked 的 prop。同时当 <base-checkbox> 触发一个 change 事件并附带一个新的值的时候，这个 lovingVue 的 property 将会被更新。-->
 <!--可以绑定原生事件.native到组件根元素-->
 <text-document v-bind:title.sync="doc.title"></text-document>
 <!--.sync提供方便地实现双向的数据绑定，类似react的双向的语法糖,要在组件内进行一些操作，V3会详细说明-->
@@ -300,7 +301,7 @@ Vue.component('base-checkbox', {
 
 ### 异步组件
 
-```vue
+```javascript
 Vue.component('async-example', function (resolve, reject) {
   setTimeout(function () {
     // 向 `resolve` 回调传递组件定义
@@ -416,7 +417,6 @@ MyPlugin.install = function (Vue, options) {
     bind (el, binding, vnode, oldVnode) {
       // 逻辑...
     }
-    ...
   })
 
   // 3. 注入组件选项
@@ -424,7 +424,6 @@ MyPlugin.install = function (Vue, options) {
     created: function () {
       // 逻辑...
     }
-    ...
   })
 
   // 4. 添加实例方法
@@ -502,9 +501,9 @@ Vue.filter('capitalize', function (value) {
   ```javascript
   Vue.extend({})//使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件选项的对象。
   //注意，和Vue.Component不一样的是，这个所谓的子类是一个构造函数，需要调用new才能真正创建对应的组件实例，并挂载到一个元素上。new Profile().$mount('#mount-point')
-  Vue,nextTick(cb,context)//在下次 DOM 更新循环结束之后执行延迟回调。也可以以nextTick().then(func)调用
-  Vue.set(target:Object,property:string|number,value:value)//向响应式对象中添加一个 property，并确保这个新 property 同样是响应式的，且触发视图更新。
-  Vue.delete(target,property)//set的删除过程
+  Vue,nextTick(cb,context)//在下次 DOM 更新循环结束之后执行延迟回调。也可以nextTick().then(func)调用
+  Vue.set(target:Object,property:string|number,value:value)//向响应式对象中添加一个property，并确保这个新 property 同样是响应式的，且触发视图更新。vm.$set
+  Vue.delete(target,property)//set的删除过程|vm.$delete
   Vue.directive( id, [definition] )//注册或获取全局指令。
   Vue.filter( id, [definition] )//注册或获取全局过滤器。
   Vue.component('my-component', Vue.extend({}))//注册或获取全局组件。注册还会自动使用给定的 id 设置组件的名称
@@ -691,7 +690,7 @@ Vue.filter('capitalize', function (value) {
 
   - v-text\\v-html\\v-show\\v-if\\v-for
   - v-on\\v-bind\\v-model
-  - v-slot
+  - v-slot:slotName="插槽作用域的名字（自定义的）"
   - v-pre 跳过这个元素和它的子元素的编译过程。可以用来显示原始 Mustache 标签。跳过大量没有指令的节点会加快编译。 
   - v-cloak 这个指令保持在元素上直到关联实例结束编译。和 CSS 规则如 [v-cloak] { display: none } 一起用时，这个指令可以隐藏未编译的 Mustache 标签直到实例准备完毕。 
   - v-once: 只渲染元素和组件一次。随后的重新渲染，元素/组件及其所有的子节点将被视为静态内容并跳过。这可以用于优化更新性能。 
@@ -800,7 +799,7 @@ export default {
     const objectRef = ref({ count: 0 })
 	// 这是响应式的替换
     //注意，这种情况模板不会自动解包
-    
+
 	objectRef.value = { count: 1 }
     return {
       state,count,objectRef
@@ -944,6 +943,28 @@ const itemRefs = ref([])
 ### 注册
 
 基本和v2一致，setup语法糖中只需要导入即可完成注册
+
+### setup
+
+setup执行在beforeCreate之前。。。
+
+```javascript
+export default {
+  setup(props, context) {
+    // 透传 Attributes（非响应式的对象，等价于 $attrs）
+    console.log(context.attrs)
+
+    // 插槽（非响应式的对象，等价于 $slots）
+    console.log(context.slots)
+
+    // 触发事件（函数，等价于 $emit）
+    console.log(context.emit)
+
+    // 暴露公共属性（函数）
+    console.log(context.expose)
+  }
+}
+```
 
 ### prop
 
@@ -1303,7 +1324,7 @@ const { x, y } = useMouse()
 
   - unref() 如果参数是 ref，则返回内部值，否则返回参数本身。 
 
-  - toRef() 基于响应式对象上的一个属性，创建一个对应的 ref。这样创建的 ref 与其源属性保持同步：改变源属性的值将更新 ref 的值，反之亦然。 
+  - toRef()基于响应式对象上的一个属性，创建一个对应的 ref。这样创建的 ref 与其源属性保持同步：改变源属性的值将更新 ref 的值，反之亦然。 
 
     ```javascript
     const state = reactive({
@@ -1617,7 +1638,13 @@ function computed(fn) {
 ```
 
 - targetMap->监听的对象，depsMap->被监听的属性，dep->属性改变时的副作用
-- 这个就简单多了，其实就是在模板里确定data的effect，然后首次调用绑定好targetMap、depsMap、dep，set时触发某个属性对应的deps。
+- 这个就简单多了，其实就是在模板里确定data的effect，reactive实现一个proxy，设置get第一次进行绑定副作用，设置set执行副作用。然后首次调用绑定好targetMap、depsMap、dep，set时触发某个属性对应的deps。
+
+### Computed
+
+用这个来举例
+
+在初始化时会执行一次计算属性的getter，这时候就会调用里边所有data的getter，这个getter因为代理使得他们被绑定到了对应的computed属性的watcher上，实现了依赖收集。
 
 # 经典问题
 
@@ -1643,3 +1670,15 @@ function computed(fn) {
 - provide+inject
 - $attrs、$listeners(父组件的监听器们)，这个意思就是子组件先设置inherited:false,然后$attrs给孙子，v-on="$listeners"给孙子，这样父组件的东西就传给了孙子。
 - Vue3的defineExpose({obj})可以把组件里的东西暴露出去。
+
+## V2V3
+
+- 响应式实现方式不一样
+- 自定义v-model和.sync
+- 组合式API出现
+- 需要定义emit
+- 虚拟dom优化
+  - V3变成了头比头，尾比尾，最后基于最长递增子序列进行移动/添加/删除
+  - 静态标记，跳过不会变化的结点
+  - Vue3 中会把这个不参与更新的元素保存起来，只创建一次，之后在每次渲染的时候不停地复用
+  - 缓存不变的事件。

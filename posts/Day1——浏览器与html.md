@@ -70,9 +70,16 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
   - ISP  NSP 所有网络提供都携带路由器，每个路由有当前子网络ip的路由表，当底层向上层发送数据时候，找不到会依次向上找，可能由一个主干网络跳到另外一个主干网络。 
 - DNS优化
   - 多级缓存：浏览器缓存，系统缓存，路由器缓存，IPS服务器缓存，根域名服务器缓存，顶级域名服务器缓存，主域名服务器缓存。 
+  
   - DNS负载均衡
+  
   - CND（ Content Delivery Network ）分布式网络，最近的IP地址
-  - dns-prefetch，浏览器缓存域名解析。
+  
+  - dns-prefetch，浏览器预解析域名。
+  
+    ```html
+    <link rel="dns-prefetch" href="http://xxx.net" />
+    ```
 
 ### TPC三次握手建立连接
 
@@ -172,7 +179,13 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 
 ### meta
 
-- http-dquiv属性
+- 所有属性都有一个content属性解释内容
+
+  ```html
+  <meta http-equiv="content-type" content="text/html"/>
+  ```
+
+- http-equiv属性
   - content-type，规定文档类型
   - expires：设置浏览器的过期时间
   - refresh：设置规定时间跳转到指定页
@@ -193,8 +206,8 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 
 ### link标签的特殊rel
 
-- prefetch 用于在浏览器的空闲时间请求资源
-- preload 用于提前加载在页面初始化加载（page load）时用到的资源
+- prefetch 用于在浏览器的空闲时间请求资源，以后可能用到，浏览器要是没事就先拿到缓存起来再说
+- preload 用于提前加载在页面初始化加载（page load）时用到的资源， 强制将它的请求优先级提到前面 
 - preconnect 用于提前和一个网站建立起连接
 - 如果使用了特殊rel，那么需要as属性指定元素类型
 

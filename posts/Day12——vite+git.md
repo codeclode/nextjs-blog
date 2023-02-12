@@ -249,7 +249,7 @@ git branch --no-merged
 #查看未合并分支
 git branch -v
 #常看各个分支最后一个提交对象的信息
-git branck -m <oldbranck-name> <newbranch-name>
+git branch -m <oldbranck-name> <newbranch-name>
 #重命名分支
 git branch -d dev
 #删除dev分支
