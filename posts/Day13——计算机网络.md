@@ -583,3 +583,20 @@ io.on('connection', socket => {
   - 前端请求时在`request`对象中配置`"withCredentials": true`；
   - 服务端在`response`的`header`中配置`"Access-Control-Allow-Origin":"前端地址，不能为*"`;
   - 服务端在`response`的`header`中配置`"Access-Control-Allow-Credentials", "true"`
+
+### HTTPS连接过程
+
+共12个过程
+
+- C->S，发送Client Hello,包含客户端支持的SSL的指定版本、加密组件列表（还有第一个随机数）
+- S->C，发送Server Hello,包含SSL版本以及加密组件。服务器的加密组件内容是从客户端加密组件内筛选出来的。
+- S->C，发送证书，里面有公钥（第一二个随机数混合公钥）
+- S->C，发送Server Hello Done，告诉客户端握手协商部分结束。
+- C->S，以Client Key Exchange报文作为回应。包含被称为Pre-master secret的随机密码串，该报文用刚才的公钥进行加密（第三个随机数）。
+- C->S，发送Change Cipher Spec报文，提示服务器，在此报文之后的通信会采用Pre-master secret密匙加密。（生成的对称加密的公钥）
+- C->S，发送Finished报文，包含连接至今全部报文的整体校验值。 
+- S->C，发送Change Cipher Spec报文
+- S->C，Finished报文
+- 接下来SSL连接就算建立完成。当然，通信会收到SSL的保护。从此处开始进行应用层协议的通信，即发送HTTP请求。
+- 应用层协议通信，即发送HTTP相应。  
+- 最后由客户端断开连接。断开连接时，发送close_notify报文。

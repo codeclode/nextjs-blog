@@ -2,6 +2,18 @@
 title: "Vue2+3"
 date: "2023-01-23"
 ---
+# 对框架的理解
+
+## MVVM
+
+Model、View、ViewModel 
+
+通过双向绑定的机制，实现数据和UI内容，只要想改其中一方，另一方都能够及时更新的一种设计理念，这样就省去了很多在View层中写很多case的情况，只需要改变数据就行。在MVVM中View和ViewModel通过Binding进行关联，他们之前的关联处理通过DataBinding完成。 
+
+## 两个核心
+
+组件系统和数据驱动 
+
 # Vue2
 
 ## 实例
@@ -243,6 +255,7 @@ Vue.component('my-component-name', {
 ### 自定义事件
 
 ```vue
+<script>
 Vue.component('base-checkbox', {
   model: {
     prop: 'checked',
@@ -259,7 +272,7 @@ Vue.component('base-checkbox', {
     >
   `
 })
-
+</script>
 <base-checkbox v-model="lovingVue" @focus.native="onFocus" @change="fatherChange"></base-checkbox>
 <!--lovingVue 的值将会传入这个名为 checked 的 prop。同时当 <base-checkbox> 触发一个 change 事件并附带一个新的值的时候，这个 lovingVue 的 property 将会被更新。-->
 <!--可以绑定原生事件.native到组件根元素-->

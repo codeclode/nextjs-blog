@@ -644,7 +644,7 @@ setupListeners () {
 
 ```javascript
 window.history.pushState(stateObject,title,url)
-window.history,replaceState(stateObject,title,url)
+window.history.replaceState(stateObject,title,url)
 //HTML5引入了history.pushState()和history.replaceState()方法，他们分别可以添加和修改历史记录条目。这些方法通常与window.onpopstate配合使用。这两个函数会触发popState事件，该事件将携带这个stateObject参数的副本。
 //pushState和replaceState两种方法的共同特点：当调用他们修改浏览器历史栈后，虽然当前url改变了，但浏览器不会立即发送请求该url，这就为单页应用前端路由，更新视图但不重新请求页面提供了基础。
 ```
