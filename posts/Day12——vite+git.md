@@ -47,7 +47,7 @@ export default defineConfig({
 
 ### CSS
 
- Vite 也同时提供了对 `.scss`, `.sass`, `.less`, `.styl` 和 `.stylus` 文件的内置支持。没有必要为它们安装特定的 Vite 插件，但必须安装相应的预处理器依赖： 
+Vite 也同时提供了对 `.scss`, `.sass`, `.less`, `.styl` 和 `.stylus` 文件的内置支持。没有必要为它们安装特定的 Vite 插件，但必须安装相应的预处理器依赖： 
 
 ```shel
 # .scss and .sass
@@ -257,8 +257,10 @@ git checkout <branch-name>
 #切换到其他分支
 git checkout -b <branch-name>
 #从当前分支创建并切换到新建分支
-git checkout -b hotfix remote hotfix	
-#从远端remote的hotfix分支创建本地hotfix分支
+git checkout -b remote/hotfix	
+#拉取远端分支
+git checkout -b temp origin/user1 
+#拉取远端的user1分支作为本地的temp分支
 git merge
 #merge会形成树形的结构，小分支直接和主干最后一个commit合并为新的结点
 git rebase

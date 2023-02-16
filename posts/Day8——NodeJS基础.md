@@ -241,9 +241,83 @@ date: "2023-01-16"
 ### CJS(require)和ESM(import)区别
 
 - cjs用于服务器端而esm都可以
+
 - cjs是值的拷贝而esm是值的引用
+
 - cjs是运行时加载，而esm是静态的
+
 - cjs同步加载（执行到require才加载）而esm异步加载（import('m').then(fn)）
+
+- ESM会把import都提到最上边，并且是只读的。规范规定 import/export 必须位于模块顶级，不能位于作用域内；其次对于模块内的 import/export 会提升到模块顶部，这是在编译阶段完成的。 
+
+- 循环引用
+
+  ```javascript
+  // a.js
+  exports.done = false;
+  let b = require('./b');
+  console.log('a.js: b.done = %j', b.done);  // true
+  exports.done = true;
+  console.log('a.js执行完毕');
+  
+  // b.js
+  exports.done = false;
+  let a = require('./a');
+  console.log('b.js: a.done = %j', a.done);  // false
+  exports.done = true;
+  console.log('b.js执行完毕');
+  
+  // main.js
+  let a = require('./a');
+  let b = require('./b');
+  console.log('main.js: a.done = %j, b.done = %j', a.done, b.done);  // true true
+  
+  // 输出结果
+  // node main.js
+  b.js: a.done = false
+  b.js执行完毕
+  a.js: b.done = true
+  a.js执行完毕
+  main.js: a.done = true, b.done = true
+  /*
+  b.js: a.done = false b获取到的是暂停了的a
+  b.js执行完毕
+  a.js: b.done = true b已经结束了
+  a.js执行完毕
+  main.js: a.done = true, b.done = true*/
+  ```
+
+  commonjs 模块的 exports 是动态执行的，具体 require 能获取到的值，取决于模块的运行情况。 
+
+  ```javascript
+  // a.mjs
+  export let a_done = false;//这里的赋值在import和export之后，也就是说export提升以后只是一个未定义的值
+  import { b_done } from './b';
+  console.log('a.js: b.done = %j', b_done);
+  console.log('a.js执行完毕');
+  
+  // b.mjs
+  import { a_done } from './a';
+  console.log('b.js: a.done = %j', a_done);
+  export let b_done = true;
+  console.log('b.js执行完毕');
+  
+  // main.mjs
+  import { a_done } from './a';
+  import { b_done } from './b';
+  console.log('main.js: a.done = %j, b.done = %j', a_done, b_done);
+  
+  // 输出结果
+  //ReferenceError: a_done is not defined
+  //babel模拟以后es6->es5,结果是
+  /*b.js: a.done = undefined
+  b.js执行完毕
+  a.js: b.done = true
+  a.js执行完毕
+  main.js: a.done = false, b.done = true*/
+  ```
+
+  这是因为提升，声明有了还没定义。
 
 # 从NPM开始
 

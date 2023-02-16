@@ -474,9 +474,11 @@ function SuperType(){
 - 实例方法
 
   - xhr.open(method, url, async, user, password);
+    async设置为false，那么 send()方法直到收到答复前不会返回。 
   - xhr.setRequestHeader(header, value)
   - xhr.getResponseHeader(name)、xhr.getAllResponseHeaders
   - xhr.send(body?)
+    body一般是form Data
   - xhr.abort()
 - 属性
   - 关于状态：readyState(0~4)、statusText("OK"、""、"notFound")、status(0,200,404...)
@@ -488,6 +490,43 @@ function SuperType(){
   - loadstart、load加载完成、loadend加载结束或意外中止
   - progress加载中
   - readystatechange
+
+### fetch
+
+全局的 **fetch()** 方法用于发起获取资源的请求。它返回一个 promise，这个 promise 会在请求响应后被 resolve，并传回Response对象。 
+
+PS:404不会报错，请自己检查
+
+fetch(url|request,initOptions?)
+
+```typescript
+type initOptions={
+    method:string,
+    headers:{xxx:xxx},
+    body:Bolb|URLSearchParams|FormData,
+    mode:cors|no-cors|same-origin,
+    credentials(签证):为了在当前域名内自动发送 cookie，必须提供这个选项,
+    cache:default|no-store|reload...,
+	redirect:follow (自动重定向), error (如果产生重定向将自动终止并且抛出一个错误），或者 manual (手动处理重定向),
+    signal:AbortController.signal
+}
+```
+
+如何取消请求
+
+```javascript
+const controller = new AbortController();
+const signal = controller.signal;
+
+fetch(url, { signal })
+.then((response) => {
+  console.log("Download complete", response);
+})
+.catch((err) => {
+  console.error(`Download error: ${err.message}`);
+});
+controller.abort()
+```
 
 # MutationObserver
 

@@ -680,9 +680,10 @@ webpack output其实就是Express的一个router对象，webpack根据入口文�
 
 - webpack-dev-server会创建两个服务：提供静态资源的服务（express）和Socket（net.Socket）
 - Express Server负责直接提供静态资源服务（打包后的资源直接被浏览器请求和解析）
-- Socket Server是一个socket长连接，服务器可以直接发送文件到客户端
+- Socket Server是一个 Websocket ，服务器可以直接发送文件到客户端
 - 当服务期间听到对应模块发上变化时，会生成两个文件.json（manifest文件）和.js文件（update chunk）客户端基于hmr runtime来进行更新。
 - HMR的核心就是客户端从服务端拉取更新后的资源,更准确的说法就是 HMR卡去的不是整个资源文件,而是 chunk diff,即 chunk 需要更新的部分 
+- 后续的部分(处理更新)由 `HotModulePlugin` 来完成，提供了相关 API 以供开发者针对自身场景进行处理，像`react-hot-loader` 和 `vue-loader` 都是借助这些 API 实现 HMR。
 
 ### 自定义的loader和plugin
 
@@ -753,4 +754,183 @@ class FileList {
 
 module.exports = FileList;
 ```
+
+# 附一个cv的配置
+
+### 文件一：基础配置
+
+```javascript
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const rootDir = process.cwd()
+const autoprefixer = require('autoprefixer');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+
+const {
+  CleanWebpackPlugin
+} = require('clean-webpack-plugin');
+
+module.exports = {
+  mode: "none",
+  entry: path.resolve(rootDir, "src/index.js"),
+  output: {
+    path: path.resolve(rootDir, 'dist'),
+    filename: "bundle.[contenthash:8].js"
+  },
+  devServer: {
+    port: '3001', // 默认是 8080
+    hot: true,
+    compress: true, // 是否启用 gzip 压缩
+    proxy: {
+      '/api': {
+        target: 'http://0.0.0.0:80',
+        pathRewrite: {
+          '/api': '',
+        },
+      },
+    },
+  },
+  plugins: [
+    new HtmlWebpackPlugin({//配置生成html
+      template: path.resolve(rootDir, 'public/index.html'),
+      inject: 'body',
+      scriptLoading: 'blocking'
+    }),
+    new CopyWebpackPlugin({
+      patterns: [{//直接复制资源到dist
+        from: '*.js',
+        context: path.resolve(rootDir, "public/js"),
+        to: path.resolve(rootDir, 'dist/js'),
+      }, ],
+    }),
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].css',
+    }),//打包后抽离 css 文件
+    new CssMinimizerWebpackPlugin()//压缩器
+  ],
+  module: {
+    noParse:/jQuery.js/,//不分析
+    rules: [{
+        test: /\.(jsx|js)$/,
+        use: ['thread-loader', 'babel-loader'],
+        exclude: /node_modules/,
+      }, {
+        test: /\.(jsx|js)$/,
+        use: 'babel-loader',
+        include: path.resolve(rootDir, 'src'),
+        exclude: /node_modules/,
+      }, {
+        test: /\.(le|c)ss$/,
+        exclude: /node_modules/,
+        use: [
+          MiniCssExtractPlugin.loader,//使用压缩器
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {//解决css命名冲突
+                auto: true,
+                exportGlobals: true,
+                localIdentName: "[local]__[hash:base64:5]",
+              },
+            },
+          },
+          'less-loader',
+          {
+            loader: 'postcss-loader',//兼容
+            options: {
+              postcssOptions: {
+                plugins: [
+                  ["autoprefixer"],
+                ],
+              },
+            },
+          }
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif|jpeg|webp|svg|eot|ttf|woff|woff2)$/,
+        type: 'asset',     
+        dataUrlCondition: {
+          maxSize: 25 * 1024, // 25kb
+        }
+      },
+    ]
+  }
+}
+```
+
+### 文件二：优化一下
+
+```javascript
+const {merge} = require('webpack-merge');
+const baseConfig = require('./webpack.base');
+
+module.exports = merge(baseConfig, {
+  mode: 'production',
+  watch: true,
+    // 只有开启监听模式时，watchOptions才有意义
+  watchOptions: {
+    // 默认为空，不监听的文件或者文件夹，支持正则匹配
+    ignored: /node_modules/,
+    // 监听到变化发生后会等300ms再去执行，默认300ms
+    aggregateTimeout:300,
+    // 判断文件是否发生变化是通过不停询问系统指定文件有没有变化实现的，默认每秒问1000次
+    poll:1000
+  }
+  devtool: 'hidden-source-map',//隐藏source-map
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename]
+    },
+    version: '1.0.0', // 修改版本号可以不使用之前的缓存数据
+  },
+  optimization: { // 代码分割，打包成更小体积的更多个js文件
+    splitChunks: {
+      chunks: 'all',//分包或提取公包
+    }
+  }
+});
+```
+
+### 常用loader和plugin
+
+#### loader
+
+- 古早的文件loader
+  - raw-loader
+  - file-loader
+  - url-loader
+- 图片资源
+  - image-loader 加载并且压缩图片文件 
+  - svg-inline-loader：将压缩后的 SVG 内容注入代码中
+- json-loader
+- js
+  - eslint-loader
+  - tslint-loader
+  - babel-loader(ES6->ES5)
+  - vue-loader
+  - thread-loader
+- 样式,注意顺序
+  - 'style-loader'
+  - 'css-loader'
+  - 'sass-loader'
+  - 'postcss-loader'
+
+#### plugin
+
+- 打包性能
+  - clean-webpack-plugin目录清理  
+  - webpack-bundle-analyzer可视化 Webpack 输出文件的体积  
+  - speed-measure-webpack-plugin可以看到每个 Loader 和 Plugin 执行耗时 
+- 文件生成
+  - html-webpack-plugin简化 HTML 文件创建 
+- 结果优化
+  - terser-webpack-plugin支持 ES6 压缩 (Webpack4)
+  - uglifyjs-webpack-plugin不支持 ES6 压缩 (Webpack4 以前) 
+  - mini-css-extract-plugin分离样式文件，CSS 提取为独立文件 
+  - serviceworker-webpack-plugin为网页应用增加离线缓存功能 
 

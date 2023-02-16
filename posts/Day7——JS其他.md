@@ -380,6 +380,7 @@ upload(){
   if (!uploadFileEle.files.length) return;
   // 获取文件
   const file = uploadFileEle.files[0];
+  //file的类型是File，File是Blob的子类
   // 创建上传数据
   const formData = new FormData();
   formData.append("file", file);
@@ -550,4 +551,42 @@ function pipeStream(path, writeStream) {
   })
 }
 ```
+
+# 错误监控
+
+```javascript
+window.onerror = function(message, source, lineno, colno, error) {
+  console.log('全局错误', message, source, lineno, colno, error);
+  return true//不再默认console.error(err)
+};
+```
+
+监控无catch的promise
+
+```javascript
+window.addEventListener('unhandledrejection', function(evt) {
+  console.log('unhandledrejection', evt)
+});
+```
+
+Vue脚本
+
+```javascript
+app.config.errorHandler = (err, vm, info) => {
+    let {
+        message, // 异常信息
+        name, // 异常名称
+        script,  // 异常脚本url
+        line,  // 异常行号
+        column,  // 异常列号
+        stack,  // 异常堆栈信息
+    } = err;
+    console.log('vue错误', vm, info)
+};
+```
+
+局部错误
+
+- .catch
+- try/catch
 
