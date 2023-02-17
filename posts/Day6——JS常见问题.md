@@ -209,7 +209,9 @@ function SuperType(){
   alert(instance2.color);//"red,green,blue"
   //但是这种方法只能继承父类的实例属性和方法，不能继承原型属性/方法
   ```
+  
 - 组合起来用原型链实现对**原型**属性和方法的继承，用借用构造函数技术来实现**实例**属性的继承。
+
 - ```javascript
   function SuperType(name){
     this.name = name;
@@ -332,7 +334,6 @@ function SuperType(){
   instance1.colors.push("2"); // ["red", "blue", "green", "2"]
   instance1.colors.push("3"); // ["red", "blue", "green", "3"]
   ```
-```
   
 - maxin多继承
 
@@ -341,18 +342,31 @@ function SuperType(){
        SuperClass.call(this);
        OtherSuperClass.call(this);
   }
-  
+
   // 继承一个类
   MyClass.prototype = Object.create(SuperClass.prototype);
   // 混合其它
   Object.assign(MyClass.prototype, OtherSuperClass.prototype);
   // 重新指定constructor
   MyClass.prototype.constructor = MyClass;
-  
+
   MyClass.prototype.myMethod = function() {
        // do something
   };
-```
+  ```
+
+- 手写new
+
+- ```javascript
+  function myNew(fn, ...args) {
+    let obj = Object.create(fn.prototype);
+    let res = fn.call(obj, ...args);
+    if (res && (typeof res === "object" || typeof res === "function")) {
+      return res;
+    }
+    return obj;
+  }
+  ```
 
 # this问题
 
@@ -399,7 +413,10 @@ function SuperType(){
   person1.show4()()//person1
   //因为这个函数的定义地点就是this=person1时
   ```
-  
+```
+
+```
+
 - 构造函数里的this是当前实例
 
 -   实例原型上的公有方法里的this一般是当前实例
@@ -421,6 +438,7 @@ function SuperType(){
     obj.fn.call()//window
     obj.fn.call({})//{}
     ```
+```
 
 - apply
 
@@ -438,7 +456,7 @@ function SuperType(){
   - ```javascript
     var newFn = obj.fn.bind(1)
     newFn()//Number 1
-    ```
+```
 
 # EventLoop
 
@@ -483,6 +501,7 @@ function SuperType(){
 - 属性
   - 关于状态：readyState(0~4)、statusText("OK"、""、"notFound")、status(0,200,404...)
   - timeout最长等待时间
+  - withCredentials需要跨域携带cookie
   - upload： 表示上传的进度， 通过对其绑定事件来追踪它的进度(onprogress)。 
   - 关于响应：response、responseType("","json","arraybuffer","ms-stream","text","blob")、responseXML、responseURL、reponseText
 - 事件
@@ -551,6 +570,7 @@ controller.abort()
     attributeFilter:[‘class’,‘src’]//观察的特定属性
   });
   ```
+
 
 - disconnect()停止观察
 

@@ -5,7 +5,9 @@ date: "2023-01-20"
 
 # 优秀之处
 
-- 使用esbuild预构建，使用go编写，速度快
+- dev模式下使用esbuild预构建，esbuild使用go编写，速度快
+- build用的是rollup
+- Vite不会遍历整个应用程序，只是转换当时正在使用的文件/模块。 
 -  Vite 以原生 ESM 方式提供源码。这实际上是让浏览器接管了打包程序的部分工作：Vite 只需要在浏览器请求源码时进行转换并按需提供源码。根据情景动态导入代码，即只在当前屏幕上实际使用时才会被处理。 
 - 支持了动态模块热替换，vite的HMR 是在原生 ESM 上执行的。  当编辑一个文件时，Vite 只需要精确地使已编辑的模块与其最近的 HMR 边界之间的链失活（大多数时候只是模块本身），使得无论应用大小如何，HMR 始终能保持快速更新。 
 - 同时利用 HTTP 头来加速整个页面的重新加载 ，使用强缓存
@@ -126,7 +128,7 @@ type config={
     base:string;//开发或生产环境服务的公共基础路径。默认是/
     mode:string;//指定环境development、production
     define:Record<string,string>//定义全局常量替换方式。其中每项在开发环境下会被定义在全局，而在构建时被静态替换。
-    pluhins:(Plugin | Plugin[] | Promise<Plugin | Plugin[]>)[];//使用插件
+    plugins:(Plugin | Plugin[] | Promise<Plugin | Plugin[]>)[];//使用插件
 	publicDir:string|false//默认public，静态资源服务的文件夹，如果是 false 可以关闭此项功能。
 	cacheDir:string//见名之意
     resolve:{

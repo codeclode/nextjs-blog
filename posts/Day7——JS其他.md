@@ -353,9 +353,9 @@ objectStoreRequest.onsuccess = function(event) {
 ### 括号
 
 - exp1(?=exp2)：exp2前的exp1
--  (?<=exp2)exp1：查找 exp2 后面的 exp1 
-- exp1(?!exp2)：查找后面不是 exp2 的 exp1 
--  (?<!exp2)exp1：查找前面不是 exp2 的 exp1 
+-  (?<=exp2)exp1：查找 exp2 后面的 exp1
+- exp1(?!exp2)：查找后面不是 exp2 的 exp1
+-  (?<!exp2)exp1：查找前面不是 exp2 的 exp1
 
 ### 反向捕获
 

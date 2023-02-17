@@ -132,6 +132,17 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 #### jsonp
 
 > 浏览器允许在标签中加载跨域的静态资源，也就是说JS标签、css标签等src或href可以跨域， 我们可以通过动态创建script，再请求一个带参网址实现跨域通信。jsonp正是利用这个特性来实现的。  
+>
+> ```html
+> <script>
+>   function jsonCallback(data) {
+>     console.log(data);
+>   }
+> </script>
+> <script src="url"></script>
+> <!--这个脚本调用了jsonCallback-->
+> ```
+>
 
 #### CORS
 

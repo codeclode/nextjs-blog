@@ -21,6 +21,8 @@ date: "2023-01-19"
 
 # 开始
 
+注意loader执行顺序是从右往左
+
 ```shell
 npm init
 npm i --save-dev webpack webpack-cli
@@ -379,6 +381,45 @@ loader从字面的意思理解，是 加载 的意思。 由于webpack 本身只
 
 plugin完成的是loader不能完成的功能，是为了扩展webpack的功能，但是 plugin 是作用于webpack本身上的。而且plugin不仅只局限在打包，资源的加载上，它的功能要更加丰富。从打包优化和压缩，到重新定义环境变量，功能强大到可以用来处理各种各样的任务。在整个编译周期都起作用。 
 
+# 四种loader
+
+通过enforce配置loader类型，默认是normal
+
+```json
+module: {
+  rules: [
+    {
+      test: /\.js$/,
+      use: ["eslint-loader"], 
+      enforce: "pre", //编译前先对js文件进行校验     
+    },
+    {
+      test: /\.js$/,
+      use: ["babel-loader"],
+    },
+  ],
+},
+```
+
+```javascript
+function BLoader(content, map, meta) {
+  console.log("执行 b-loader 的normal阶段");
+  return content + "//给你加点注释(来自于BLoader)";
+}//normal时机调用
+
+BLoader.pitch = function () {
+  console.log("BLoader的pitch阶段");
+};//pitch时机调用
+
+module.exports = BLoader;
+```
+
+**Pitching** 阶段: Loader 上的 pitch 方法，按照 `后置(post)、行内(inline)、普通(normal)、前置(pre)` 的顺序调用。
+
+**Normal** 阶段: Loader 上的 常规方法，按照 `前置(pre)、普通(normal)、行内(inline)、后置(post)` 的顺序调用。模块源码的转换， 发生在这个阶段。
+
+在 Loader 的运行过程中，如果发现该 Loader 上有pitch属性，会先执行 pitch 阶段，再执行 normal 阶段，当一个 Loader 的 pitch 阶段有返回值时，将跳过后续 Loader 的 pitch 阶段，直接进行到该 Loader上一个loader 的 normal 阶段（相当于不再解析文件而是直接返回content）。 
+
 # 优化
 
 ### 持久化缓存
@@ -698,7 +739,8 @@ resolveLoader: {
 ```
 
 ```javascript
-module.exports = function (source) {
+module.exports = function (source, map, meta) {
+    //map是source-map的内容
     const options = this.getOptions();
     return source.replace('xiong ling', options.name);
     //这就是一个简易的loader，他的作用是替换xiong ling为loader使用处options的name字符串
@@ -726,6 +768,8 @@ class FileList {
     }
     apply(compiler) {
       // 在 emit 钩子里执行，他是异步钩子，所以我们需要使用tapAsync来注册，并且必须调用cb函数
+      //tapAsync是钩子暴露出来用回调方式注册异步钩子
+      //钩子本体是emit，还有run、compile等钩子
         compiler.hooks.emit.tapAsync('FileList', (compilation, cb) => {
             const fileListName = this.options.outputFile;
             // compilation.assets有我们所有的资源文件

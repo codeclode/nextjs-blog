@@ -294,10 +294,22 @@ type K3 = keyof { [x: string]: Person };  // string | number
 //keyof，获取某个类型的所有键
 
 //infer声明一个类型变量并且对它进行使用
+//infer的意思是推断，只有在指定了泛型才知道是什么
+//有点像泛型之泛型
+//推断函数
 type ReturnType<T> = T extends (
   ...args: any[]
 ) => infer R ? R : any;
 type b = ReturnType<() => string>; // type b = string
+
+//推断数组
+type Ids = number[];
+type Names = string[];
+type Unpacked<T> = T extends (infer R)[] ? R : T;
+type idType = Unpacked<Ids>; // idType 类型为 number
+type nameType = Unpacked<Names>; // nameType 类型为string
+//keyof typeof obj|keyof Class
+//获取键的枚举
 
 function loggingIdentity<T extends Lengthwise>(arg: T): T {
   console.log(arg.length);
@@ -1016,6 +1028,16 @@ console.log(records[0].duration);
     - getBoundingClientRect()
     - scrollTo()
 
+# 自动化测试
+
+### TDD：Test-Driven Development（测试驱动开发）
+
+- TDD：Test-Driven Development（测试驱动开发）：TDD 则要求在编写某个功能的代码之前先编写测试代码，然后只编写使测试通过的功能代码，通过测试来推动整个开发的进行
+
+### BDD：Behavior-Driven Development（行为驱动开发）
+
+- BDD：Behavior-Driven Development（行为驱动开发）：BDD 可以让项目成员（甚至是不懂编程的）使用自然语言来描述系统功能和业务逻辑，从而根据这些描述步骤进行系统自动化的测试
+
 # 网络安全
 
 ## XSS
@@ -1247,5 +1269,97 @@ self.onfetch = (event) => {
       })
   );
 };
+```
+
+# SSR之同构
+
+所谓同构就是采用一套代码，构建双端（server 和 client）逻辑，最大限度的重用代码，不用维护两套代码。保持前后端干一样的事情。
+
+### 路由同构
+
+前端点击link或者nagivate之后，发送请求给后端，携带者path，后端match这个path，把对应的页面组件回传给前端。
+
+### 数据同构
+
+其实也是一样的，在查找到要渲染的组件后，需要预先得到此组件所需要的数据，然后将数据传递给组件后，再进行组件的渲染。但是数据也仅仅是服务端有，浏览器端是没有这个数据，当客户端进行首次组件渲染的时候没有初始化的数据，渲染出的节点肯定和服务端直出的节点不同，导致组件重新渲染。 
+
+```javascript
+const branch =  matchRoutes(routes,url);
+const Component = branch[0].route.component;
+//数据预取
+const data = Component.getInitialProps(branch[0].match.params);
+const html = renderToString(<Component data={data}/>);
+res.end(html);
+```
+
+### 渲染同构
+
+在服务端将预取的数据注入到浏览器，使浏览器端可以访问到，客户端进行渲染前将数据传入对应的组件即可，这样就保证了props的一致。 
+
+#### 注水
+
+```javascript
+const propsData = `<textarea style="display:none" id="krs-server-render-data-BOX">${JSON.stringify(data)}</textarea>`;
+
+// 通过 ejs 模板引擎将数据注入到页面
+ejs.renderFile('./index.html', {
+    htmlContent: html,  
+    propsData
+},  // 渲染的数据key: 对应到了ejs中的index
+  (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+        console.log(data);             
+        res.end(data);
+      }
+  })
+```
+
+#### 脱水
+
+```jsx
+export default class Index extends React.Component {
+    constructor(props,context) {
+        super(props);
+    }
+
+    render() {
+        return <RootContext.Provider value={this.props.initialData||{}}>
+            {this.props.children}
+        </RootContext.Provider>
+    }
+}
+
+//渲染入口  接收脱水数据
+function renderUI(initialData) {
+    ReactDOM.hydrate(<BrowserRouter><Provider initialData={initialData}>
+        <Routes />
+    </Provider>
+    </BrowserRouter>, document.getElementById('rootEle'), (e) => {
+    });
+}
+
+//函数执行入口
+function entryIndex() {
+    let APP_INIT_DATA = {};
+    let state = true;
+
+    //取得数据
+    let stateText = document.getElementById('krs-server-render-data-BOX');
+
+    if (stateText) {
+        APP_INIT_DATA = JSON.parse(stateText.value || '{}');
+    }
+
+
+    if (APP_INIT_DATA) {//客户端渲染
+        
+        renderUI(APP_INIT_DATA);
+    }
+}
+
+//入口执行
+entryIndex();
 ```
 

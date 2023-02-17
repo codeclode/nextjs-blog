@@ -351,6 +351,32 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 
 - new Promise((resolution,reject)),resolution就是.then(()=>{})方法，reject就是.catch(()=>{})方法，当然如果.then里面就俩函数，那么第二个函数就是reject
 
+  ```javascript
+  let x = new Promise((resolve)=>{
+      return
+      resolve()
+  }).then(()=>{
+      console.log(111)
+  })
+  //x永远pending
+  let x = new Promise((resolve)=>{
+      setTimeout(resolve)
+      return
+      resolve()
+  }).then(()=>{
+      console.log(111)
+  })
+  //x下一轮fulfilled
+  let x = new Promise((resolve)=>{
+      resolve()
+      resolve()
+      resolve()
+  }).then(()=>{
+      console.log(111)
+  })
+  //只会输出一个111
+  ```
+
 ### 静态方法
 
 - Promise.all(迭代对象)返回一个Promise，等待所有可迭代对象里的Promise执行结束后返回他们处理出来的结果，如果有一个错误就直接catch出第一个错误，数组顺序按照可迭代对象排列
