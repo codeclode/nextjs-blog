@@ -120,6 +120,12 @@ export default defineConfig({//这样也可以有提示
 })
 ```
 
+### 几个常用插件
+
+- vite-plugin-compression（压缩成gzip格式，配合nginx） 
+- unplugin-auto-import自动导入
+- unplugin-vue-components导入vue组件 
+
 ### 选项
 
 ```typescript
