@@ -28,6 +28,14 @@ npm init
 npm i --save-dev webpack webpack-cli
 ```
 
+### 五个核心
+
+- entry
+- output
+- loader
+- plugin
+- mode
+
 ### 工作目录
 
 ```javascript

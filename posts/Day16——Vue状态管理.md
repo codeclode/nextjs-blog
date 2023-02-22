@@ -206,7 +206,9 @@ getters:{
 }
 ```
 
-namespace:默认情况下，模块内部的 action 和 mutation 仍然是注册在全局命名空间的——这样使得多个模块能够对同一个 action 或 mutation 作出响应。 加入namespace:true可以隔离模块
+namespace:默认情况下，模块内部的 action 和 mutation 仍然是注册在全局命名空间的——这样使得多个模块能够对同一个 action 或 mutation 作出响应。 加入namespace:true可以隔离模块。
+
+模块里可以嵌套模块
 
 ```javascript
 {
@@ -218,7 +220,6 @@ namespace:默认情况下，模块内部的 action 和 mutation 仍然是注册�
   modules: {
     foo: {
       namespaced: true,
-
       actions: {
         someAction: {
           root: true,//在命名空间里注册全局action

@@ -124,6 +124,14 @@ string type
 
 注意，在事件中，SyntheticEvent类型的event参数是合并而来的，也就是说他可能被重用，而且在事件回调函数被调用后，所有的属性都会无效。出于性能考虑，你不能通过异步访问事件。 如果希望异步访问事件属性，需在事件上调用 event.persist()保留对事件的引用。
 
+这玩意叫合成事件，React 实现了一个**合成事件层**，就是这个事件层，把 IE 和 W3C 标准之间的兼容问题给消除了。 
+
+- React 上注册的事件最终会绑定在`document`这个 DOM 上，而不是 React 组件对应的 DOM(减少内存开销就是因为所有的事件都绑定在 document 上，其他节点没有绑定事件)
+- React 自身实现了一套事件冒泡机制，所以这也就是为什么我们 `event.stopPropagation()` 无效的原因。
+- React 通过队列的形式，从触发的组件向父组件回溯，然后调用他们 JSX 中定义的 callback
+- React 有一套自己的合成事件 `SyntheticEvent`，不是原生的。
+- React 通过对象池的形式管理合成事件对象的创建和销毁，减少了垃圾的生成和新对象内存的分配，提高了性能
+
 详细的事件直接看文档吧，这里说一下复合事件
 
 ```typescript
@@ -181,6 +189,7 @@ class Clock extends React.Component {
 - 唯一的修改state的地方，这个方法会合并修改，没修就是以前的
 - 更新是异步的，啥时候更新取决于React内部实现（也就是说别想着更新完接着用上热乎的）
 - 浅合并，新对象完全替换而旧对象完全保留（地址不会变）
+- setState 方法可能是同步的也可能是异步的，这取决于执行上下文和更新队列的状态。 当在 React **事件处理程序**中调用 setState 方法时，React 会在下一次渲染之前，将更新加入到更新队列中，并**异步**更新组件。这是为了优化性能，避免在一次事件处理程序中多次更新组件。在一些特定的情况下，setState 方法是**同步**的，例如在**生命周期方法和回调函数（定时器）**中调用 setState 方法时。这是因为在这些情况下，React 已经开始进行组件的更新，并且需要立即更新组件的状态，以便后续的更新能够正确地进行。 
 
 ## 事件处理
 
@@ -381,7 +390,7 @@ class FileInput extends React.Component {
 ### 挂载阶段
 
 - constructor(props)
-- static getDerivedStateFromProps(props,state) 在调用 render 方法之前调用，并且在初始挂载及后续更新时都会被调用。它应返回一个对象来更新 state，如果返回null则不更新任何内容。 
+- static getDerivedStateFromProps(props,state) 在调用 render 方法之前调用，并且在初始挂载及后续更新时都会被调用。它应返回一个对象来更新 state，如果返回null则不更新任何内容，为了防止某些人在这里被setState所以是static方法。 
 - render()
 - componentDidMount()可以使用setState，一般在这里进行初始的网络请求等内容
 
@@ -583,11 +592,38 @@ function App() {
 
 生成横跨服务端和客户端的稳定的唯一 ID。
 
-## React.memo
+## 性能方法
 
-React.memo(Component,howToCompare)
+### React.memo(Component,howToCompare)
 
 如果你的函数组件在给定相同 props 的情况下渲染相同的结果，那么你可以通过将其包装在 React.memo 中调用，以此通过记忆组件渲染结果的方式来提高组件的性能表现。这意味着在这种情况下，React 将跳过渲染组件的操作并直接复用最近一次渲染的结果。 也就是说整个组件的渲染与否取决于prop。第二个参数默认浅比较，也可以自己传入一个函数进行比较，这个函数的参数是preProp和nextProp。其实如果就像是React.PureComponent和shouldComponentUpdate的结合体。请注意第二个参数返回true代表没有改变（不会渲染）。
+
+### React.lazy
+
+ 定义一个动态加载的组件。这有助于缩减 bundle 的体积，并延迟加载在初次渲染时未用到的组件。 
+
+```jsx
+const SomeComponent = React.lazy(() => import('./SomeComponent'));
+```
+
+### React.Suspense
+
+和lazy一起使用
+
+```jsx
+const OtherComponent = React.lazy(() => import('./OtherComponent'));
+
+function MyComponent() {
+  return (
+    // 显示 <Spinner> 组件直至 OtherComponent 加载完成
+    <React.Suspense fallback={<Spinner />}>
+      <div>
+        <OtherComponent />
+      </div>
+    </React.Suspense>
+  );
+}
+```
 
 # 高阶组件
 
@@ -677,3 +713,13 @@ function logProps(WrappedComponent) {
 - 更新的节点层级不会发生移动（直接找到旧树中的位置进行对比）。
 - 兄弟节点之间通过`key`进行唯一标识。
 - 如果新旧的`节点类型`不相同，那么它认为就是一个新的结构，无论嵌套了多深也会全部`丢弃`重新创建。
+
+### fiber
+
+React16以前，更新是通过深度优先遍历完成的，当树的层级深就会产生栈的层级过深时页面渲染速度变慢，为了解决这个问题引入了fiber，React fiber就是虚拟DOM，它是一个链表结构（因此可以随时中断，记录下当前位置即可），返回了return、children、siblings，分别代表父fiber，子fiber和兄弟fiber，**随时可中断**，这样就实现增量渲染，增量渲染指的是把一个渲染任务分解为多个渲染任务，而后将其分散到多个帧里。 
+
+**workInProgress**:正在内存中构建的fiber树叫workInProgress fiber，在第一次更新时，所有的更新都发生在workInProgress树，在第一次更新后，workInProgress树上的状态是最新状态，它会替换current树
+
+**current**:正在视图层渲染的树叫current fiber树
+
+更新时重新创建workInProgress树，复用当前current树上的alternate，作为新的workInProgress二者形成双缓冲，类似舞台的左右场，实现更加顺滑和迅速的切换。

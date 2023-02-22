@@ -79,7 +79,7 @@ if (isMainThread) {
 
 - 方法
   - addListener(event,listener) 为指定事件添加一个监听器到监听器数组的尾部
-  - on(event,listener)为指定事件注册监听器，接收event字符串和cb，这俩方法应该一样把
+  - on(event,listener)为指定事件注册监听器，接收event字符串和cb，这俩方法应该一样
   - once，只能执行一次的on
   - removeListener(event,listener)
   - removeAllListeners(event)
@@ -150,6 +150,8 @@ console.log(myEmitter.listeners());//[]
   
 - 目前在Node的环境下，当前也就只有promise为微任务，Object.observe属于谨慎使用级别
 
+- 执行一个宏就会做所有微
+
 - 值得注意的是，定时器有两个执行时机，一个为timer阶段，另一个则是poll阶段，其实他们都会把所有可用的timer调完，而且掉完每一个以后都会执行所有nextTick和微任务
 
 - 请注意，这里说的执行完所有，是指已经放在执行队列里的，而不是还在预备队列的
@@ -161,7 +163,7 @@ console.log(myEmitter.listeners());//[]
   setImmediate(() => {
     console.log("i0");//check
     new Promise((resolve, reject) => {
-      console.log("p1")//poll
+      console.log("p1")//check
       resolve()
     }).then(() => {
       console.log("p2");
@@ -182,7 +184,6 @@ console.log(myEmitter.listeners());//[]
   //t1,i0,p1,p2,t3,t4,i1,t2
   ```
 
-  
 
 ### 一个逆天案例
 

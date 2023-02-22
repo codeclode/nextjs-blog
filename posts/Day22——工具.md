@@ -154,7 +154,7 @@ const instance = axios.create({
   headers: {},
   //请求的配置信息
   config: {},
-  // `request` 是生成此响应的请求
+  // request 是生成此响应的请求
   request: {}
 }
 ```

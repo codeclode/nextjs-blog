@@ -11,6 +11,7 @@ date: "2023-01-18"
 - 集成了“视图”渲染引擎，以便通过将数据插入模板来生成响应。
 - 设置常见 web 应用设置，比如用于连接的端口，以及渲染响应模板的位置。
 - 在请求处理管道的任何位置添加额外的请求处理“中间件”。
+- 其实，这玩意也全是中间件，遇到res.end()返回
 
 ### 开启服务、静态资源和路由
 
@@ -41,8 +42,8 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 //如果需要分模块，也可以这样
-var router = express.Router()
-router.get('/', function (req, res) {
+var birds = express.Router()
+birds.get('/', function (req, res) {
   res.send('Birds home page')
 })
 app.use('/birds', birds)
@@ -111,7 +112,7 @@ app.get('/', function (req, res) {
 
 - 中间件
 
-  - express.json， 它解析传入的请求 与 JSON 有效负载 
+  - express.json，它解析传入的请求 与 JSON 有效负载 
   - express.static
   - express.urlencoded它解析传入的请求 使用urlen编码有效载荷 
 
@@ -192,6 +193,10 @@ app.get('/', function (req, res) {
 ### 搞一个中间件
 
 ```javascript
+const Koa = require('koa');
+const app = new Koa();
+app.listen(3000);
+
 function logger(format) {
   format = format || ':method ":url"';
 
@@ -242,6 +247,10 @@ async function pi(ctx, next) {
 const all = compose([random, backwards, pi]);
 
 app.use(all);
+
+app.on('error', (err, ctx) => {
+  log.error('server error', err, ctx)
+});//错误处理
 ```
 
 ### ctx对象
@@ -253,7 +262,7 @@ app.use(all);
 - state， 推荐的命名空间，用于通过中间件传递信息和你的前端视图。 
 - app，程序实例
 - app.emit()，发送事件，方便错误统一处理
-- cookie的set、get方法和express一致
+- cookie.set(name, value, [options])、get方法
 - throw(statusCode,message)抛出错误
 - 以及把ctx.response、ctx.request的一些属性直接付给ctx方便使用
 

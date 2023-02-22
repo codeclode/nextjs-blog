@@ -9,6 +9,8 @@ date: "2023-01-27"
 
 redux是最基本的单元，使用的话比较简单和基础
 
+原则有四个：单向数据流、唯一的 store、保持状态只读（只能派发action）、数据改变只能通过纯函数完成 
+
 ```javascript
 npm install redux -S // 安装
 
@@ -186,7 +188,7 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
   preloadedState,
   enhancers: [batchedSubscribe(debounceNotify)],
-})//这个函数是redux函数createStore的抽象
+})//这个函数是redux函数cre、ateStore的抽象
 ```
 
 ### 生成Reducer

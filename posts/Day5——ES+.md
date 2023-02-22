@@ -173,16 +173,16 @@ const school = {
 
 ```javascript
 class Phone{
-constructor(brand,price) {
+  constructor(brand,price) {
 		this.brand = brand;
         this.price = price;
-	}
-	call(){
-		console.log("我可以打电话！");
-	}
+  }
+  call(){
+    console.log("我可以打电话！");
+  }
 }
 class SmartPhone extends Phone{
-// 构造函数
+  // 构造函数
 	constructor(brand,price,color,size) {
 		super(brand,price); // 调用父类构造函数
 		this.color = color;

@@ -320,7 +320,7 @@ objectStoreRequest.onsuccess = function(event) {
   console.log(toString.call(function(){})); //=>"[object Function]" 
   ```
 
-- 只能检测内置类，不能检测自定义类
+- 只能检测内置类，不能检测自定义类（除非修改了Symbol.toStringTag=className）
 
 - 只要是自定义类返回的都是‘[Object Object]’
 
@@ -589,4 +589,65 @@ app.config.errorHandler = (err, vm, info) => {
 
 - .catch
 - try/catch
+
+# setInterval
+
+每个 `setTimeout `产生的任务会直接 `push `到任务队列中；而 `setInterval `在每次把任务` push` 到任务队列前，都要进行一下判断(看**上次**的任务是否仍在队列中，如果有则不添加，没有则添加)，这导致Interval延迟长且某些间隔会被跳过。
+
+setTimeout实现
+
+```javascript
+var timeWorker = {}
+var mySetInterval= function(fn, time) {
+  // 定义一个key，来标识此定时器
+  var key = Symbol();
+  // 定义一个递归函数，持续调用定时器
+  var execute = function(fn, time) {
+    timeWorker[key] = setTimeout(function(){
+      fn();
+      execute(fn, time);
+    }, time)
+  }
+  execute(fn, time);
+  // 返回key
+  return key;
+}
+var myClearInterval = function(key) {
+  if (key in timeWorker) {
+    clearTimeout(timeWorker[key]);
+    delete timeWorker[key];
+  }
+}
+```
+
+# 手写async
+
+```javascript
+function asyncTest(fn) {
+  //这里相当于与给参数的generator函数套了一层
+  return function () {
+    return new Promise((resolve, reject) => {
+        let gen = fn()
+        function next(ret) {
+          if (ret.done) {
+            return resolve(ret.value)
+          }
+          return Promise.resolve(ret.value).then(onFullFilled, err => {
+            reject(err)
+          })
+        }
+        function onFullFilled(value) {
+          let ret
+          try {
+            ret = gen.next(value)
+          } catch (e) {
+            return reject(e)
+          }
+          next(ret)
+      }
+      onFullFilled()
+    })
+  }
+}
+```
 

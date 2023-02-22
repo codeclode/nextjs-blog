@@ -133,7 +133,7 @@ date: "2023-01-11"
     
     - defineProperties(obj,props:{'xxx':描述符,'xxx':描述符})：多次执行defineProperty
     
-    - entries、keys、values返回可枚举属性的k、v
+    - entries、keys、values返回可枚举属性的k、v（不会遍历原型链上的，forin会）
     
     - setPrototypeOf(obj,prototype)设置新的原型对象getyPrototypeOf获取原型对象
     
@@ -161,7 +161,7 @@ date: "2023-01-11"
   - 实例属性有constructor和\_\_proto\_\_
   - 实例方法
     - (define|lookup)(Getter|Setter)设置或读取属性的getter或setter，不要过多使用
-    - hasOwnProperty(string|Symbol)查找对象中是否有对应的属性
+    - hasOwnProperty(string|Symbol)查找对象中是否有对应的属性（非原型链上的）
     - isPrototypeOf(object)查找此对象是否在object的原型链上，注意object是子，调用者为父
     - propertyIsEnumerable(prop)返回对应prop是否可枚举
 - 函数function

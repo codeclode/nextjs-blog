@@ -794,7 +794,7 @@ inputb.addEventListener('keyup', function (e) {
 
 ## 节流
 
-玩家们觉得回城的时候按一下b重新吟唱不太好，于是官方决定按就按吧，不会重新开始吟唱。
+这个更像技能CD。
 
 ```javascript
 function throttle(fun, delay) {
@@ -1010,6 +1010,10 @@ console.log(records[0].duration);
   - will-change属性
   - 为0不要加单位
   - 不要过多嵌套
+
+- 渐进式渲染——其实就是懒加载，不过不仅是图片，比如优先重要资源，HTML分块异步获取等
+
+- 流式渲染——差不多，在做ssr渲染时，服务器同构处理组件，将处理结果以流的形式pipe给服务器的输出，而不是等全部组件处理完毕后将字符串作为结果输出，这样我们就实现了分块（流失）传输。 
 
 - 回流重绘
 

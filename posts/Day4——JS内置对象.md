@@ -34,6 +34,13 @@ date: "2023-01-12"
       [3, 'three'],
     ]);
     ```
+  
+- 和Object的区别
+
+  - `Map` 对象继承自 `Obejext` 对象,可以通过原型继承去调用 `Object` 身上的原型方法
+  - Map只能new，Object可以直接大括号或者Object.create
+  - Map实现了迭代器，可以for-of，且按插入顺序返回
+  - 在 `Map` 对象中,该对象的 `key` 可以是任何类型的值,而在普通对象中的 `key` 只能是 `string` 类型(`number`类型会自动转变成 `string` 类型)和 `Symbol` 类型,如果传进来的是复杂类型会自动报错。
 
 ### Set
 
@@ -45,13 +52,14 @@ date: "2023-01-12"
 ### WeakMap
 
 - weakMap的键只能是object，这样可以及时回收
-
+- 键不会被引用计数记录（值依然会被记录）
 - WeakMap不可迭代
 - WeakMap没有map的属性，只有delete、get、set、has方法
 
 ### WeakSet
 
 - 同样的，集合中的值只能是对象
+- 不会被引用计数记录
 - 也是不能迭代的
 - 只有add、delete、has方法
 
@@ -375,6 +383,16 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
       console.log(111)
   })
   //只会输出一个111
+  let p = new Promise((resolve)=>{
+      resolve()
+  })
+  p.then(()=>{
+      console.log(1)
+  })
+  p.then(()=>{
+      console.log(2)
+  })
+  //1 2都会输出
   ```
 
 ### 静态方法

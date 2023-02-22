@@ -602,7 +602,7 @@ date: "2023-01-16"
 
 - **path.normalize(p)** 规范化路径
 - **path.join(...paths)** 用于连接路径。该方法的主要用途在于，会正确使用当前系统的路径分隔符，Unix系统是"/"，Windows系统是"\"。  
-- **path.resolve([from ...], to)** 将 to 参数解析为绝对路径。  
+- **path.resolve([from ...], to)** 将 to 参数解析为绝对路径。
 - **path.isAbsolute(path)** 判断参数 path 是否是绝对路径。  
 - **path.relative(from, to)** 用于将相对路径转为绝对路径。  
 - **path.dirname(p)** 返回路径中代表文件夹的部分，

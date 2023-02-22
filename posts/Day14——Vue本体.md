@@ -1135,7 +1135,8 @@ const CompB = {
 ### 插件
 
 ```javascript
-app.use(myPlugin, {
+app.use(myPlugin,oprions)
+myPlugin:{
   install: (app, options) => {
     // 在这里编写插件代码
 	//通过 app.component() 和 app.directive() 注册一到多个全局组件或自定义指令。
@@ -1695,3 +1696,8 @@ function computed(fn) {
   - 静态标记，跳过不会变化的结点
   - Vue3 中会把这个不参与更新的元素保存起来，只创建一次，之后在每次渲染的时候不停地复用
   - 缓存不变的事件。
+
+## nextTick
+
+- 接受一个回调函数作为参数，这个回调函数会在下一个事件循环中被执行，并且能够获取到更新后的DOM并且进行操作。除了传递回调函数之外，nextTick 方法还返回一个 Promise 对象，可以使用 await 关键字等方式等待 nextTick 执行完成
+- Promise.then->MutationObserver->setImmediate->setTimeout(fn,0) 

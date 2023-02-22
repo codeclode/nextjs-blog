@@ -289,6 +289,7 @@ git reset HEAD
 git reset --(soft|mixed|hard)<HEAD~(num)>
 git revert [commit]
 #撤销一个提交，会用一个新的提交（原提交的逆向操作）来完成撤销操作，如果已push则重新push即可
+#可以理解为创建了一个状态副本并commit成这个状态
 ```
 
 **HEAD 说明：**
@@ -325,6 +326,8 @@ git stash clear
 #删除全部缓存
 git stash pop <stash@{ID}>
 #恢复改动
+git stash show
+#展现最新保存的stash和当前⽬录的差异
 ```
 
 ### 差异

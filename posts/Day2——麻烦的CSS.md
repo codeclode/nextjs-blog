@@ -160,7 +160,7 @@ date: "2023-01-10"
 
 - offsetWidth = clientWidth+border
 
-- offsetLeft就是距离父级内边距的距离，父级身上的position：absolute/fixed决定 如果父级元素没有就逐层查找 直到body 
+- offsetLeft就是距离父级内边距的距离，父级身上的position：absolute/fixed决定 如果父级元素没有就逐层查找直到body 
 
 - scrollWidth=clientWidth+margin
 
@@ -191,6 +191,8 @@ date: "2023-01-10"
 
 背景->负z-index->block层级(文档流)->浮动层级（浮动流）->inline层级->z-index（默认绝对定位）=0->正z-index
 
+z-index失效：父元素不是absolute或fixed、设置z-index的同时还设置了float浮动、该元素没有设置position属性为非static属性（relative也可以）。  
+
 值得注意的是，脱离文档流的判断标准是元素原本的位置被后继的东西填充，而不是移动后是否挤占其他元素。
 
 ### 重绘与回流
@@ -201,6 +203,34 @@ date: "2023-01-10"
 - 避免多层内联样式
 - 使用经常改变位置的元素绝对定位脱离文档流
 - 使用transform开启硬件加速(transform使浏览器为元素创建⼀个 GPU 图层)。
+
+# CSS层级
+
+### 渲染对象（RenderObject）
+
+一个 DOM 节点对应了一个渲染对 
+
+### 渲染层（RenderLayer）
+
+这是浏览器渲染期间构建的第一个层模型，处于相同坐标空间（z轴空间）的渲染对象，都将归并到同一个渲染层中，因此根据层叠上下文，不同坐标空间的的渲染对象将形成多个渲染层，以体现它们的层叠关系
+
+### 图形层（GraphicsLayer）
+
+是一个负责生成最终准备呈现的内容图形的层模型，它拥有一个图形上下文负责输出该层的位图。存储在共享内存中的位图将作为纹理上传到 GPU，最后由 GPU 将多个位图进行合成，然后绘制到屏幕上，此时，我们的页面也就展现到了屏幕上。可以把它当作合成层。
+
+### 合成层
+
+>  transform创建一个renderLayers(渲染)合成层，拥有独立的graphicsLayers(绘图层)。每一个绘图层都有一个绘图区域，其对应的渲染会绘制进绘图区域，合成器（compositor）最终会负责将由绘图区域输出的位图合并成最终屏幕展示图案。 合成层会交由 GPU 合成，比 CPU 处理要快得多； 
+
+谁会创建合成层
+
+- 3D或者perspective transform（就是transforms：translate3d、translateZ等）的css属性层 
+- video、canvas、flash
+- 对 opacity、transform、fliter、backdropfilter 应用了 animation 或者 transition 
+- 使用css滤镜filters的层
+- position: fixed
+- will-change
+- 同合成层重叠，且在该合成层上面渲染的层 
 
 # 响应式
 
@@ -219,6 +249,7 @@ img.offsetTop < window.innerHeight + document.body.scrollTop;
 element.offsetTop - document.documentElement.scrollTop < document.documentElement.clientHeight
 //更好用的其实是getBoundingClientRect,获取到视窗的举例
 element.getBoundingClientRect().top < clientHeight
+//interSectionObserver
 ```
 
 # C3新特性
