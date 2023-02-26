@@ -183,6 +183,12 @@ img.onload = function(){
   ctx.drawImage(img, 20, 20,100,100,0,0,300,300);
   //在0，0处绘制一个缩放到300*300的原图片(20,20)处开始宽高都为100的图片
 }
+function download(canvas,name){
+  var a = document.createElement('a')
+  a.href = canvas.toDataURL()
+  a.download=name
+  a.click()
+}//保存到本地
 ```
 
 ## 变形
@@ -391,3 +397,14 @@ Hello<tspan fill="#f0f" font-weight="bold">小</tspan>Svg</text>
 - rotate(deg)
 - transform-origin(canterX,centerY)旋转中心点
 - skewX(x),skewY(y)倾斜，不能合起来
+
+# 其他
+
+- echarts
+  - 配置式
+  -  ECharts 总体结构是基于 MVC 架构的
+    - Storage(M)：模型层，实现图形数据的CURD（增删改查）管理；
+    - Painter(V)：  视图层，实现canvas 元素的生命周期管理，即：视图渲染、更新控制、绘图；
+    - Handler(C)：控制层，事件交互处理，实现完整的dom事件模拟封装。
+- canvas还是svg：svg 交互性更好，性能较弱，不适用于移动端，在绘制数万个点时会崩溃。而 canvas 的渲染速度和性能更好。
+

@@ -20,7 +20,7 @@ date: "2023-01-11"
     - parseFloat、parseInt和全局函数相同
   - Number类的实例方法
     - toEcponential( fractionDigits  可选，用来指定小数点后有几位数字。 )以指数方法表示该数字(1.2e+1->12)
-    - toFixed( digits  小数点后数字的个数；介于 0 到 20) 使用定点表示法表示给定数字的字符串。 
+    - toFixed(digits小数点后数字的个数，介于 0 到 20) 使用定点表示法表示给定数字的字符串。 
     - toPrecision(  `precision` 一个用来指定有效数个数的整数)
     - toString(radix:指定进制)
     - 这几个返回都是字符串
@@ -246,7 +246,7 @@ date: "2023-01-11"
   - String(true)                 // "true" 
   - String(null)                 // "null" 
   - String(undefined)            // "undefined" 
-  - String(Symbol('s'))          // "Symbol(s)"
+  - String(Symbol('s'))          // "Symbol(s)"，就是没有引号的哦
   - 对于Object类，取决于他们的toString方法，比如[1,2]=>"1,2"
 
 - 隐式转换： **如果其中一个操作数是字符串；或者其中一个操作数是对象，且可以通过ToPrimitive操作转换为字符串，则执行字符串连接操作；其他情况执行加法操作。** 
@@ -254,6 +254,32 @@ date: "2023-01-11"
 - **对于执行加法操作的情况，如果操作数有一边不是number，则执行ToNumber操作，将操作数转换为数字类型。** 
 
 -  关于常见的Array我们在JS内置对象（数据容器）中讨论
+
+### toString、valueOf、ToPrimitive
+
+ `toString` 方法对于值类型数据使用而言，其效果相当于类型转换，将原类型转为字符串。 `valueOf` 方法对于值类型数据使用而言，其效果将相当于返回原数据。对于unll和undefined，.toString()报错（String(x)不会）
+
+对象的`Symbol.toPrimitive`属性。指向一个方法。该对象被转化为原始类型的值时，会调用这个办法，返回该对象对应的原始类型值。 `Symbol.toPrimitive`被调用时,会接受一个字符串参数，表示当前运算的模式，一个有三种模式。 
+
+```javascript
+var obj2 = {
+  [Symbol.toPrimitive](hint) {
+    if(hint == "number"){
+        return 10;
+    }
+    if(hint == "string"){
+        return "hello";
+    }
+    return true;
+  }
+}
+
+console.log(+obj2);     //10    --hint in "number"
+console.log(`${obj2}`); //hello --hint is "string"
+console.log(obj2 + ""); //"true"
+```
+
+而对于对象，自己实现这两个方法，作用于强制类型转换时，在进行字符串强转时候，优先调用toString()方法。在进行数值运算的时候，优先调用valueOf方法。再有运算符的情况下，valueOf的优先级要高于toString()方法。   Symbol.toPrimitive在类型转换方面，优先级是最高的。
 
 # 特殊流程控制
 
@@ -293,7 +319,7 @@ date: "2023-01-11"
 - ```javascript
   //函数自调用
   (function () {
-      var x = "Hello!!";      // 我将调用自己
+      var x = "Hello!!";// 我将调用自己
   })();//注意不写函数名（不要声明）
   //也可以不带括号，在function前边加+|-|~|!并且在末尾加入(实参)
   ```
@@ -316,7 +342,7 @@ date: "2023-01-11"
 - `document`是`window`的一个对象属性。`window` 对象表示浏览器中打开的窗口。如果文档包含框架（`frame` 或 `iframe` 标签），浏览器会为 HTML 文档创建一个 `window` 对象，并为每个框架创建一个额外的 `window` 对象。所有的全局函数和对象都属于 `window` 对象的属性和方法。
 - `window` 指窗体。`document`指页面。`document`是`window`的一个子对象。
 - 获取元素结点
-  - getElementById、 getElementsByName、 getElementsByClassName、 getElementsByTagName、querySelector 
+  - getElementById、 getElementsByName、 getElementsByClassName、 getElementsByTagName、querySelector
   - 修改属性getAttribute、setAttribute
   - 创建节点：createElement(tagname)、createTextNode(string)、createAttrubute('attrubuteName')
   - 添加结点appendChild、appendBefore
@@ -351,7 +377,7 @@ date: "2023-01-11"
   - assign(string)加载新文档
   - reload()刷新页面
   - replace(string)用新文档替换当前文档，类似assign
-- Navigator浏览器信息
+- Navigator系统信息
 - Screen屏幕信息，pixelDepth，颜色分辨率
 - History，forward、back、go，操作浏览器前进后退
 
@@ -402,5 +428,3 @@ void 2 === '2';   // (void 2) === '2'，返回 false
 void (2 === '2'); // void (2 === '2')，返回 undefined
 //void让后面的语句强制返回undefined，他的优先级比较高哦！
 ```
-
-****

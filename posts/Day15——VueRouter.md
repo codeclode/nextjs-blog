@@ -13,7 +13,7 @@ date: "2023-01-24"
 <router-link to="/">Go to Home</router-link>
 <router-link to="/about">Go to About</router-link>
 <router-link :to="{ name: 'user', params: { username: 'erina' }}">User</router-link>
-<!--通过传递 `to` 来指定链接 -->
+<!--通过传递 `to` 来指定链接-->
 <router-view></router-view>
 <!-- 路由匹配到的组件将渲染在这里 -->
 ```
@@ -474,7 +474,7 @@ else if(failure){
 - addRouter(name,route:RouteRecordRaw)\\removeRouter(name)
 - afterEach((to,from,failure)=>{xxx})
 - back()\\forward()\\go(n)类似history
-- beforeEach()\\beforeREsolve()：守卫
+- beforeEach()\\beforeResolve()：守卫
 - getRoutes()：获取所有路由记录的完整列表。 
 - hasRouter(name):boolean 确认是否存在指定名称的路由。 
 - isReady():Promise\<void\> 当路由器完成初始化导航时，返回一个 Promise，这意味着它已经解析了所有与初始路由相关的异步输入钩子和异步组件。 
@@ -562,7 +562,7 @@ createRouter({
 
   - name：命名视图
 
-  - slot：如果希望配置过度和空状态，route参数是RouteLocationNormalized对象 
+  - slot：如果希望配置过渡和空状态，route参数是RouteLocationNormalized对象 
 
     ```html
   <router-view v-slot="{ Component, route }">

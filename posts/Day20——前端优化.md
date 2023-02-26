@@ -33,7 +33,7 @@ enum Direction {
   WEST = "WEST",
 }
 //使用字符串枚举。在一个字符串枚举里，每个成员都必须用字符串字面量，或另外一个字符串枚举成员进行初始化。
-  
+
 enum Enum {
   A,
   B,
@@ -68,11 +68,10 @@ tupleType = ["semlinker", true];
   - ```typescript
     let someValue: any = "this is a string";
     let strLength: number = (<string>someValue).length;
-    
     let someValue: any = "this is a string";
     let strLength: number = (someValue as string).length;
     ```
-
+  
 - 非空断言!
 
   - ```typescript
@@ -265,6 +264,7 @@ class Developer extends Person {
 - type可以声明联合类型 {stuNo: number} | {classId: number} 
 - type可以声明元组
 - interface重复声明会合并而type报错
+- 类可以实现接口（ implements ），接口可以继承接口
 
 ### 泛型
 
@@ -433,6 +433,10 @@ const p: Required<PhoneType> = {
 ### 提取属性
 
 ```typescript
+type Pick<T, K extends keyof T> = {
+    [P in K]: T[P];
+};
+
 interface HousesItemType {
   desc: string;
   houseCode: string;
@@ -452,6 +456,10 @@ type MiniHousesItemType = Pick<
 ### 只读
 
 ```typescript
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P]
+}
+
 interface ResultType<T=any>{
     data:T
     status:number
@@ -487,6 +495,9 @@ const list: Record<Names, PersonType> = {
 ### 忽视和移除
 
 ```typescript
+type Exclude<T, U> = T extends U ? never : T;
+type Omit = Pick<T, Exclude<keyof T, K>>;
+
 interface CarType {
   name: string;
   type: string;
@@ -894,7 +905,7 @@ const observer = new PerformanceObserver((list) => {
 	console.log(entry.duration);
 	console.groupEnd(entry.name);
   }
-})	
+})
 observer.observe({entryTypes://只有这一个参数，代表要记录的性能字符串
 ['longtask','frame','navigation','resource','mark','measure','paint']});
 observer.disconnect()//停止监听
@@ -936,7 +947,7 @@ console.log(records[0].duration);
 
 - gzip压缩响应
 
-  - Accept-Encoding: gzip, deflate 客户端
+  - Accept-Encoding: gzip, deflate客户端
   - Content-Encoding: gzip 服务端
 
 - 压缩文件
@@ -1226,7 +1237,7 @@ window.addEventListener('beforeinstallprompt', (e) => {//支持安装到主屏�
 
 ServiceWorker 是一种特化的 Worker，专门来处理跟网页有关的资源（assets），在浏览器和真正的服务端之间扮演一个代理（Proxy）的角色。ServiceWorker 同时引入了缓存（Cache），可以用来存储一个网络响应。 主要负责离线请求和性能优化。
 
-一个页面只能注册一个，当一个可以被多个注册。
+一个页面只能注册一个，一个可以被多个注册。
 
 ```javascript
 //页面脚本

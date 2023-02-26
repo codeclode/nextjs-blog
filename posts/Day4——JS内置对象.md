@@ -37,7 +37,7 @@ date: "2023-01-12"
   
 - 和Object的区别
 
-  - `Map` 对象继承自 `Obejext` 对象,可以通过原型继承去调用 `Object` 身上的原型方法
+  - `Map` 对象继承自 `Obeject` 对象,可以通过原型继承去调用 `Object` 身上的原型方法
   - Map只能new，Object可以直接大括号或者Object.create
   - Map实现了迭代器，可以for-of，且按插入顺序返回
   - 在 `Map` 对象中,该对象的 `key` 可以是任何类型的值,而在普通对象中的 `key` 只能是 `string` 类型(`number`类型会自动转变成 `string` 类型)和 `Symbol` 类型,如果传进来的是复杂类型会自动报错。
@@ -52,7 +52,7 @@ date: "2023-01-12"
 ### WeakMap
 
 - weakMap的键只能是object，这样可以及时回收
-- 键不会被引用计数记录（值依然会被记录）
+- 键不会被引用记录（值依然会被记录）
 - WeakMap不可迭代
 - WeakMap没有map的属性，只有delete、get、set、has方法
 
@@ -150,7 +150,7 @@ date: "2023-01-12"
 ```javascript
 ![]
 false
-![1,2,3]
+![1,2,3]//永远是真( o｀ω′)ノ
 false
 Number([])
 0
@@ -208,7 +208,7 @@ new RegExp('ab+c', 'i') // 构造函数
 //RegExp(pattern[, flags])
 ```
 
-### 静态属性lastIndex
+### 属性lastIndex
 
 ```javascript
 lastIndex = regExpObj.lastIndex;//用来指定下一次匹配的起始索引，只有正则表达式使用了表示全局检索的 "g" 或者粘性检索的 "y" 标志时，该属性才会起作用。此时应用下面的规则：
@@ -359,6 +359,8 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 
 - new Promise((resolution,reject)),resolution就是.then(()=>{})方法，reject就是.catch(()=>{})方法，当然如果.then里面就俩函数，那么第二个函数就是reject
 
+- then方法接受的参数是函数，而如果传递的并非是一个函数，它实际上会将其解释为then(null)，这就会导致前一个Promise的结果会传递下面。 
+
   ```javascript
   let x = new Promise((resolve)=>{
       return
@@ -475,7 +477,7 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
     console.log(value);
     // pFast fulfils first
   })
-  // 期望输出："很快完成"有一个完成就全部完成，除非全失败
+  // 期望输出："很快完成"有一个完成就全部完成，除非全失败，返回 All promises were rejected
   ```
 
 - Promise.reject(reason)：直接返回一个带有reason的拒绝 `Promise` 对象 
@@ -554,7 +556,7 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 - set(obj,propkey,value,receiver)，为obj设置propkey属性为value，如果遇到setter，receiver则被设置为setter方法的this值。
 - get(obj,propkey,receiver)类似set的读取属性
 - has(obj,propkey)查找是否有对应属性
-- preventExtensions(obj)、isExtensible(obj),getPrototypeOf(obj),setPrototypeOf(obj)->返回boolean其实就是Object里的同名方法，不过它遇到非对象不会自动转换为对象而是抛异常
+- preventExtensions(obj)、isExtensible(obj),getPrototypeOf(obj),setPrototypeOf(obj)->返回boolean，其实就是Object里的同名方法，不过它遇到非对象不会自动转换为对象而是抛异常
 - ownKeys：等价于Object.getOwnPropertyNames+Object.getOwnPropertySymbols
 - getOwnPropertyDescriptor(obj,propkey)，类似Object的同名函数，返回属性描述对象，不过它遇到非对象不会自动转换为对象而是抛异常
 - defineProperty(obj,propKey,attribute)，定义obj.propkey=attribute,返回设置是否成功
@@ -588,7 +590,6 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
   | isExtensible、preventExtensions | Object.isExtensible、preventExtensions |
   |             ownKeys             |            Reflect.ownKeys             |
   |         setPrototypeOf          |         Object.setPrototypeOf          |
-  |                                 |                                        |
 
 ### 细说handler
 

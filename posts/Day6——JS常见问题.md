@@ -32,7 +32,7 @@ date: "2023-01-14"
 
 - 注意，自执行函数的作用域也理解为函数作用域
 
-- 回调函数的作用域在定义的时候决定，无关在哪个函数里执行
+- 函数的作用域在定义的时候决定，无关在哪个函数里执行
 
 # var、无var、let
 
@@ -75,7 +75,7 @@ date: "2023-01-14"
 >
 >  > 可能
 >  >
->  > - 未声明的变量，（就是默认绑到window上的那个）
+>  > - 未声明的变量（就是默认绑到window上的那个）
 >  > - 闭包
 >  > - 没有及时清除DOM元素应用（元素不在文档里了，但是依然有变量引用了它）
 >  > - 被遗忘的定时器回调
@@ -83,7 +83,7 @@ date: "2023-01-14"
 >  >
 >  > 常见情景
 >  >
->  > - 框架组件卸载后没有清楚原来的定时器或绑定的方法
+>  > - 框架组件卸载后没有清除原来的定时器或绑定的方法
 >  > - EventBus未解绑
 >  >
 >  > 解决方案
@@ -92,6 +92,18 @@ date: "2023-01-14"
 >  > - 一个原则：不用马上还
 >  >
 >  > debug：浏览器控制台内存选项
+>
+>  两种垃圾回收机制
+>
+>  > 引用计数
+>  >
+>  > > 古早方法，现在被淘汰了
+>  >
+>  > 标记清除
+>  >
+>  > > 判断一个变量是否可以抵达，不可抵达就回收
+>  > >
+>  > > 可抵达的意思是：从globalThis开始遍历，扫描所有可以触及的对象（这下理解为什么var定义的东西为什么也要绑定到window上了）
 
 # 深拷贝
 
@@ -139,7 +151,7 @@ function clone(target, map = new WeakMap()) {
 
 - new函数执行中，会把this指向新创建的实例对象
 
-- 注意，如果构造函数有return并且是一个应用数据类型就会覆盖new 的执行结果
+- 注意，如果构造函数有return并且是一个引用数据类型就会覆盖new 的执行结果
 
 ### 原型链
 
@@ -395,7 +407,7 @@ function SuperType(){
       return function () {
         console.log(this.name)
       }
-  },
+    },
     show4: function () {
       return () => console.log(this.name)
     }
@@ -478,7 +490,16 @@ function SuperType(){
 - 可以认为，所有的同步代码是一个宏任务。
 - RAF，这个东西不是微任务也不是宏任务，要把它理解为下一次重绘之前更新动画帧所调用的函数
 - async函数里到第一个await都是同步的，接下来就是异步了
-- 事件属于同步任务 
+- 对于async
+  - async的返回值
+    - 非thenable，不等待直接加入微任务队列
+    - thenable，等1个then再马上加入微任务队列
+    - promise，等2个then再马上加入微任务队列
+  - await的返回值
+    - 非thenable，会立即向微任务队列添加一个微任务`then`
+    - thenable，等1个then再马上加入微任务队列
+    - promise，表现和非thenable一样。
+- 事件属于同步任务
 
 # 网络编程
 
@@ -581,12 +602,12 @@ const intersectionObserver = new IntersectionObserver((entries) => {
   // 如果 intersectionRatio 小于 0，则目标在视野外，
   // 我们不需要做任何事情。
   if (entries[0].intersectionRatio <= 0) return;
-
   loadItems(10);
   console.log('Loaded new items');
 });
 // 开始监听
 intersectionObserver.observe(document.querySelector('.scrollerFooter'));
+//每次进入在视口的状态改变时触发，非常的智能
 ```
 
 构造函数
@@ -612,8 +633,6 @@ threshold='规定了一个监听目标与边界盒交叉区域的比例值，可
 - unobserve(targetElement)停止观测（仅指targetElement）
 
 callback参数entries：每个被触发的观测对象的 **`IntersectionObserverEntry `** 
-
-IntersectionObserverEntry ：
 
 IntersectionObserverEntry.boundingClientRect：返回包含目标元素的边界信息的DOMRectReadOnly. 边界的计算方式与 Element.getBoundingClientRect()相同。
 

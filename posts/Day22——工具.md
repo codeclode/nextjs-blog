@@ -97,16 +97,16 @@ const instance = axios.create({
 
 - responseType:"json"  选项包括: 'arraybuffer', 'document', 'json', 'text', 'stream' 
 
-- responseEncoding: 'utf8', // 默认值 
+- responseEncoding: 'utf8', // 默认值
 
-- xsrfCookieName: 'XSRF-TOKEN', // 默认值 
+- xsrfCookieName: 'XSRF-TOKEN', // 默认值
 
 - ```javascript
   onUploadProgress: function (progressEvent) {
-      // 处理原生进度事件
+    // 处理原生进度事件
   },
   onDownloadProgress: function (progressEvent) {
-      // 处理原生进度事件
+    // 处理原生进度事件
   },
   ```
 
@@ -194,7 +194,7 @@ axios.interceptors.request.eject(myInterceptor);
 
 ## 请求取消
 
-CancelToken已经弃用，之说signal
+CancelToken已经弃用，仅说signal
 
 使用AbortController来对请求进行中止，这个类有一个只读的signal属性用来控制请求是否中止。
 
@@ -244,7 +244,7 @@ Sass允许规则和属性嵌套
 
 ```scss
 a{
-  $:hover{
+  &:hover{
     cursor:"pointer"
   }
 }

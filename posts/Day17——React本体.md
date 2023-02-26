@@ -85,7 +85,7 @@ const MyContext = React.createContext(defaultValue);//创建一个环境
 
 ### unmountComponentAtNode(container)
 
- 从 DOM 中卸载组件，会将其事件处理器（event handlers）和 state 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 true，如果没有组件可被移除将会返回 false。 
+从 DOM 中卸载组件，会将其事件处理器（event handlers）和 state 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 true，如果没有组件可被移除将会返回 false。 
 
 ### createPortal(child,container)
 
@@ -164,14 +164,13 @@ class Clock extends React.Component {
   componentWillUnmount() {//组件卸载关闭定时器
       clearInterval(this.timerID);
   },
-  
-    tick() {
-      this.setState({
-        date: new Date()//不要直接修改任何state
-      });
-      /*this.setState((state, props) => ({
-        counter: state.counter + props.increment
-      }));*/
+  tick() {
+    this.setState({
+      date: new Date()//不要直接修改任何state
+    });
+    /*this.setState((state, props) => ({
+      counter: state.counter + props.increment
+    }));*/
   }
 
   render() {
@@ -400,7 +399,7 @@ class FileInput extends React.Component {
 - shouldComponentUpdate(nextProps, nextState)如果返回false那么取消本次更新
   - React.Component 并未实现 shouldComponentUpdate()，而 `React.PureComponent` 中以浅层对比 prop 和 state 的方式来实现了该函数。 
 - render()
-- getSnapshotBeforeUpdate(prevProps, prevState)拍快照，返回值就是生成的快照传给componentDidUpdate
+- getSnapshotBeforeUpdate(prevProps, prevState)拍快照，返回值就是生成的快照传给下边那个周期
 - componentDidUpdate(prevProps,prevState,snapshot)在更新后会被立即调用。首次渲染不会执行此方法。 
 
 ### 卸载
@@ -427,7 +426,7 @@ class FileInput extends React.Component {
 const [count,setCount] = useState(0)
 ```
 
-一般来说，在函数退出后变量就会”消失”，而 state 中的变量会被 React 保留。 对于响应式，React通过Object.is来对比新state和老state，不一样就会触发副作用（所以数组要\[...oldState,newElement\]）。
+一般来说，在函数退出后变量就会”消失”，而 state 中的变量会被 React 保留。 对于响应式，React通过Object.is来对比新state和老state，不一样就会触发副作用（所以数组要\[...oldState,newElement\]）。和setState不一样的是，这里修改状态必定异步。如果是函数，会执行函数以返回值为value。
 
 ## useEffect
 
@@ -443,7 +442,6 @@ useEffect(() => {
 },[count]);//新打开和count更新时都执行
 useEffect(() => {
   document.title = `You clicked hh times`; 
-
 },[]);//新打开时都执行
 //第二个参数要是传对象就会每次都执行
 ```
@@ -551,6 +549,14 @@ function TextInputWithFocusButton() {
 
 和自己搞一个对象不一样的是，useRef每次渲染时返回的都是同一个ref对象，当 ref 对象内容发生变化时，useRef并不会通知。变更 .current属性不会引发组件重新渲染。 
 
+## useDeferredValue
+
+```jsx
+const deferredValue = useDeferredValue(value);
+```
+
+ 让我们延迟渲染不紧急的部分，value可以是一个state，可以帮我们实现防抖。
+
 ## useImperativeHandle
 
 自定义绑定给一个处理对象，从而通过类似代理人的方式模拟操作真正的dom
@@ -569,6 +575,8 @@ FancyInput = forwardRef(FancyInput);
 ```
 
 ## useTransition
+
+非紧急更新
 
 ```react
 function App() {
@@ -723,3 +731,31 @@ React16以前，更新是通过深度优先遍历完成的，当树的层级深�
 **current**:正在视图层渲染的树叫current fiber树
 
 更新时重新创建workInProgress树，复用当前current树上的alternate，作为新的workInProgress二者形成双缓冲，类似舞台的左右场，实现更加顺滑和迅速的切换。
+
+# 三种模式
+
+React官方一开始就是把setState设计成了异步模式，但是为了现实中的一些业务，在**Legacy模式**下，脱离React上下文环境的情况就出现异步模式，但是在**concurrent模式**下是肯定都是异步的。 
+
+### legacy流行模式
+
+```jsx
+ReactDOM.render(<App />, rootNode)
+```
+
+同步构建DOM
+
+### concurrent实验+未来模式
+
+```jsx
+ReactDOM.createRoot(rootNode,<App />)
+```
+
+React以提升用户交互体验为核心，把任务分为高低优先级，此模式下，高优先级的任务可以打断低优先级任务的执行，低优先级任务在打断之后被恢复。另外，倘若**低优先级任务一直被高优先级任务打断，那么低优先级任务就会过期，会被强制执行掉**。
+
+concurrent不存在一个很大的任务，取而代之代之的是很多个“微型”任务。Concurrent 是解决计算密集型的一种思路，而Fiber是React体系下，要实现这种思路的一种基础结构，可以记录处理过的信息，从而可以恢复和暂停。
+
+### blocking过渡模式
+
+```jsx
+ReactDOM.createBlockingRoot(rootNode).render(<App />)
+```

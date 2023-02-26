@@ -155,7 +155,7 @@ function Issue() {
     <div>
       {/* fallback：数据没到之前的骨架屏 */}
       <Suspense fallback={<IssueHistorySkeleton />}>
-        {/* 等着Await里的resolve号了我就渲染里边那个组件 */}
+        {/* 等着Await里的resolve好了我就渲染里边那个组件 */}
         <Await resolve={history}>
           {(resolvedHistory) => (<IssueHistory history={resolvedHistory} />)}
         </Await>

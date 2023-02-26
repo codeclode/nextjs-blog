@@ -4,9 +4,17 @@ date: "2023-01-23"
 ---
 # 对框架的理解
 
-## MVVM
+Model->数据层、View->视图层
 
-Model、View、ViewModel 
+## MVC
+
+c->controller，controller和view并没有解耦，业务逻辑被放置在model层 
+
+## MVP
+
+Model和View之间不进行通讯，都是通过Presenter完成。Controller和View解耦。
+
+## MVVM
 
 通过双向绑定的机制，实现数据和UI内容，只要想改其中一方，另一方都能够及时更新的一种设计理念，这样就省去了很多在View层中写很多case的情况，只需要改变数据就行。在MVVM中View和ViewModel通过Binding进行关联，他们之前的关联处理通过DataBinding完成。 
 
@@ -54,7 +62,7 @@ var vm = new Vue({
     }//默认只有getter
 	fillname:{
       get: function () {
-      	return this.firstName + ' ' + this.lastName
+      	  return this.firstName + ' ' + this.lastName
         },
     	set: function (newValue) {
       		var names = newValue.split(' ')
@@ -211,6 +219,7 @@ new Vue({
 ### prop
 
 ```vue
+<script>
 Vue.component('my-component-name', {
   inheritAttrs: false,
   //不希望组件的根元素继承 attribute
@@ -247,6 +256,7 @@ Vue.component('my-component-name', {
     </label>
   `
 })
+</script>
 //组件可以接受任意的 attribute，而这些 attribute 会被添加到这个组件的根元素上。
 <my-component-name v-bind="post"></div>
 <!--这样传递的是post对象所有的键值对，类似react的{...v}-->
@@ -323,7 +333,7 @@ Vue.component('async-example', function (resolve, reject) {
     })
   }, 1000)
 })
-允许你以一个工厂函数的方式定义你的组件，这个工厂函数会异步解析你的组件定义。Vue 只有在这个组件需要被渲染的时候才会触发该工厂函数，且会把结果缓存起来供未来重渲染。
+//允许你以一个工厂函数的方式定义你的组件，这个工厂函数会异步解析你的组件定义。Vue 只有在这个组件需要被渲染的时候才会触发该工厂函数，且会把结果缓存起来供未来重渲染。
 new Vue({
   components: {
     'my-component': () => import('./my-async-component')
@@ -523,13 +533,12 @@ Vue.filter('capitalize', function (value) {
   Vue.use(plugin)
   Vue.mixin(mixin)
   Vue.compile( template:string )
-  //将一个模板字符串编译成 render 函数。只
-  //在完整版时可用。
+  //将一个模板字符串编译成 render 函数。只在完整版时可用。
   Vue.observable( object )
   //让一个对象可响应。Vue 内部会用它来处理 data 函数返回的对象。
   Vue.version//Vue版本
   ```
-
+  
 - 组件选项/数据
 
   - data
@@ -1180,19 +1189,19 @@ const { x, y } = useMouse()
 
 ## 生命周期（选项）
 
-|     name      |                         content                         |
-| :-----------: | :-----------------------------------------------------: |
-| beforeCreate  |               初始化、props解析后，data前               |
-|    created    |      在组件实例处理完所有与状态相关的选项后调用。       |
-|  beforeMount  |                 在组件被挂载之前调用。                  |
-|    mounted    |                 在组件被挂载之后调用。                  |
-| beforeUpdate  |                       组件更新前                        |
-|    updated    |                       组件更新后                        |
-| beforeUnmount |                         卸载前                          |
-|   unmounted   |                         卸载后                          |
-| errorCaptured |           在捕获了后代组件传递的错误时调用。            |
-|   activated   | keep-alive缓存树的一部分，当组件被插入到 DOM 中时调用。 |
-|  deactivated  | keep-alive缓存树的一部分，当组件从 DOM 中被移除时调用。 |
+|             name             |                         content                         |
+| :--------------------------: | :-----------------------------------------------------: |
+|         beforeCreate         |               初始化、props解析后，data前               |
+|           created            |      在组件实例处理完所有与状态相关的选项后调用。       |
+|         beforeMount          |                 在组件被挂载之前调用。                  |
+|           mounted            |                 在组件被挂载之后调用。                  |
+|         beforeUpdate         |                       组件更新前                        |
+|           updated            |                       组件更新后                        |
+|        beforeUnmount         |                         卸载前                          |
+|          unmounted           |                         卸载后                          |
+| errorCaptured(err, vm, info) |           在捕获了后代组件传递的错误时调用。            |
+|          activated           | keep-alive缓存树的一部分，当组件被插入到 DOM 中时调用。 |
+|         deactivated          | keep-alive缓存树的一部分，当组件从 DOM 中被移除时调用。 |
 
 ## 生命周期（组合）
 
@@ -1208,7 +1217,7 @@ const { x, y } = useMouse()
 |    onActivated    |                        -                        |
 |   onDeactivated   |                        -                        |
 
-值得注意的是，setup在beforeCreate之前执行
+值得注意的是，setup在beforeCreate之前（或者说是模拟量create）执行
 
 ## API，仅仅比较和v2的差异
 
@@ -1472,6 +1481,8 @@ export default {
 
 ## 虚拟DOM和diff
 
+- 解析template->AST->渲染函数->虚拟DOM
+- 通过遍历AST生成渲染函数
 - 虚拟dom，就是我们在渲染的时候参考的那颗树
 - 里边有很多比如tag、class等标签相关的东西，当然，有子虚拟DOM数组
 - render方法的作用就是递归地创建结点
@@ -1701,3 +1712,11 @@ function computed(fn) {
 
 - 接受一个回调函数作为参数，这个回调函数会在下一个事件循环中被执行，并且能够获取到更新后的DOM并且进行操作。除了传递回调函数之外，nextTick 方法还返回一个 Promise 对象，可以使用 await 关键字等方式等待 nextTick 执行完成
 - Promise.then->MutationObserver->setImmediate->setTimeout(fn,0) 
+
+### 状态更新
+
+在vue中，更改数据后，会在微任务中更新dom，这是一个异步操作。 
+
+在我们修改一个数据后，会触发setter，然后将对应的更新任务推导队列中，并调用`queueFlush`函数，这个函数会在一个Promise中调用`flushjobs`，这时候vue就会去做更新组件，更新dom的一些操作。 
+
+改成同步：this.$update()

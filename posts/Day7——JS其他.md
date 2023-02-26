@@ -285,7 +285,7 @@ objectStoreRequest.onsuccess = function(event) {
 - 右值必须是一个对象，其他会报错（比如null）
 - 根据原型链判断
 - 返回true和false
-- 要求检测的实例必须是对象数据类型的 
+- 要求检测的实例必须是对象数据类型的
 - 所有对象都是 Object 的实例，检测结果都是 TRUE ，所以无法基于这个结果判断是否为普通对象 
 
 ### constructor
@@ -427,9 +427,8 @@ let chunkList = []//存放切片的数组
 input.addEventListener('change', (e) => {
   files = e.target.files[0]
   console.log(files);
-    
-    //创建切片
-    //上传切片
+  //创建切片
+  //上传切片
 })
 function createChunk(file, size = 2 * 1024 * 1024) {//size:切片大小
   const chunkList = []
@@ -627,23 +626,23 @@ function asyncTest(fn) {
   //这里相当于与给参数的generator函数套了一层
   return function () {
     return new Promise((resolve, reject) => {
-        let gen = fn()
-        function next(ret) {
-          if (ret.done) {
-            return resolve(ret.value)
-          }
-          return Promise.resolve(ret.value).then(onFullFilled, err => {
-            reject(err)
-          })
+      let gen = fn()
+      function next(ret) {
+        if (ret.done) {
+          return resolve(ret.value)
         }
-        function onFullFilled(value) {
-          let ret
-          try {
-            ret = gen.next(value)
-          } catch (e) {
-            return reject(e)
-          }
-          next(ret)
+        return Promise.resolve(ret.value).then(onFullFilled, err => {
+          reject(err)
+        })
+      }
+      function onFullFilled(value) {
+        let ret
+        try {
+          ret = gen.next(value)
+        } catch (e) {
+          return reject(e)
+        }
+        next(ret)
       }
       onFullFilled()
     })

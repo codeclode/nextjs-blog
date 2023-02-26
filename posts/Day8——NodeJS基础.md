@@ -347,14 +347,11 @@ date: "2023-01-16"
 - 描述
 
   - description
-- keywords，字符串数组
-  
+  - keywords，字符串数组
   - author，字符串或对象
-- contributors，字符串数组或对象
-  
+  - contributors，字符串数组或对象
   - homepage，项目主页
-- repository，仓库地址
-  
+  - repository，仓库地址
   - bugs，问题提交地址
   
 - 依赖配置，都是依赖包对象，不同的是他们的用途

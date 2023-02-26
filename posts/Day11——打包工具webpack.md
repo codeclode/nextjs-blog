@@ -51,7 +51,7 @@ module.exports = {
 }
 
 //package.json
-  "scripts": {
+"scripts": {
     "build": "webpack --config ./build/webpack.config.js",
 },
 ```
@@ -131,7 +131,7 @@ module.exports = {
     "scripts": {
         "dev": "webpack server --config build/webpack.config.js --open",
         ...
-    },
+    }
 ```
 
 # 多环境
@@ -154,7 +154,6 @@ module.exports = merge(common, {
     contentBase: path.resolve(__dirname, '../dist')
   },
 })
-
 //生产
 const { merge } = require('webpack-merge');
 const common = require('./webpack.config.js');
@@ -169,7 +168,7 @@ module.exports = merge(common, {
     "build": "webpack --config ./build/webpack.prod.js --mode production",
     ...
 }
-    //如果不在脚本里添加mode，也可以写在配置文件里 mode: 'development',
+//如果不在脚本里添加mode，也可以写在配置文件里 mode: 'development'
 ```
 
 # CSS和静态资源
@@ -287,23 +286,23 @@ webpack5 使用了“资源模块”来代替以上 loader。 官方是这样解
 > 资源模块(asset **module**)是一种模块类型，它允许使用资源文件（字体，图标等）而无需配置额外 loader。 
 
 - asset/resource： 发送一个单独的文件并导出 URL。之前通过使用 file-loader 实现。
-- asset/inline： 导出一个资源的 data URI。之前通过使用 url-loader 实现。
+- asset/inline：导出一个资源的 data URI。之前通过使用 url-loader 实现。
 - asset/source： 导出资源的源代码。之前通过使用 raw-loader 实现。
-- asset： 在导出一个 data URI 和发送一个单独的文件之间自动选择。之前通过使用 url-loader，并且配置资源体积限制实现。
+- asset：在导出一个 data URI 和发送一个单独的文件之间自动选择。之前通过使用 url-loader，并且配置资源体积限制实现。
 
 使用流程：首先建立assets文件夹，在这里搞张图片，然后在js里导入他。
 
 ```javascript
 module: {
-    rules: [
-      {
-        test: /\.(jpe?g|png|svg|gif)/i,
-        type: 'asset/resource',
-        generator: {
-			filename: 'img/[hash][ext][query]' // 局部指定输出位置
-		}
+  rules: [
+    {
+      test: /\.(jpe?g|png|svg|gif)/i,
+      type: 'asset/resource',
+      generator: {
+		filename: 'img/[hash][ext][query]' // 局部指定输出位置
       }
-    ]
+    }
+  ]
 }
 ```
 
@@ -424,7 +423,7 @@ module.exports = BLoader;
 
 **Pitching** 阶段: Loader 上的 pitch 方法，按照 `后置(post)、行内(inline)、普通(normal)、前置(pre)` 的顺序调用。
 
-**Normal** 阶段: Loader 上的 常规方法，按照 `前置(pre)、普通(normal)、行内(inline)、后置(post)` 的顺序调用。模块源码的转换， 发生在这个阶段。
+**Normal** 阶段: Loader 上的 常规方法，按照 `前置(pre)、普通(normal)、行内(inline)、后置(post)` 的顺序调用。模块源码的转换， 发生在这个阶段，loader从右往左执行，先执行写在最后边的。
 
 在 Loader 的运行过程中，如果发现该 Loader 上有pitch属性，会先执行 pitch 阶段，再执行 normal 阶段，当一个 Loader 的 pitch 阶段有返回值时，将跳过后续 Loader 的 pitch 阶段，直接进行到该 Loader上一个loader 的 normal 阶段（相当于不再解析文件而是直接返回content）。 
 
@@ -450,7 +449,7 @@ watchOptions:{"ignored":"/node_modules/"}
 
 ### 开发时使用style-loader
 
-主要是 MiniCssExtractPlugin对于热更新HMR支持的不是很好 
+主要是MiniCssExtractPlugin对于热更新HMR支持的不是很好 
 
 ### resolve优化
 
@@ -985,4 +984,5 @@ module.exports = merge(baseConfig, {
   - uglifyjs-webpack-plugin不支持 ES6 压缩 (Webpack4 以前) 
   - mini-css-extract-plugin分离样式文件，CSS 提取为独立文件 
   - serviceworker-webpack-plugin为网页应用增加离线缓存功能 
+  - copy-webpack-plugin直接复制静态文件
 

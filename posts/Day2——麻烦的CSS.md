@@ -112,7 +112,12 @@ date: "2023-01-10"
 - 通配符*
 - ID #
 - class .
-- 属性[xxx(^$|*~)='xxx']
+- 属性[xxx(^$|*~)='xxx'] 
+  - ^->以xxx开头
+  - $->结尾
+  - ~->包含指定单词
+  - |->开头， 值必须是完整或单独的单词 
+  - *->包含xxx
 - 标签 div
 
 ### 组合选择器
@@ -160,7 +165,7 @@ date: "2023-01-10"
 
 - offsetWidth = clientWidth+border
 
-- offsetLeft就是距离父级内边距的距离，父级身上的position：absolute/fixed决定 如果父级元素没有就逐层查找直到body 
+- offsetLeft就是距离父级内边距的距离，父级身上的position：absolute/fixed决定 如果父级元素没有就逐层查找直到body
 
 - scrollWidth=clientWidth+margin
 
@@ -245,9 +250,9 @@ z-index失效：父元素不是absolute或fixed、设置z-index的同时还设�
 
 ```javascript
 img.offsetTop < window.innerHeight + document.body.scrollTop;
-//如果可是窗口不是window
+//如果可视窗口不是window
 element.offsetTop - document.documentElement.scrollTop < document.documentElement.clientHeight
-//更好用的其实是getBoundingClientRect,获取到视窗的举例
+//更好用的其实是getBoundingClientRect,获取到视窗的距离
 element.getBoundingClientRect().top < clientHeight
 //interSectionObserver
 ```
@@ -263,7 +268,7 @@ element.getBoundingClientRect().top < clientHeight
 - border-radius
 - box-shadow
 - filter、backdrop-filter
-- background-clip|origin|sizze
+- background-clip|origin|size
 
 - 。。。
 
