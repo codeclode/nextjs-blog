@@ -359,6 +359,10 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 
 - new Promise((resolution,reject)),resolution就是.then(()=>{})方法，reject就是.catch(()=>{})方法，当然如果.then里面就俩函数，那么第二个函数就是reject
 
+-  `.then` 或者 `.catch` 都会返回一个新的 promise，如果返回值不是promise会包装成promise，返回的值不能是 promise 本身
+
+- .finally最终返回的默认会是一个上一次的Promise对象值，不过如果抛出的是一个异常则返回异常的Promise对象。
+
 - then方法接受的参数是函数，而如果传递的并非是一个函数，它实际上会将其解释为then(null)，这就会导致前一个Promise的结果会传递下面。 
 
   ```javascript

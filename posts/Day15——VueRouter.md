@@ -219,6 +219,30 @@ const routes = [
 ///search?q=vue 将传递 {query: 'vue'} 作为 props 传给 SearchUser 组件。
 ```
 
+## 滚动行为
+
+**只在支持 history.pushState 的浏览器中可用。** 
+
+```javascript
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes: [...],
+  scrollBehavior (to, from, savedPosition) {
+    // return 期望滚动到哪个的位置
+	// 如果返回savedPosition，则和浏览器的原生表现一样
+	return {top:0,behavior: 'smooth'}
+	return {el:to.hash}//指定锚点
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve({ left: 0, top: 0 })
+      }, 500)
+    })//实现延迟滚动
+  }
+})
+```
+
+
+
 ## 两种历史记录模式
 
 ### hash

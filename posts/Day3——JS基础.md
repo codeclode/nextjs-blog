@@ -149,7 +149,7 @@ date: "2023-01-11"
     
     - is(v1,v2)符合人类理解的判断是否一致
     
-    - preventExtensions 让一个对象永远不能再添加新的属性 、seal 阻止添加新属性并将所有现有属性标记为不可配置。freeze冻结一个对象。冻结了一个对象则不能向这个对象添加新的属性，不能删除已有属性，不能修改该对象已有属性的可枚举性、可配置性、可写性，以及不能修改已有属性的值。同时有对应的isExtensible、isFrozen、isSeal方法
+    - preventExtensions让一个对象永远不能再添加新的属性 、seal 阻止添加新属性并将所有现有属性标记为不可配置。freeze冻结一个对象。冻结了一个对象则不能向这个对象添加新的属性，不能删除已有属性，不能修改该对象已有属性的可枚举性、可配置性、可写性，以及不能修改已有属性的值。同时有对应的isExtensible、isFrozen、isSeal方法
     
     - fromEntries( iterable )，就是entries的逆操作
     

@@ -674,18 +674,20 @@ optimization: {
 
 ### 初始化
 
-1. 将 `process.args + webpack.config.js` 合并成用户配置
-2. 调用 `validateSchema` 校验配置
-3. 调用 `getNormalizedWebpackOptions + applyWebpackOptionsBaseDefaults` 合并出最终配置
-4. 创建 `compiler` 对象
-5. 遍历用户定义的 `plugins` 集合，执行插件的 `apply` 方法
-6. 调用 `new WebpackOptionsApply().process` ，加载各种内置插件
+1. 将命令行和comfig文件合并成用户配置并校验
+3. 合并用户配置和默认配置出最终配置
+4. 利用配置创建 `compiler` 对象
+5. 遍历用户定义的 `plugins` 集合，执行 `apply` 方法
+6. 加载各种内置插件
+6. 执行compile的run方法开始编译
 
 ### 构建
 
- **module => ast => dependences => module** 
+ **module => ast => dependences => module**
 
-- 调用 `handleModuleCreate` ，根据文件类型构建 `module` 子类
+- 找到所有entry文件
+
+- 根据文件类型构建 `module` 子类
 - 调用 loader-runner仓库的 `runLoaders` 转译 `module` 内容，通常是从各类资源类型转译为 JavaScript 文本
 - 调用acorn将 JS 文本解析为AST
 - 遍历 AST，触发各种钩子 
@@ -985,4 +987,3 @@ module.exports = merge(baseConfig, {
   - mini-css-extract-plugin分离样式文件，CSS 提取为独立文件 
   - serviceworker-webpack-plugin为网页应用增加离线缓存功能 
   - copy-webpack-plugin直接复制静态文件
-

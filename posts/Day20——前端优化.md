@@ -321,6 +321,23 @@ type Partial<T> = {
 };
 ```
 
+### d.ts和declare
+
+在.d.ts声明变量或者模块等东西之后，在其他地方可以不用import导入这些东西就可以直接用，用，而且有语法提示。.d.ts 文件中的顶级声明必须以 "declare" 或 "export" 修饰符开头，通过declare声明的类型或者变量或者模块，在include包含的文件范围内，都可以直接引用而不用去import或者import type相应的变量或者类型。
+
+```typescript
+declare var jQuery: (selector: string) => any;
+declare type Asd {
+    name: string;
+}
+declare module '*.css';
+declare namespace API{
+  interface ResponseObj {
+      xxx
+  }
+}
+```
+
 ### 装饰器
 
 - 装饰器属于实验性特性
@@ -691,7 +708,7 @@ $baseFontSize: 100;
   ```css
   .border_1px{
     border-bottom: 1px solid #000;
-    }
+  }
   @media only screen and (-webkit-min-device-pixel-ratio:2){
     .border_1px{
       border-bottom: none;
@@ -787,12 +804,12 @@ function ajax(content) {
   console.log('ajax request ' + content)
 }
 function debounce(fun, delay) {
-  return function (args) {
+  return function (...args) {
     let that = this
     let _args = args
     clearTimeout(fun.id)//尝试取消上次的吟唱
     fun.id = setTimeout(function () {//开始吟唱
-      fun.call(that, _args)
+      fun.apply(that, _args)
     }, delay)
   }
 }
@@ -920,6 +937,19 @@ console.log(records[0].duration);
 首屏优化过程基于浏览器渲染页面的过程
 
 - 开启浏览器缓存（强缓存和协商缓存）减少资源获取时间
+
+- 后端配置Gzip压缩节约带宽，webpack中使用 compression-webpack-plugin 提前可以提前压缩好
+
+  ```json
+  new CompressionPlugin({ 
+    filename: '[path].gz[query]', 
+    algorithm: 'gzip', 
+    test: /\.js$|\.css$|\.html$|\.ttf$|\.eot$|\.woff$/, 
+    threshold: 10240, 
+    minRatio: 0.8,
+    deleteOriginalAssets: false
+  })
+  ```
 
 - 第三方库提取出来，设置一个较长的缓存时间（因为这玩意不大会变）。其实就是分包
 
@@ -1170,6 +1200,16 @@ CSRF通常从第三方网站发起，被攻击的网站无法防止攻击发生�
 - 验证码、UA校验。。。
 - 花钱解决，升级服务器
 - 服务器设置一个ip防火墙，不让这个ip访问
+
+## 劫持
+
+### DNS劫持
+
+怎么我访问淘宝给我引到京东了
+
+### http劫持
+
+利用http名文传输。。。中间人给你加点广告
 
 # PWA和service worker
 

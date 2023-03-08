@@ -139,12 +139,11 @@ function clone(target, map = new WeakMap()) {
   console.log(f1); //=>undefined 因为没有返回值
   console.log(window.name, window.age); //=>'李'  18
   
-  
   let f2 = new Func('李', 18);
   console.log(f2); //=> {name: "李", age: 18}
   console.log(window.name, window.age); //=> window.name是空  window.age是undefined
   ```
-
+  
 - new函数()这种方式就是基于构造函数的方法执行，返回的结果就是一个类的实例
 
 - new Fn,无括号就是无参数的new
@@ -394,6 +393,8 @@ function SuperType(){
 
 - 箭头函数没有this，但是要是在箭头函数里使用this，他就会往上一级作用域查找，如果上一级作用域也没有，那就继续往上找，直到找到全局的window为止 ，他的this基于写在哪里而不是谁调用了他。
 
+- **this绑定的优先级：new绑定 > 显式绑定 > 隐式绑定 > 默认绑定。** 
+
 - ```javascript
   var name = 'window'
   
@@ -425,6 +426,7 @@ function SuperType(){
   person1.show4()()//person1
   //因为这个函数的定义地点就是this=person1时
   ```
+  
 - 构造函数里的this是当前实例
 
 -   实例原型上的公有方法里的this一般是当前实例

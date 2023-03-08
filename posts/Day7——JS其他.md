@@ -62,7 +62,7 @@ self.onmessage = (messageEvent) => {//注意，worker本体接送消息使用sel
 //mainjs
 let worker = new SharedWorker('./sharedWorker.js');
 likeBtn.addEventListener('click', function () {
-	worker.port.postMessage({ type: 'increase', payload: { count: 666 } });
+    worker.port.postMessage({ type: 'increase', payload: { count: 666 } });
 });
 decreaseBtn.addEventListener('click', function () {
 	worker.port.postMessage({ type: 'decrease', payload: { count: 666 } });

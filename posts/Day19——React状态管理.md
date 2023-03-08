@@ -163,7 +163,7 @@ export default usersSlice.reducer
 ## 设计理念
 
 - 不可变，引用对象修改副本，在createSlice方法里面，会自动转换数组方法以及对象等号赋值为不可变更新
-- 单向数据流
+- 单向数据流，View---dispatch--->action->Reducer->Store---subscribe--->View
 
 ## RTKapi连接redux
 
@@ -346,6 +346,7 @@ const onClick = () => {
 - 修改被观察状态
 - 计算值修改
 - 响应修改
+- event->actions->observable state->computed Values->effects
 
 ## 观察状态
 
