@@ -169,7 +169,7 @@ date: "2023-01-10"
 
 - scrollWidth=clientWidth+margin
 
-  scrollTop/scrollLeft  滚动条卷走的高度和宽度
+  、scrollTop/scrollLeft  滚动条卷走的高度和宽度
 
 ### BFC
 
@@ -319,3 +319,26 @@ element.getBoundingClientRect().top < clientHeight
 
 - 后边的元素或者::after设置clear，这样做并不是清除浮动，而是让这个被设置了的元素“看见”浮动，从而向下排列。从而达到防止高度塌陷的问题。
 - 利用overflow（只要不是visible）创建一个BFC（ BFC在计算高度的时候，内部浮动元素的高度也要计算在内。 ）
+
+# CSS模块化
+
+CSS 根据选择器名称去全局匹配元素，它没有作用域可言，比如你在页面的两个不同的地方使用了一个相同的类名，先定义的样式就会被覆盖掉。 
+
+## 三种解决方式
+
+### CSS命名规范
+
+简单的通过冗长的命名实现选择器唯一
+
+BEM：.模块名__元素名--修饰器名
+
+OOCSS：即面向对象的 CSS，类比bootstrap，将元素的样式抽象成多个独立的小型样式类，来提高样式的灵活性和可重用性。 
+
+SMACSS：按照模块功能分成base、layout、module、state、theme来命名。
+
+### CSSmodules
+
+**像 import 一个 JS Module 一样去 import 一个 CSS Module**。每一个 CSS 文件都是一个独立的模块，每一个类名都是该模块所导出对象的一个属性。通过这种方式，便可在使用时明确指定所引用的 CSS 样式。并且，CSS Modules 在打包时会自动**将 id 和 class 混淆成全局唯一的 hash 值**，从而避免发生命名冲突问题。
+
+### Css-in-js
+

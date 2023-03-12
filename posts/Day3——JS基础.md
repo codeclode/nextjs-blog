@@ -135,7 +135,7 @@ date: "2023-01-11"
     
     - entries、keys、values返回可枚举属性的k、v（不会遍历原型链上的，forin会）
     
-    - setPrototypeOf(obj,prototype)设置新的原型对象getyPrototypeOf获取原型对象
+    - setPrototypeOf(obj,prototype)设置新的原型对象|getyPrototypeOf获取原型对象
     
     - getOwnPropertyDescriptor(obj, prop)获取obj身上prop的属性描述
     

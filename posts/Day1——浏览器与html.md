@@ -81,7 +81,7 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
     <link rel="dns-prefetch" href="http://xxx.net" />
     ```
 
-### TPC三次握手建立连接
+### TCP三次握手建立连接
 
 ### HTTP请求与缓存
 
@@ -146,7 +146,7 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 
 #### CORS
 
-服务器端设置Access-Control-Allow-Origin，如果需要Cookie，服务端Access-Control-Allow-Credentials应为true，客户端XMLHttpRequest的withCredentials=true 
+服务器端设置Access-Control-Allow-Origin，如果需要Cookie，服务端Access-Control-Allow-Credentials应为true，客户端XMLHttpRequest的withCredentials=true
 
 #### 开发模式下的代理服务器
 
@@ -231,7 +231,7 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 
 # Src和href
 
-> **href：**是指向网络资源所在位置，建立和当前元素（锚点）或当前文档（链接）之间的链接，用于超链接。标识超文本引用，用在**link**和**a**等元素上，**href**是引用和页面关联，是在当前元素和引用资源之间建立联系，
+> **href：**是指向网络资源所在位置，建立和当前元素（锚点）或当前文档（链接）之间的链接，用于超链接。标识超文本引用，用在**link**和**a**等元素上，**href**是引用和页面关联，是在当前元素和引用资源之间建立联系。
 >
 > src：是指向外部资源的位置，指向的内部会迁入到文档中当前标签所在的位置；在请求src资源时会将其指向的资源下载并应用到当前文档中，例如js脚本，img图片和frame等元素。表示引用资源，表示替换当前元素，用在img，script，iframe上，src是页面内容不可缺少的一部分。
 >

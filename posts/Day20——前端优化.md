@@ -149,7 +149,6 @@ let point: Point = {
   y: 1
 }//交叉类型
 
-
 interface X {
   c: string;
   d: string;
@@ -772,11 +771,10 @@ $baseFontSize: 100;
                  images/illustration-big.png 2x'
          style='max-width: 500px'/>
   </div>
-  <img sizes = "(min-width: 600px) 600px, 300px" src = "photo.png" srcset = “photo@1x.png 300w,photo@2x.png 600w,
-  photo@3x.png 1200w"/>
+  <img sizes = "(min-width: 600px) 600px, 300px" src = "photo.png" srcset = "photo@1x.png 300w,photo@2x.png 600w,photo@3x.png 1200w"/>
   <!--sizes，如果当前屏幕css像素大于600就用600，否则用300。srcset后边的w就是说用前边的数除以刚才比较的结果，最终选取第一个大于dpr的图-->
   ```
-
+  
 - ```css
   .avatar {
     background-image: -webkit-image-set( "conardLi_1x.png" 1x, "conardLi_2x.png" 2x );

@@ -88,6 +88,7 @@ date: "2023-01-16"
 - ```javascript
   //AMD Wrapper
   define(
+      moduleName,
       ["types/Employee"],  //依赖
       function(Employee){  //回调在所有依赖都被加载后才执行
           function Programmer(){
@@ -98,8 +99,8 @@ date: "2023-01-16"
           return Programmer;  //return Constructor
       }
   )
-  ```
-
+```
+  
 - ```javascript
   // AMD with CommonJS sugar
   define(["require"], function(require){
@@ -109,10 +110,10 @@ date: "2023-01-16"
   //在这里，我们使用define来定义模块，return来输出接口， require来加载模块，这是AMD官方推荐用法。
   ```
 
-- CMD(Common Module Definition)，SeaJS（实现）
+- CMD(Common Module Definition)，SeaJS（实现），其实这玩意就像是把cjs移到浏览器上。
 
 - ```javascript
-  define(function(require, exports) {
+  define(moduleName,function(require, exports) {
       var a = require('./a');
       a.doSomething();
   
@@ -138,7 +139,16 @@ date: "2023-01-16"
   })
   ```
 
-- 其实还有个UMD， 这是一种思想，就是一种兼容 commonjs,AMD,CMD 的兼容写法，define.amd / define.cmd / module 等判断当前支持什么方式， 
+- 其实还有个UMD， 这是一种思想，就是一种兼容 commonjs,AMD,CMD 的兼容写法，define.amd / define.cmd / module 等判断当前支持什么方式。webpack配置umd。
+
+  ```javascript
+  output: {
+      path: path.join(__dirname),
+      filename: 'index.js',
+      libraryTarget: "umd",//此处是希望打包的插件类型
+      library: "Swiper",
+  }
+  ```
 
 ### 去掉包裹
 
@@ -419,6 +429,13 @@ date: "2023-01-16"
   - ealintConfig，等同于.edlintrc.json
   - babel，babel的编译配置
   - browserlist，支持的浏览器版本
+
+### yarn和pnpm
+
+都是处理了过多依赖的问题
+
+- yarn：铺平。所有的依赖不再一层层嵌套了，而是全部在同一层，这样也就没有依赖重复多次的问题了，也就没有路径过长的问题了，也就是说只要不是版本不一致就不会一个包里有另一个包
+- pnpm：所有的包都在全局仓库里，node_modules只不过是软连接。
 
 # NodeJs本体
 

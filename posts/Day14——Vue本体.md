@@ -1720,3 +1720,8 @@ function computed(fn) {
 在我们修改一个数据后，会触发setter，然后将对应的更新任务推导队列中，并调用`queueFlush`函数，这个函数会在一个Promise中调用`flushjobs`，这时候vue就会去做更新组件，更新dom的一些操作。 
 
 改成同步：this.$update()
+
+## keep-alive
+
+- 使用的是LRU
+- 缓存的是vue实例

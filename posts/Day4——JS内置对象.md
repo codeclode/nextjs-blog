@@ -342,8 +342,9 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
   console.log(uid === uid2);      // true
   console.log(object[uid2]);      // "12345"
   console.log(uid2);              // "Symbol(uid)"
-  ```
-
+  Symbol.keyFor(uid)				// "uid"
+```
+  
 - 为复杂对象添加属性且不会覆盖已有属性
 
 - ```javascript
@@ -399,6 +400,12 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
       console.log(2)
   })
   //1 2都会输出
+  let p = new Promise((resolve)=>{
+      resolve(1233)
+  }).then(123).then((res)=>{
+      console.log(res)
+  })
+  //1233
   ```
 
 ### 静态方法
