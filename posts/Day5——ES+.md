@@ -79,16 +79,16 @@ for(let i = 0;i < 9;i++){
 ### 对象简化写法
 
 ```javascript
-let name = "訾博";
+let name = "4";
 let change = function(){
-	console.log("活着就是为了改变世界！");
+	console.log("123！");
 }
 //创建对象
 const school = {
 	name,
 	change,
 	say(){
-		console.log("言行一致！");
+		console.log("6！");
 	}
 }
 ```

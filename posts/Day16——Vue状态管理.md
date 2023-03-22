@@ -392,7 +392,7 @@ computed: {
       return store.someGetter + this.count + this.double
    },
   }),
-},
+}
 ```
 
 ## Getter

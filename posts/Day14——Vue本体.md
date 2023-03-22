@@ -523,7 +523,7 @@ Vue.filter('capitalize', function (value) {
 
   ```javascript
   Vue.extend({})//使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件选项的对象。
-  //注意，和Vue.Component不一样的是，这个所谓的子类是一个构造函数，需要调用new才能真正创建对应的组件实例，并挂载到一个元素上。new Profile().$mount('#mount-point')
+  //注意，和Vue.Component(全局注册一个组件)不一样的是，这个所谓的子类是一个构造函数，需要调用new才能真正创建对应的组件实例，并挂载到一个元素上。new Profile().$mount('#mount-point')
   Vue,nextTick(cb,context)//在下次 DOM 更新循环结束之后执行延迟回调。也可以nextTick().then(func)调用
   Vue.set(target:Object,property:string|number,value:value)//向响应式对象中添加一个property，并确保这个新 property 同样是响应式的，且触发视图更新。vm.$set
   Vue.delete(target,property)//set的删除过程|vm.$delete
@@ -593,7 +593,8 @@ Vue.filter('capitalize', function (value) {
       inject:['foo']
       extends:oneCom//类似类的扩展
   })
-  
+  //provide/inject绑定并不是可响应的。如果传入了一个可监听的对象，那么其 property 还是可响应的
+  //通过传递一个函数或者V3里的ref|reactive包裹的对象可以实现响应式
   var mixin = {
     created: function () { console.log(1) }
   }
@@ -1422,7 +1423,6 @@ const { x, y } = useMouse()
   provide(fooSymbol, count)
   </script>
   
-  
   <script setup>
   
   // 注入值的默认方式
@@ -1601,7 +1601,7 @@ export default {
   }
   ```
 
-- 所以流程就是：new Vue的时候先observe，这样我们就搞出来所有data属性的dep，接下来等到mount环节new了一个Watcher，在watcher首次render，render会调用data的getter从而绑定watcher和deps，最后再解绑target防止多次get不停绑定(target在new Watcher的时候绑定到自己身上，注意这个是Dep构造函数的属性)。每当dep监听的属性set时就会通知watcher来调用render。
+- 所以流程就是：new Vue的时候先observe，这样我们就搞出来每个data属性的dep，接下来等到mount环节new了一个Watcher，在watcher首次render，render会调用data的getter从而绑定watcher和deps，最后再解绑target防止多次get不停绑定(target在new Watcher的时候绑定到自己身上，注意这个是Dep构造函数的属性)。每当被监听的属性set时就会通知调用它身上的dep上的notify来通知绑定好的watcher来调用render。
 
 ### V3
 
@@ -1725,3 +1725,21 @@ function computed(fn) {
 
 - 使用的是LRU
 - 缓存的是vue实例
+
+# V2V3到底有啥区别
+
+生命周期：其实没区别。。。setup接替了beforeCreate和created而已，还有destory->unmount
+
+V3支持多个根节点
+
+组合式API，这不废话吗
+
+Suspense组件，#fallback空白时渲染
+
+Teleport组件，to="css选择器"
+
+V3用ts写的，更加支持ts
+
+proxy代替definedefineProperty
+
+增加 patchFlag 字段，帮助 diff 时区分静态节点，以及不同类型的动态节点，一定程度地减少节点本身及其属性的比对。 

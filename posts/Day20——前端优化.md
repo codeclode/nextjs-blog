@@ -820,7 +820,7 @@ inputb.addEventListener('keyup', function (e) {
 
 ## 节流
 
-这个更像技能CD。
+这个更像需要引导动作的技能CD。
 
 ```javascript
 function throttle(fun, delay) {
@@ -992,7 +992,7 @@ console.log(records[0].duration);
     let item1 = document.getElementById("li1");
     let item2 = document.getElementById("li2");
     let item3 = document.getElementById("li3");
-     
+    
     document.addEventListener("click", function (e) {
       let t = e.target;
       //当事件处理程序直接绑定在目标元素上e.target===e.currentTarget，e.target ===this

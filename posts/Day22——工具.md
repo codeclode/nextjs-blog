@@ -230,7 +230,7 @@ Sass允许规则和属性嵌套
         font-weight: bold; 
     }
   }
-  pre {   
+  pre {
     font: {
       family: fantasy;
       size: 30em;

@@ -14,7 +14,9 @@ date: "2023-01-20"
 - Vite 以原生 ESM 方式提供源码（压根就没有打包）。这实际上是让浏览器接管了打包程序的部分工作：Vite 只需要在浏览器请求源码时进行转换并按需提供源码。根据情景动态导入代码，即只在当前屏幕上实际使用时才会被处理。 
 
   ```html
-  <script type="module" src="xxx"></script>
+  <script type="module" src="xxx">
+  	import xxx from 'xxx'
+  </script>
   ```
 
 - 支持了动态模块热替换，vite的HMR 是在原生 ESM 上执行的。  当编辑一个文件时，Vite 只需要精确地使已编辑的模块与其最近的 HMR 边界之间的链失活（大多数时候只是模块本身），使得无论应用大小如何，HMR 始终能保持快速更新。 
@@ -176,6 +178,10 @@ type config={
 	}
 }
 ```
+
+# rollup
+
+Rollup对于代码的Tree-shaking和ES6模块有着算法优势上的支持，项目只需要打包出一个简单的bundle包，并是基于ES6模块开发的，使用Rollup，rollup并不支持类似 HRM 特性，仅仅是ESM的打包器。
 
 # 补一下git
 

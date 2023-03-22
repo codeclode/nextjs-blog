@@ -154,22 +154,15 @@ date: "2023-01-10"
 ### 盒模型
 
 - margin+padding+border+content
-
 - 现代浏览器默认content-box
-
 - 只有老IE使用border-box
-
 - clientWidth=padding+content
-
 - clientLeft就是边框border大小
-
 - offsetWidth = clientWidth+border
-
 - offsetLeft就是距离父级内边距的距离，父级身上的position：absolute/fixed决定 如果父级元素没有就逐层查找直到body
-
 - scrollWidth=clientWidth+margin
-
-  、scrollTop/scrollLeft  滚动条卷走的高度和宽度
+- scrollTop/scrollLeft  滚动条卷走的高度和宽度
+- offsetParent:相对谁而偏移
 
 ### BFC
 
@@ -318,7 +311,7 @@ element.getBoundingClientRect().top < clientHeight
 ### 如何清除
 
 - 后边的元素或者::after设置clear，这样做并不是清除浮动，而是让这个被设置了的元素“看见”浮动，从而向下排列。从而达到防止高度塌陷的问题。
-- 利用overflow（只要不是visible）创建一个BFC（ BFC在计算高度的时候，内部浮动元素的高度也要计算在内。 ）
+- 利用overflow（只要不是visible）创建一个BFC（ BFC在计算高度的时候，内部浮动元素的高度也要计算在内。）
 
 # CSS模块化
 

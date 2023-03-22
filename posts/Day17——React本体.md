@@ -38,12 +38,12 @@ root.render(element);//替换root里的东西为element
 ```react
 function Welcome(props) {
   return <h1>Hello, {props.name}</h1>;
-}//类式组件
+}//函数式组件
 class Welcome extends React.Component {
   render() {
     return <h1>{this.props.children}, {this.props.name}</h1>;
   }
-}//函数式组件
+}//类式组件
 
 //那么我们可以在渲染时使用组件
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -409,7 +409,7 @@ class FileInput extends React.Component {
 ### 出错
 
 - static getDerivedStateFromError(err) 后代组件抛出错误后被调用。 
-- componentDIdCatch(err,info)用来记录错误信息
+- componentDidCatch(err,info)用来记录错误信息
 
 # 函数（Hook）式组件
 
@@ -494,7 +494,7 @@ const value = useContext(myContext)
 
 ```react
 const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
-const memoizedCallback = useCallback(() => {doSomething(a, b);},[a, b],);
+const memoizedCallback = useCallback(() => {doSomething(a, b);},[a, b]);
 ```
 
 类似vue的计算属性，useMemo获取的值是fn里的返回值，如果没有改变就始终返回缓存值，但是一旦a，b改变就创建新的结果。而useCallback(fn,deps)则相当于 useMemo(() => fn, deps)，函数只会在deps改变时更新。 
@@ -503,7 +503,7 @@ const memoizedCallback = useCallback(() => {doSomething(a, b);},[a, b],);
 
 参数和useEffect一样，但是在所有的 DOM 变更之后同步调用 effect。 
 
-和useeffect不一样的地方是，useEffect是异步的，浏览器先渲染好了才会触发，而useLayoutEffect则是会阻塞渲染，等自己执行完才能继续。
+和useEffect不一样的地方是，useEffect是异步的，浏览器先渲染好了才会触发，而useLayoutEffect则是会阻塞渲染，等自己执行完才能继续。
 
 ## useReducer
 
@@ -547,7 +547,7 @@ function TextInputWithFocusButton() {
 }
 ```
 
-和自己搞一个对象不一样的是，useRef每次渲染时返回的都是同一个ref对象，当 ref 对象内容发生变化时，useRef并不会通知。变更 .current属性不会引发组件重新渲染。 
+和自己搞一个对象（createRef()）不一样的是，useRef每次渲染时返回的都是同一个ref对象，当 ref 对象内容发生变化时，useRef并不会通知。变更 .current属性不会引发组件重新渲染。
 
 ## useDeferredValue
 

@@ -17,7 +17,7 @@ date: "2023-01-17"
   
   for(var i=0; i<3; i++)  { 
       var wrkerprocess=child_process.exec('node support.js '+i,  function  (error,  stdout,  stderr)  
-  	if  (error){  
+  	if  (error){
   		console.log(error.stack);  
   		console.log('error  code:  '+error.code);
           console.log('signal  received:  '+error.signal);

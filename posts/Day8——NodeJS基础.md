@@ -99,16 +99,17 @@ date: "2023-01-16"
           return Programmer;  //return Constructor
       }
   )
-```
-  
-- ```javascript
-  // AMD with CommonJS sugar
-  define(["require"], function(require){
-      // 在这里， a.js 已经下载并且执行好了
-      var a = require("./a")
-  })//依赖自收集
-  //在这里，我们使用define来定义模块，return来输出接口， require来加载模块，这是AMD官方推荐用法。
   ```
+  
+```javascript
+
+    // AMD with CommonJS sugar
+    define(["require"], function(require){
+          // 在这里， a.js 已经下载并且执行好了
+          var a = require("./a")
+      })//依赖自收集
+      //在这里，我们使用define来定义模块，return来输出接口， require来加载模块，这是AMD官方推荐用法。
+```
 
 - CMD(Common Module Definition)，SeaJS（实现），其实这玩意就像是把cjs移到浏览器上。
 

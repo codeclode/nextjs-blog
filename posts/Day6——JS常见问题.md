@@ -393,6 +393,8 @@ function SuperType(){
 
 - 箭头函数没有this，但是要是在箭头函数里使用this，他就会往上一级作用域查找，如果上一级作用域也没有，那就继续往上找，直到找到全局的window为止 ，他的this基于写在哪里而不是谁调用了他。
 
+- setTimeout里的this是window(除非是箭头函数)
+
 - **this绑定的优先级：new绑定 > 显式绑定 > 隐式绑定 > 默认绑定。** 
 
 - ```javascript
@@ -501,6 +503,7 @@ function SuperType(){
     - 非thenable，会立即向微任务队列添加一个微任务`then`
     - thenable，等1个then再马上加入微任务队列
     - promise，表现和非thenable一样。
+  - async里的promise如果抛出错误或者没有resolve都不会继续执行
 - 事件属于同步任务
 
 # 网络编程
