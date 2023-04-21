@@ -299,6 +299,8 @@ git cherry-pick <hash>
 ```shell
 git reflog
 #查看所有可用的历史版本记录（实际是HEAD变更记录），包含被回退的记录
+git restore --staged [filename]
+#撤销暂存区
 git checkout .|[filename]
 #撤销工作区修改
 git reset HEAD

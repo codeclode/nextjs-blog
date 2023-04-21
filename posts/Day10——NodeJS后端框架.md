@@ -285,10 +285,52 @@ app.on('error', (err, ctx) => {
 ### 基于
 
 - 原生
-
 - socket.io
 - expressWs
 - koa-websocket(好久没人维护了)
+
+### 原生
+
+```javascript
+const server = http.createServer((req, res) => {
+  // 检查请求是否为 WebSocket 握手请求，握手仍然基于http
+  if (req.method === 'GET' &&
+      req.headers.upgrade &&
+      req.headers.upgrade.toLowerCase() === 'websocket' &&
+      req.headers.connection &&
+      req.headers.connection.toLowerCase() === 'upgrade' &&
+      req.headers['sec-websocket-key']) {
+    // 返回 WebSocket 握手响应
+    const key = req.headers['sec-websocket-key'];
+    const hash = require('crypto').createHash('sha1');
+    hash.update(key + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11');
+    const accept = hash.digest('base64');
+    // 要求升级协议
+    res.writeHead(101, {
+      'Upgrade': 'websocket',
+      'Connection': 'Upgrade',
+      'Sec-WebSocket-Accept': accept
+    });
+    // 创建 WebSocket 连接
+    const socket = new WebSocket(req, res);
+    socket.on('open', () => {
+      console.log('Client connected');
+    });
+    socket.on('message', (message) => {
+      console.log(`Received message: ${message}`);
+      socket.send(message);
+    });
+    socket.on('close', () => {
+      console.log('Client disconnected');
+    });
+    return;
+  }
+  // 处理其他 HTTP 请求
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Hello, world!\n');
+});
+server.listen(8080);
+```
 
 ### socket.io的一个实现
 

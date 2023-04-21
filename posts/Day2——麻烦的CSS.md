@@ -331,7 +331,39 @@ SMACSS：按照模块功能分成base、layout、module、state、theme来命名
 
 ### CSSmodules
 
-**像 import 一个 JS Module 一样去 import 一个 CSS Module**。每一个 CSS 文件都是一个独立的模块，每一个类名都是该模块所导出对象的一个属性。通过这种方式，便可在使用时明确指定所引用的 CSS 样式。并且，CSS Modules 在打包时会自动**将 id 和 class 混淆成全局唯一的 hash 值**，从而避免发生命名冲突问题。
+**像 import 一个 JS Module 一样去 import 一个 CSS Module**。每一个 CSS 文件都是一个独立的模块，每一个类名都是该模块所导出对象的一个属性。通过这种方式，便可在使用时明确指定所引用的 CSS 样式。并且，CSS Modules 在打包时会自动**将 id 和 class 混淆成全局唯一的 hash 值**，从而避免发生命名冲突问题。比如vue的scope，react的xxx.module.css
 
 ### Css-in-js
 
+全部变成内联样式，在js、jsx文件里写css
+
+```jsx
+const Title = styled.h1`
+  font-size: 1.5em;
+  text-align: center;
+  color: palevioletred;
+`;
+<Wrapper>
+  <Title>Hello World, this is my first styled component!</Title>
+</Wrapper>;
+//styled-component解决方案
+```
+
+# css库
+
+- tailwindcss——提供符合规则的类名及其内容，单纯的一个css库
+- styled-component、emotion——css in js
+- reset.css——**是为了消除不同的浏览器在默认样式上不同表现**，清零浏览器默认样式，问题就是冗余太多，一旦引入就会搞出来特别多无用样式
+- Normalize.css——解决reset缺点，不搞一刀切，保留有用的代理样式，修复某些浏览器下的bug，注重方案通用。
+
+# 元素隐藏
+
+|                            方法                             | 可交互 | 占空间 | 事件 |
+| :---------------------------------------------------------: | :----: | :----: | :--: |
+|                        display: none                        |   ×    |   ×    |  ×   |
+|                     visibility: hidden                      |   ×    |   √    |  ×   |
+|                         opacity: 0                          |   √    |   ×    |  √   |
+|                    \<div hidden></div\>                     |   ×    |   ×    |  ×   |
+|      position: absolute; top: -9999px; left: -9999px;       |   ×    |   ×    |  ×   |
+|           width: 0; height: 0; overflow: hidden;            |   ×    |   ×    |  ×   |
+| transform: translate(-9999px, -9999px)\|transform: scale(0) |   ×    |   -    |  ×   |

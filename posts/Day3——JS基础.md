@@ -125,7 +125,7 @@ date: "2023-01-11"
     - get：getter
     - set：setter
   - 静态方法
-    - assign(target, ...sources)将sources的属性复制或覆盖到target（内部的引用值不会复制），只能复制可枚举的属性
+    - assign(target, ...sources)将sources的属性复制或覆盖到target（内部的引用值不会复制），只能复制可枚举的属性，注意返回值就是第一个对象的引用
     
     - create(proto,propertiesObject?)根据proto为原型创建对象，propertiesObject为自带的特定属性值，这个特定属性值必须是一个描述符对象。
     
