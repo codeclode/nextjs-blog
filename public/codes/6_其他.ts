@@ -105,13 +105,3 @@ function getTimeFromStr(str: string = "yyyy-mm-dd", date: Date = new Date()) {
   ret = ret.replace(/mm/, `${date.getMonth() + 1}`);
   return ret;
 }
-
-//html分析器
-function parseHTML(str: string): Record<string, string> & {
-  tag: string;
-} {
-  
-  return {
-    tag: "",
-  };
-}

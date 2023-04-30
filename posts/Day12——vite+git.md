@@ -181,7 +181,7 @@ type config={
 
 # rollup
 
-Rollup对于代码的Tree-shaking和ES6模块有着算法优势上的支持，项目只需要打包出一个简单的bundle包，并是基于ES6模块开发的，使用Rollup，rollup并不支持类似 HRM 特性，仅仅是ESM的打包器。
+Rollup对于代码的Tree-shaking和ES6模块有着算法优势上的支持，项目只需要打包出一个简单的bundle包，并是基于ES6模块开发的，使用Rollup，rollup并不支持类似 HRM 特性，仅仅是ESM的打包器。rollup的目的是让ESM一统天下，减少webpack为了兼容cjs搞得无用垫片。
 
 # 补一下git
 

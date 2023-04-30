@@ -183,7 +183,7 @@ true
 # JSON
 
 - parse
-- stringify
+- stringify，undefined、函数、symbol属性和原型链默认不会处理，getter可以
 
 # WeakRef(保留意见)
 

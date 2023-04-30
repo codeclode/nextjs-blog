@@ -5,6 +5,13 @@ date: "2023-01-11"
 
 # 数据类型
 
+### 堆栈
+
+- 堆区：就只是一块大空间，存储变量时没有什么规律可言 
+- 栈：乒乓球筒，取数据就是要一个个弹出来
+- js的字符串放在堆里，这点很重要！
+- 对于数字，嘴上说是64位，但是v8不这样做，只要没有双精度就放在栈里并且位数不高，如果非要当成双精度才会放在堆里并且提升成64位
+
 ### 基本数据类型
 
 - 数字
@@ -60,31 +67,36 @@ date: "2023-01-11"
 
     - match、matchAll分别返回匹配正则表达式的值数组和迭代器
 
+      - "0123".match(/(\d)(\d)+/)=>['0123', '0', '3', index: 0, input: '0123', groups: undefined]
+      - a[0]=>匹配到的字符串，a[1~n]:捕获组
+      - "0123".match(/\d/g)=>['0','1','2','3']
+      - matchAll返回迭代器,且reg必须带有g修饰符
+      
     - normalize按照指定unicode形式将字符串规范化
-
+    
     - padEndwith，padStart，参数为长度和可选字符串
-
+    
     - ```javascript
-      'abc'.padEnd(10);          // "abc       "
+    'abc'.padEnd(10);          // "abc       "
       'abc'.padEnd(10, "foo");   // "abcfoofoof"
-      'abc'.padEnd(6, "123456"); // "abc123"
+    'abc'.padEnd(6, "123456"); // "abc123"
       'abc'.padEnd(1);           // "abc"
       ```
-
-    - repeat(count)返回重复count次的副本
-
-    - replace、replaceAll，匹配对应字串或正则并修改为目标字串（也可以是一个替换函数）
-
-    - search，返回符合正则匹配的第一个字串索引
-
-    - split(分隔符，切割数量限制)、slice（beginIndex，endIndex?）不解释
-
-    - substring类似slice，但是参数不能为负（不支持倒着数）
-
+    
+  - repeat(count)返回重复count次的副本
+    
+  - replace、replaceAll，匹配对应字串或正则并修改为目标字串（也可以是一个替换函数）
+    
+  - search，返回符合正则匹配的第一个字串索引
+    
+  - split(分隔符，切割数量限制)、slice（beginIndex，endIndex?）不解释
+    
+  - substring类似slice，但是参数不能为负（不支持倒着数）
+    
     - substr(start,length)
-
+    
     - toLowerCase、toUpperCasse、trim、trimStart、trimEnd不解释
-
+    
     - \[Symbol.iterator\]() 返回一个新的 Iterator 对象，它遍历字符串的代码点，返回每一个代码点的字符串值。 
     
     - ```javascript
@@ -360,7 +372,7 @@ console.log(obj2 + ""); //"true"
   - Object <EventTarget < Node < CharacterData < Text
   - Object <EventTarget< Node < Document < HTMLDocument
   - Object <EventTarget< Node < DocumentFragment
-- addEventListener('事件',()=>{},是否捕获，是否冒泡),可以绑定多次
+- addEventListener('事件',()=>{},是否捕获时触发|{capture:boolean,once:boolean,passive:boolean(触发默认行为)}}),可以绑定多次
 - 事件流程是从外到内捕获再从内到外冒泡
 
 ### BOM，浏览器对象
