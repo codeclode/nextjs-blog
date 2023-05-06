@@ -14,7 +14,22 @@ redux是最基本的单元，使用的话比较简单和基础
 ```javascript
 npm install redux -S // 安装
 
-import { createStore } from 'redux' // 引入
+import { createStore,compose } from 'redux' // 引入
+
+function logger({ getState, dispatch }) {
+  return (next) => (action) => {
+    console.log('will dispatch', action)
+
+    // 调用 middleware 链中下一个 middleware 的 dispatch。
+    let returnValue = next(action)
+
+    console.log('state after dispatch', getState())
+
+    // 一般会是 action 本身，除非
+    // 后面的 middleware 修改了它。
+    return returnValue
+  }
+}
 
 const reducer = (state = {count: 0}, action) => {
   switch (action.type){
@@ -31,8 +46,11 @@ const actions = {
   set: (num) => ({type:'SET',number:num})
 }
 
-const store = createStore(reducer);
-
+const store = createStore(reducer,compose(
+  applyMiddleware(thunk),
+  applyMiddleware(logger)
+));//第二个参数可选，用来增强store，是一个函数，如果多个增强函数用compose组合
+//如果是三个参数，那么就是(reducer,initState,improveFun)
 store.subscribe(() =>
   console.log(store.getState())
 );
@@ -96,7 +114,7 @@ export const counterSlice = createSlice({
   }
 })
 
-// Action creators are generated for each case reducer function
+// Action creators
 export const { increment, decrement, incrementByAmount } = counterSlice.actions
 //这个东西是真正用来调用的
 export default counterSlice.reducer
@@ -188,7 +206,7 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
   preloadedState,
   enhancers: [batchedSubscribe(debounceNotify)],
-})//这个函数是redux函数cre、ateStore的抽象
+})//这个函数是redux函数createStore的抽象
 ```
 
 ### 生成Reducer

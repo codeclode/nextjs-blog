@@ -30,7 +30,7 @@ date: "2023-01-11"
     - toFixed(digits小数点后数字的个数，介于 0 到 20) 使用定点表示法表示给定数字的字符串。 
     - toPrecision(  `precision` 一个用来指定有效数个数的整数)
     - toString(radix:指定进制)
-    - 这几个返回都是字符串
+    - 这几个返回都是**字符串**
 
 - 字符串
 
@@ -42,7 +42,7 @@ date: "2023-01-11"
 
     - fromCodePoint(num1[, ...[, numN]]) 使用指定的 Unicode 编码位置创建的字符串。 
 
-    - raw
+    - raw,模板函数，
 
     - ```javascript
       String.raw`Hi\n${2+3}!`;
@@ -53,6 +53,10 @@ date: "2023-01-11"
       String.raw({
         raw: ['foo', 'bar', 'baz']
       }, 2 + 3, 'Java' + 'Script'); // 'foo5barJavaScriptbaz'
+      function f(strarr,...rest){
+          console.log(strarr,rest)
+      }
+      f`1${2}3${4}`//['1','3',''],[2,4]注意2，4是数字
       ```
 
   - 实例方法
@@ -82,29 +86,29 @@ date: "2023-01-11"
     'abc'.padEnd(6, "123456"); // "abc123"
       'abc'.padEnd(1);           // "abc"
       ```
-    
-  - repeat(count)返回重复count次的副本
-    
-  - replace、replaceAll，匹配对应字串或正则并修改为目标字串（也可以是一个替换函数）
-    
-  - search，返回符合正则匹配的第一个字串索引
-    
-  - split(分隔符，切割数量限制)、slice（beginIndex，endIndex?）不解释
-    
-  - substring类似slice，但是参数不能为负（不支持倒着数）
-    
-    - substr(start,length)
-    
+      
+    - repeat(count)返回重复count次的副本
+      
+    - replace、replaceAll，匹配对应字串或正则并修改为目标字串（也可以是一个替换函数）
+      
+    - search，返回符合正则匹配的第一个字串索引
+      
+    - split(分隔符，切割数量限制)、slice（beginIndex，endIndex?）不解释
+      
+    - substring类似slice，但是参数不能为负（不支持倒着数）
+      
+    - substr(start,length)，支持倒数，length=Math.max(0,length)
+      
     - toLowerCase、toUpperCasse、trim、trimStart、trimEnd不解释
-    
+      
     - \[Symbol.iterator\]() 返回一个新的 Iterator 对象，它遍历字符串的代码点，返回每一个代码点的字符串值。 
-    
+      
     - ```javascript
       var strIter = string[Symbol.iterator]();
-      
       console.log(strIter.next().value); // "A"
       console.log(strIter.next().value); // "\uD835\uDC68"
       ```
+    
 
 - 布尔
 
@@ -132,10 +136,10 @@ date: "2023-01-11"
 
     - configurable：表示该属性的描述是否可以改变
     - enumerable：表示是否可以枚举(for in 和 keys)
-    - value：属性值
+    - value：属性值，有value为值属性
     - writable：是否可以用等号修改
     - get：getter
-    - set：setter
+    - set：setter，有这俩是存取器属性
   - 静态方法
     - assign(target, ...sources)将sources的属性复制或覆盖到target（内部的引用值不会复制），只能复制可枚举的属性，注意返回值就是第一个对象的引用
     
@@ -145,7 +149,7 @@ date: "2023-01-11"
     
     - defineProperties(obj,props:{'xxx':描述符,'xxx':描述符})：多次执行defineProperty
     
-    - entries、keys、values返回可枚举属性的k、v（不会遍历原型链上的，forin会）
+    - entries、keys、values返回可枚举属性的k、v（不会遍历原型链上的，forin会），keys顺序是数字（其实本质上也是字符串，无论加的时候是1:0还是“1”:0，再插入顺序的字符，然后symbol）
     
     - setPrototypeOf(obj,prototype)设置新的原型对象|getyPrototypeOf获取原型对象
     
@@ -180,6 +184,8 @@ date: "2023-01-11"
   - 实例属性
     - length，参数长度
     - name函数名
+    - caller，返回调用这个函数的函数，在最外层调用就是null（就是调用栈）
+    - arguments.callee,返回函数本身
   - 实例方法(专门的一个问题)
     - apply
     - bind
@@ -213,9 +219,11 @@ date: "2023-01-11"
 
   - Number("")                   // 0 
 
+  - Number("       ")                   // 0 
+
   - Number(false)                // 0 
 
-  - Number(true)                 // 1 
+  - Number(true)                 // 1
 
   - Number(null)                 // 0 
 
@@ -304,7 +312,7 @@ console.log(obj2 + ""); //"true"
   - 其次遍历所有字符串键，按照加入时间升序排列
   - 最后遍历所有Symbol键，按照加入时间升序排列
 
-### for (let index of arr)
+### for (let value of arr)
 
 - 遍历所有的拥有迭代器的对象（ES6+），如数组、map、set、字符串
 - 他遍历的是值，依据的是迭代器

@@ -41,6 +41,7 @@ date: "2023-01-12"
   - Map只能new，Object可以直接大括号或者Object.create
   - Map实现了迭代器，可以for-of，且按插入顺序返回
   - 在 `Map` 对象中,该对象的 `key` 可以是任何类型的值,而在普通对象中的 `key` 只能是 `string` 类型(`number`类型会自动转变成 `string` 类型)和 `Symbol` 类型,如果传进来的是复杂类型会自动报错。
+  - 查询object快，其他map块
 
 ### Set
 
@@ -344,8 +345,7 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
   console.log(uid2);              // "Symbol(uid)"
   Symbol.keyFor(uid)				// "uid"
   ```
-```
-  
+
 - 为复杂对象添加属性且不会覆盖已有属性
 
 - ```javascript
@@ -353,7 +353,7 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
   obj[Symbol('name')]=2
   obj//{Symbol(name): 1, Symbol(name): 2}
   Object.getOwnPropertySymbols(obj)//[Symbol('name'),Symbol('name')]
-```
+  ```
 
 # Promise介绍
 
@@ -620,3 +620,31 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 - setPrototypeOf(target, proto)：拦截Object.setPrototypeOf(proxy, proto)，返回一个布尔值。如果目标对象是函数，那么还有两种额外操作可以拦截。
 - apply(target, object, args)：拦截 Proxy 实例作为函数调用的操作，比如proxy(...args)、proxy.call(object, ...args)、proxy.apply(...)。
 - construct(target, args)：拦截 Proxy 实例作为构造函数调用的操作，比如new proxy(...args)。
+
+```javascript
+const parent = {
+  a: 1,
+  get value() {
+    console.log(this === child); // true
+    return this.a;
+  },
+};
+const handler = {
+  get: function (obj, prop, receiver) {
+    Reflect.get(obj, prop)
+   - return obj[prop];//1
+   + retrun Reflect.get(obj, prop, receiver)//2
+      //receiver是执行上下文，就是.前边的东西
+  },
+  set: function (obj, prop, value, receiver) {
+   - obj[prop] = value;
+   + Reflect.get(obj, prop, value, receiver)
+    return true;
+  },
+};
+
+const proxyObj = new Proxy(parent, handler);
+const child = Object.setPrototypeOf({ a: 2 }, proxyObj);
+child.value;
+```
+

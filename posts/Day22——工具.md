@@ -190,7 +190,7 @@ const myInterceptor = axios.interceptors.request.use(function () {/*...*/});
 axios.interceptors.request.eject(myInterceptor);
 ```
 
-当然，实例也可以添加拦截器。
+当然，实例也可以添加拦截器。拦截器执行顺序是req1->req0->res0->res1
 
 ## 请求取消
 

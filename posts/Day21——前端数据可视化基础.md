@@ -113,7 +113,7 @@ path1.arcTo()
 ### 渐变
 
 ```javascript
-var gradient1 = ctx.createLinearGradient(10, 10, 400, 10);
+var gradient1 = ctx.createLinearGradient(10, 10, 400, 10);//x,y,w,h
 gradient1.addColorStop(0, "#00ff00");
 //第一个参数是颜色在渐变色条上的偏移值
 gradient1.addColorStop(1, "#ff0000");
@@ -137,7 +137,7 @@ ctx.shadowColor="#66ccff"
 
 ```javascript
 var img = new Image();
-  img.src = "./image.png";
+img.src = "./image.png";
   img.onload = function() {
     var ptrn = ctx.createPattern(img, 'no-repeat');
       //no-repeat,repeat,repeat-x,repeat-y 
@@ -171,7 +171,7 @@ ctx.fillText("Canvas", 50, 50);
 //str,x,y,maxWidth?,超过maxWidth就缩小字体
 ```
 
-## 图片绘制
+## 图片绘制和导出
 
 ```javascript
 img.src ='imgsrc'
@@ -226,9 +226,27 @@ ctx.drawImage(img, 0, 0, 500, 500);
 //圆形图片
 ```
 
+## 数据处理
+
+```javascript
+ctx.getImageData(x,y,w,h)
+ctx.setImageData(imgData,x,y,dirtyX,dirtyY,dirtyWidth,dirtyHeight)
+//dirty是画布信息，无dirty则是img信息
+var imgData=ctx.getImageData(10,10,50,50);//获取对应画布内容的像素信息
+ctx.putImageData(imgData,10,70);//绘制信息到对应位置
+```
+
 # SVG
 
 ## 标签
+
+```javascript
+export function createSVGElement(type) {
+  return document.createElementNS('http://www.w3.org/2000/svg', type);
+}
+```
+
+使用这种方式创建，因为svg不是html标签。
 
 ### svg
 
@@ -351,9 +369,9 @@ Hello<tspan fill="#f0f" font-weight="bold">小</tspan>Svg</text>
     <stop offset="0%" stop-color="rgb(255, 255, 0)" />
     <stop offset="100%" stop-color="rgb(255, 0, 0)" />
   </radialGradient>
-  <rect fill="url(#radialGradient)"/>
   <!--如此使用-->
 </defs>
+<rect fill="url(#radialGradient)"/>
 ```
 
 ### 裁剪
@@ -366,7 +384,7 @@ Hello<tspan fill="#f0f" font-weight="bold">小</tspan>Svg</text>
     <path d="M10 50 A50 50 0 0 1 100 50 A50 50 0 0 1 190 50 Q210 100 100 200  Q-5 100 10 50 Z" />
   </clipPath>
 </defs>
-  
+
 <rect x="0" y="0" width="200" height="200" fill="#f00" clip-path="url(#clipPath)"  />
 ```
 
@@ -386,7 +404,7 @@ Hello<tspan fill="#f0f" font-weight="bold">小</tspan>Svg</text>
 
 # 动画
 
-### transform
+### transform移动坐标系
 
 ```html
 <rect x="0" y="0"  width="100" height="50" fill="#ff770f" transform="translate(200, 100)" transform-origin="50 50"/>

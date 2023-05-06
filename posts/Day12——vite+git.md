@@ -75,7 +75,7 @@ npm add -D stylus
 
 ### 静态资源
 
- 导入一个静态资源会返回解析后的 URL： 
+导入一个静态资源会返回解析后的 URL： 
 
 ```javascript
 import imgUrl from './img.png'
@@ -284,14 +284,14 @@ git checkout -b remote/hotfix
 #拉取远端分支
 git checkout -b temp origin/user1 
 #拉取远端的user1分支作为本地的temp分支
-git merge
-#merge会形成树形的结构，小分支直接和主干最后一个commit合并为新的结点
-git rebase
-#rebase则会把小分支嫁接到分支前面那个点上，相当于断开主干的新结点，用小分支链接，最后把断掉的那一段主干利用小分支的更改刷新成新主干，然后接到小分支连接后的主干上。
+git merge <slave>
+#merge会形成树形的结构，小分支直接和主干最后一个commit合并为新的结点,在主分支下merge slave
+git rebase <master>
+#rebase则会把小分支嫁接到分支前面那个点上，相当于断开主干的新结点，用小分支链接，最后把断掉的那一段主干利用小分支的更改刷新成新主干，然后接到小分支连接后的主干上。注意，在辅分支下rebase master,此时主干头节点不变，但分支头节点变成了主干的尾部结点
 git push origin -d <branch-name>
 #删除远程分支
 git cherry-pick <hash>
-#指定一个后边的提交，复制这个提交用来从当前开启一个新分支
+#指定一个后边的提交，复制这个提交用来从当前开启一个新分支，不过新分支的意思是分支名字依然是当前分支名字，只不过从原来的结点的下一个提交变成了hash的副本结点，并且hash副本结点变成了最新提交
 ```
 
 ### 撤销

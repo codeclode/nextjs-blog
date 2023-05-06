@@ -478,6 +478,7 @@ function Random() {
 ### useNavigate
 
 ```react
+const navigate = useNavigate()
 const userIsInactive = useFakeInactiveUser();
 navigate("/session-timed-out",{
       replace?: boolean;

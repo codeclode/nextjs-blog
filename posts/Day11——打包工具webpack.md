@@ -275,7 +275,7 @@ module.exports = {
 
 在 webpack5 之前，可能需要使用 raw-loader、file-loader、url-loader 来加载资源。
 
-1. raw-loader：将文件作为字符串导入
+1. raw-loader：将文件内容作为字符串导入，一般使用在txt这样的文件情况下
 2. file-loader：处理文件的路径并输出文件到输出目录
 3. url-loader：有条件将文件转化为 base64 URL，如果文件大于 limit 值，通常交给 file-loader 处理。
 
@@ -286,9 +286,9 @@ webpack5 使用了“资源模块”来代替以上 loader。 官方是这样解
 > 资源模块(asset **module**)是一种模块类型，它允许使用资源文件（字体，图标等）而无需配置额外 loader。 
 
 - asset/resource： 发送一个单独的文件并导出 URL。之前通过使用 file-loader 实现。
-- asset/inline：导出一个资源的 data URI。之前通过使用 url-loader 实现。
+- asset/inline：导出一个资源的 data URL(base64)。之前通过使用 url-loader 实现。
 - asset/source： 导出资源的源代码。之前通过使用 raw-loader 实现。
-- asset：在导出一个 data URI 和发送一个单独的文件之间自动选择。之前通过使用 url-loader，并且配置资源体积限制实现。
+- asset：在导出一个 data URL 和发送一个单独的文件之间自动选择。之前通过使用 url-loader，并且配置资源体积限制实现。
 
 使用流程：首先建立assets文件夹，在这里搞张图片，然后在js里导入他。
 
@@ -366,8 +366,8 @@ module.exports = {
 devtools选项选定是否生产sourceMap等来方便对源代码进行监测
 
 - cheap仅有行
-- eval：使用eval包裹模块代码
-- inline：将`.map`作为DataURI嵌入，不单独生成`.map`文件
+- eval：使用eval包裹模块代码，**无sourcemap文件**，仅增加sourceURL来关联模块处理前后的对应关系 
+- inline：将`.map`作为DataURI嵌入，不单独生成`.map`文件，和eval不一样的是，有sourcemap文件，只不过是dataurl的形式
 - `module`：包含`loader`的`sourcemap`
 
 |           devtool            | build | rebuild | 代码内容 | sourcemap  |  错误定位  |
@@ -423,9 +423,9 @@ module.exports = BLoader;
 
 **Pitching** 阶段: Loader 上的 pitch 方法，按照 `后置(post)、行内(inline)、普通(normal)、前置(pre)` 的顺序调用。
 
-**Normal** 阶段: Loader 上的 常规方法，按照 `前置(pre)、普通(normal)、行内(inline)、后置(post)` 的顺序调用。模块源码的转换， 发生在这个阶段，loader从右往左执行，先执行写在最后边的。
+**Normal** 阶段: Loader 上的 常规方法，按照 `前置(pre)、普通(normal)、行内(inline)、后置(post)` 的顺序调用。模块源码的转换， 发生在这个阶段，**loader从右往左执行，先执行写在最后边的。**
 
-在 Loader 的运行过程中，如果发现该 Loader 上有pitch属性，会先执行 pitch 阶段，再执行 normal 阶段，当一个 Loader 的 pitch 阶段有返回值时，将跳过后续 Loader 的 pitch 阶段，直接进行到该 Loader上一个loader 的 normal 阶段（相当于不再解析文件而是直接返回content）。 
+在Loader的运行过程中，如果发现该 Loader 上有pitch属性，会先执行 pitch 阶段，再执行 normal 阶段，当一个 Loader 的 pitch 阶段有返回值时，将跳过后续 Loader 的 pitch 阶段，直接进行到该 Loader上一个loader 的 normal 阶段（相当于不再解析文件而是直接返回content）。 
 
 # 优化
 

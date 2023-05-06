@@ -101,15 +101,14 @@ date: "2023-01-16"
   )
   ```
   
-```javascript
-
+    ```javascript
     // AMD with CommonJS sugar
     define(["require"], function(require){
-          // 在这里， a.js 已经下载并且执行好了
-          var a = require("./a")
-      })//依赖自收集
-      //在这里，我们使用define来定义模块，return来输出接口， require来加载模块，这是AMD官方推荐用法。
-```
+      // 在这里， a.js 已经下载并且执行好了
+      var a = require("./a")
+    })//依赖自收集
+     //在这里，我们使用define来定义模块，return来输出接口， require来加载模块，这是AMD官方推荐用法。
+    ```
 
 - CMD(Common Module Definition)，SeaJS（实现），其实这玩意就像是把cjs移到浏览器上。
 
@@ -246,7 +245,8 @@ date: "2023-01-16"
   //  bar: <uninitialized>,
   //  bar2: <uninitialized>,
   //  bar3: [Function: bar3]
-  }
+  // }此时输出的a是静态代码引用，实际上如果输出a.bar就会报错
+  //  a.js
   ```
 
 ### CJS(require)和ESM(import)区别
@@ -347,6 +347,7 @@ date: "2023-01-16"
 - npm run xxx运行package.json中的对应脚本
 - npm remove xxx 移除xxx包
 - npm login + npm publish  --registry http:xxx发布
+- npx:在当前目录下的`./node_modules/.bin`里去查找是否有可执行的命令，没有找到的话再从全局里查找是否有安装对应的模块，全局也没有的话就会自动下载对应的模块，如 create-react-app，npx 会将 create-react-app 下载到一个临时目录，用完即删，不会占用本地资源。
 
 ### package.json
 

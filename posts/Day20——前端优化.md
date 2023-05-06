@@ -298,7 +298,7 @@ type K3 = keyof { [x: string]: Person };  // string | number
 //推断函数
 type ReturnType<T> = T extends (
   ...args: any[]
-) => infer R ? R : any;
+) => infer R ? R : any;//T是否继承自一个返回R的函数，如果是，T=R，否则T=any
 type b = ReturnType<() => string>; // type b = string
 
 //推断数组
@@ -869,13 +869,17 @@ inputc.addEventListener('keyup', function(e) {
 
 ### FP——First Paint
 
-首次绘制，记录页面第一次绘制像素的时间。 
+首次绘制，记录页面第一次绘制像素的时间，表示渲染出第一个像素点。 
 
 ### FCP——First Contentful Paint
 
 页面首次绘制文本、图片、非空白 Canvas 或 SVG 的时间。 
 
 FP<FCP，因为背景肯定会比dom先绘制。
+
+### FMP——First Meaning Paint
+
+首次渲染有意义的内容的时间，“有意义”没有一个标准的定义，FMP的计算方法也很复杂。 
 
 ### LCP——Largest Contentful Paint
 
@@ -885,7 +889,7 @@ FP<FCP，因为背景肯定会比dom先绘制。
 
 1. 从 FCP 指标后开始计算
 2. 持续 5 秒内无长任务（执行时间超过 50 ms）且无两个以上正在进行中的 GET 请求
-3. 往前回溯至 5 秒前的最后一个长任务结束的时间
+3. 往前回溯至 5 秒前的最后一个长任务结束的时间，则与 FCP 值相同。
 
 这代表了网页对用户的响应是否迅速。
 
@@ -1073,7 +1077,7 @@ console.log(records[0].duration);
     - offsetWidth、offsetHeight、offsetTop、offsetLeft
     - scrollWidth、scrollHeight、scrollTop、scrollLeft
     - scrollIntoView()、scrollIntoViewIffNeeded()
-    - getComputedStyle()
+    - window.getComputedStyle()
     - getBoundingClientRect()
     - scrollTo()
 
@@ -1342,7 +1346,7 @@ self.onfetch = (event) => {
 
 其实也是一样的，在查找到要渲染的组件后，需要预先得到此组件所需要的数据，然后将数据传递给组件后，再进行组件的渲染。但是数据也仅仅是服务端有，浏览器端是没有这个数据，当客户端进行首次组件渲染的时候没有初始化的数据，渲染出的节点肯定和服务端直出的节点不同，导致组件重新渲染。 
 
-```javascript
+```jsx
 const branch =  matchRoutes(routes,url);
 const Component = branch[0].route.component;
 //数据预取
@@ -1351,13 +1355,13 @@ const html = renderToString(<Component data={data}/>);
 res.end(html);
 ```
 
-### 渲染同构
+### 渲染同构(一些数据不要页面展示)
 
 在服务端将预取的数据注入到浏览器，使浏览器端可以访问到，客户端进行渲染前将数据传入对应的组件即可，这样就保证了props的一致。 
 
 #### 注水
 
-```javascript
+```jsx
 const propsData = `<textarea style="display:none" id="krs-server-render-data-BOX">${JSON.stringify(data)}</textarea>`;
 
 // 通过 ejs 模板引擎将数据注入到页面
@@ -1403,21 +1407,16 @@ function renderUI(initialData) {
 function entryIndex() {
     let APP_INIT_DATA = {};
     let state = true;
-
     //取得数据
     let stateText = document.getElementById('krs-server-render-data-BOX');
-
     if (stateText) {
         APP_INIT_DATA = JSON.parse(stateText.value || '{}');
     }
-
-
     if (APP_INIT_DATA) {//客户端渲染
         
         renderUI(APP_INIT_DATA);
     }
 }
-
 //入口执行
 entryIndex();
 ```

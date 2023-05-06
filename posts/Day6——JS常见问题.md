@@ -536,7 +536,7 @@ function SuperType(){
 
 全局的 **fetch()** 方法用于发起获取资源的请求。它返回一个 promise，这个 promise 会在请求响应后被 resolve，并传回Response对象。 
 
-PS:404不会报错，请自己检查
+PS:任何非超时返回都不会报错，请自己检查
 
 fetch(url|request,initOptions?)
 
@@ -546,7 +546,7 @@ type initOptions={
     headers:{xxx:xxx},
     body:Bolb|URLSearchParams|FormData,
     mode:cors|no-cors|same-origin,
-    credentials(签证):为了在当前域名内自动发送 cookie，必须提供这个选项,
+    credentials(签证):为了在当前域名内自动发送 cookie，必须提供这个选项omit|include|same-origin,,
     cache:default|no-store|reload...,
 	redirect:follow (自动重定向), error (如果产生重定向将自动终止并且抛出一个错误），或者 manual (手动处理重定向),
     signal:AbortController.signal

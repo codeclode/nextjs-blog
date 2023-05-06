@@ -524,6 +524,7 @@ Vue.filter('capitalize', function (value) {
   ```javascript
   Vue.extend({})//使用基础 Vue 构造器，创建一个“子类”。参数是一个包含组件选项的对象。
   //注意，和Vue.Component(全局注册一个组件)不一样的是，这个所谓的子类是一个构造函数，需要调用new才能真正创建对应的组件实例，并挂载到一个元素上。new Profile().$mount('#mount-point')
+  //构造了一个类，Vue.Component偏向于注册了一个组件，如果知识挂载一次，extend更好，如果需要名称自然用Component
   Vue,nextTick(cb,context)//在下次 DOM 更新循环结束之后执行延迟回调。也可以nextTick().then(func)调用
   Vue.set(target:Object,property:string|number,value:value)//向响应式对象中添加一个property，并确保这个新 property 同样是响应式的，且触发视图更新。vm.$set
   Vue.delete(target,property)//set的删除过程|vm.$delete
@@ -755,6 +756,8 @@ Vue.filter('capitalize', function (value) {
     ```
 
 ## 生命周期
+
+生命周期函数可以是async的，但是生命周期函数并不会被await 影响（生命周期本身不被await）。
 
 |     name      |                             time                             |
 | :-----------: | :----------------------------------------------------------: |
@@ -1079,6 +1082,60 @@ defineEmits(['update:modelValue'])
 </template>
 ```
 
+### 异步组件
+
+```vue
+<script>
+import { defineAsyncComponent } from 'vue'
+
+const AsyncComp = defineAsyncComponent(() =>
+  import('./components/MyComponent.vue')
+)//仅在需要时才会加载,不仅可以import，也可以从服务器要，只要返回一个promise即可
+const AsyncComp = defineAsyncComponent(() => {
+  return new Promise((resolve, reject) => {
+    // ...从服务器获取组件
+    resolve(/* 获取到的组件 */)
+  })
+})
+//高级
+const AsyncComp = defineAsyncComponent({
+  // 加载函数
+  loader: () => import('./Foo.vue'),
+
+  // 加载异步组件时使用的组件
+  loadingComponent: LoadingComponent,
+  // 展示加载组件前的延迟时间，默认为 200ms
+  delay: 200,
+
+  // 加载失败后展示的组件
+  errorComponent: ErrorComponent,
+  // 如果提供了一个 timeout 时间限制，并超时了
+  // 也会显示这里配置的报错组件，默认值是：Infinity
+  timeout: 3000,
+  suspensible: false// 表明不用 Suspense 控制，并让组件始终自己控制其加载状态。
+})
+</script>
+<template>
+  <AsyncComp><!--直接使用就行-->
+</template>
+```
+
+setup，可以async，如果用了setup语法糖，如果存在await会自动async包裹。
+
+```vue
+<Suspense>
+  <!-- 具有深层异步依赖的组件 -->
+  <Dashboard />
+
+  <!-- 在 #fallback 插槽中显示 “正在加载中” -->
+  <template #fallback>
+    Loading...
+  </template>
+</Suspense>
+```
+
+引入suspense以后，如果出现了async的setup或异步组件，就会基于异步组件状态决定内容，如果有多个异步组件就会等所有内容加载好之后才出现正文内容。
+
 ## 复用
 
 ### 自定义指令
@@ -1218,7 +1275,7 @@ const { x, y } = useMouse()
 |    onActivated    |                        -                        |
 |   onDeactivated   |                        -                        |
 
-值得注意的是，setup在beforeCreate之前（或者说是模拟量create）执行
+值得注意的是，setup在beforeMounte之前（或者说是模拟create）执行
 
 ## API，仅仅比较和v2的差异
 
@@ -1496,7 +1553,7 @@ export default {
 - 而对于key这个东西，如果列表里没有会导致列表通过就地更新，保证他们在原本指定的索引位置上渲染
   - 对没有 key 的子节点数组更新调用的是`patchUnkeyedChildren`这个方法，核心是就地更新的策略。它会通过**对比新旧子节点数组的长度**，先以比较短的那部分长度为基准，将新子节点的那一部分直接 patch 上去。然后再判断，如果是新子节点数组的长度更长，就直接将新子节点数组剩余部分挂载(mount)；如果是新子节点数组更短，就把旧子节点多出来的那部分给卸载掉（unmount）。也就是说，**没有key我就仅仅凑长度，根据原来位置的DOM赋予新DOM属性。**
   - 有 key 的子节点更新是调用的`patchKeyedChildren`，大概流程就是同步头部节点、同步尾部节点、处理新增和删除的节点，最后用求解最长递增子序列的方法区处理未知子序列。是为了**最大程度实现对已有节点的复用，减少 DOM 操作的性能开销**，同时避免了就地更新带来的子节点状态错误的问题。
-  - 比对顺序：startOld=>startNew,endOld=>endNew,startOld=>endNew,endOld=>startNew,unkown
+  - 比对顺序：startOld=>startNew,endOld=>endNew,startOld=>endNew,endOld=>startNew,unkown（V2）
 
 ## 响应式
 
@@ -1743,3 +1800,7 @@ V3用ts写的，更加支持ts
 proxy代替definedefineProperty
 
 增加 patchFlag 字段，帮助 diff 时区分静态节点，以及不同类型的动态节点，一定程度地减少节点本身及其属性的比对。 
+
+V3可以多个根节点
+
+diff:V2:头头->尾尾->头尾->尾头->n2,V3:头头->尾尾->最长递增子序列（把新key映射到原keyindex，找到最长的递增子序列，一起移动以减少代价）

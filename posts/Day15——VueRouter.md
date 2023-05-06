@@ -241,8 +241,6 @@ const router = createRouter({
 })
 ```
 
-
-
 ## 两种历史记录模式
 
 ### hash
@@ -444,6 +442,18 @@ export default {
   },
 }
 ```
+
+## 懒加载
+
+```javascript
+const UserDetails = () => import('./views/UserDetails.vue')
+const router = createRouter({
+  // ...
+  routes: [{ path: '/users/:id', component: UserDetails }],
+})
+```
+
+
 
 ## 检测导航故障
 

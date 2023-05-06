@@ -24,6 +24,8 @@ consoloe.log(url)
 url.searchParams.get('name')
 //'liaosong'
 url.toJSON()//等同于toString，返回href
+URL.createObjectURL(Blob)
+URL.revokeObjectURL(url)//创建和释放objectUrl
 ```
 
 # Web worker
@@ -236,6 +238,13 @@ objectStoreRequest.onsuccess = function(event) {
   var person3=createPerson('小红',person1);
   ```
 
+### 其他
+
+- 访问器
+- 中间人|发布订阅
+- 观察者
+- 修饰器
+
 # 再看等号问题
 
 ### 表格，1true，0false
@@ -269,7 +278,7 @@ objectStoreRequest.onsuccess = function(event) {
 - 数组：Number(\[\])->0,Number([0])->0,Number([2])->2,Number([1,2])->NaN
 - 字符串：''->0,"1"->1,'1a'->NaN
 - Number(undefined)->NaN,Number(null)->0
-- Boolean([])->true,Boolean(null|undefined)->false
+- Boolean([])->true,Boolean(null|undefined)->false,Boolean({})->true
 
 # 数据类型检测的方法
 

@@ -16,7 +16,7 @@ date: "2023-01-17"
   const child_process = require('child_process');
   
   for(var i=0; i<3; i++)  { 
-      var wrkerprocess=child_process.exec('node support.js '+i,  function  (error,  stdout,  stderr)  
+      var workerprocess=child_process.exec('node support.js '+i,  function  (error,  stdout,  stderr)
   	if  (error){
   		console.log(error.stack);  
   		console.log('error  code:  '+error.code);
@@ -113,6 +113,8 @@ console.log(myEmitter.listeners());//[]
 ```
 
 ### 事件循环流程
+
+**idle观察者>>io观察者>check观察者**  setTimeout采用的是类似IO观察者，setImmediate采用的是check观察者，而process.nextTick()采用的是idle观察者。
 
 - 初始化
   - 执行输入的同步代码

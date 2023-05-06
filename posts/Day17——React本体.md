@@ -122,7 +122,7 @@ number timeStamp
 string type
 ```
 
-注意，在事件中，SyntheticEvent类型的event参数是合并而来的，也就是说他可能被重用，而且在事件回调函数被调用后，所有的属性都会无效。出于性能考虑，你不能通过异步访问事件。 如果希望异步访问事件属性，需在事件上调用 event.persist()保留对事件的引用。
+注意，在事件中，SyntheticEvent类型的event参数是合并而来的，也就是说他可能被重用，而且在事件回调函数被调用后，所有的属性都会无效。出于性能考虑，你不能通过异步访问事件。 如果希望异步访问事件属性，需在事件上调用 event.persist() 保留对事件的引用。
 
 这玩意叫合成事件，React 实现了一个**合成事件层**，就是这个事件层，把 IE 和 W3C 标准之间的兼容问题给消除了。 
 
@@ -367,7 +367,7 @@ class FileInput extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     alert(
-      `Selected file - ${this.fileInput.current.files[0].name}`    );
+      `Selected file - ${this.fileInput.current.files[0].name}`);
   }
 
   render() {
@@ -547,7 +547,7 @@ function TextInputWithFocusButton() {
 }
 ```
 
-和自己搞一个对象（createRef()）不一样的是，useRef每次渲染时返回的都是同一个ref对象，当 ref 对象内容发生变化时，useRef并不会通知。变更 .current属性不会引发组件重新渲染。
+和自己搞一个对象（createRef()）不一样的是，useRef每次渲染时返回的都是同一个ref对象（其实就是hook和普通函数的区别），当 ref 对象内容发生变化时，useRef并不会通知。变更.current属性不会引发组件重新渲染。
 
 ## useDeferredValue
 
@@ -559,17 +559,28 @@ const deferredValue = useDeferredValue(value);
 
 ## useImperativeHandle
 
+useImpreativeHandel(ref,fun=>exposes,dep?)
+
+第二个参数的返回值就是你希望给父组件暴露的东西
+
 自定义绑定给一个处理对象，从而通过类似代理人的方式模拟操作真正的dom
 
 ```react
 function FancyInput(props, ref) {
-  const inputRef = useRef();
+  const inputRef1 = useRef();
+  const inputRef2 = useRef();
   useImperativeHandle(ref, () => ({
-    focus: () => {
-      inputRef.current.focus();
-    }//父组件可以使用<FancyInput ref={inputRef} />提供的inputRef.current.focus()方法
+    focus1: () => {
+      inputRef1.current.focus();
+    },    
+    focus2: () => {
+      inputRef2.current.focus();
+    },  //父组件可以使用<FancyInput ref={inputRef} />提供的inputRef.current.focus1和focus2方法自由决定哪个input被选中
   }));
-  return <input ref={inputRef} ... />;
+  return <>
+      <input ref={inputRef} ... />
+      <input ref={inputRef} ... />
+    <>;
 }
 FancyInput = forwardRef(FancyInput);
 ```
