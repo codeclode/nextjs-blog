@@ -395,6 +395,8 @@ function SuperType(){
 
 - setTimeout里的this是window(除非是箭头函数)
 
+- new中的this是新的对象
+
 - **this绑定的优先级：new绑定 > 显式绑定 > 隐式绑定 > 默认绑定。** 
 
 - ```javascript
