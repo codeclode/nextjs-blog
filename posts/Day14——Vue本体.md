@@ -646,7 +646,7 @@ Vue.filter('capitalize', function (value) {
       customOption: 'foo',
       created: function () {
         console.log(this.$options.customOption) // => 'foo'
-      }
+      }//也可以获取其他选项，比如data属性的原始值
     })
     ```
 

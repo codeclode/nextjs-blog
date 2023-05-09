@@ -183,6 +183,8 @@ date: "2023-04-28"
 
 - 配置.babelrc
 
+- babel负责把ES6+语法向下转化，而polyfill则负责手动实现没有的API（一个负责语法，一个负责新API）
+
   ```json
   {
     "env":"production|development"

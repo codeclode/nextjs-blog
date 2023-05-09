@@ -381,6 +381,8 @@ function SuperType(){
 
 # this问题
 
+执行上下文=变量对象+作用域链+this，变量对象就是window和argument这种东西
+
 ### 使用情况
 
 - 全局下this是window，如果是严格模式则是undefined

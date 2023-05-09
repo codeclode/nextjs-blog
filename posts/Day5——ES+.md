@@ -481,13 +481,10 @@ const obj = {
 
 - 空判断 (??)：是否值为`undefined`或`null`，是则使用默认值 
 
-### 类的私有属性
+  ```javascript
+  b = a ?? c;//当a除了undefined、或者null之外的任何值,b都会等于a,否则就等于c.
+  ```
 
-```javascript
-class c{
-    #name;//私有属性
-}
-```
 
 ### Promise.allSettled()
 
@@ -519,3 +516,40 @@ btn.onclick = function(){
 - WebWorker：顶层对象是`self`
 - 以上三者：通用顶层对象是`globalThis`
 - 方便跨环境使用global
+
+# ES12
+
+### 字符串replaceAll
+
+### WeakRef
+
+### 比较长的数字可以用_分割
+
+### 三个运算符
+
+```javascript
+// 等同于 a = a || b
+a ||= b;
+// 等同于 c = c && d
+c &&= d;
+// 等同于 e = e ?? f
+e ??= f;
+```
+
+# ES13
+
+### 类的私有属性
+
+```javascript
+class c{
+    #name;//私有属性
+}
+```
+
+### 顶层async
+
+### 加强正则
+
+- 正则新增 d 标志和其对应的 hasIndices 属性，提供了获取捕获组开始索引和结束索引的方法。 
+
+### Object.hasown(obj,prop)方法

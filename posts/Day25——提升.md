@@ -286,6 +286,56 @@ export async function serverRender(path) {
 1.如何在服务端预取数据
 2.取到数据之后如何保证服务端和客户端渲染一致
 
+## SSG\ISR
+
+SSG是static site generate，ISR是Increase static render，增量静态生成
+
+SSG的问题是，接口内容更新后，用户访问页面获取到的信息并不会更新，因此需要一种可以在服务运行中动态去触发 SSG 生成的 html 的能力，于是就出现了 `ISR`，让 `SSG` 也能拥有增量更新的能力。 
+
+要在 Next.js 中开启 ISR ，只需要在前面介绍的 `getStaticProps` 函数中返回一个 `revalidate` 属性，原理是当用户请求一个需要更新的页面时，ISR 会在后台自动重新生成该页面，然后将其缓存，以便下一次请求时可以快速响应。 
+
+```jsx
+function Blog({ posts }) {
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+// 这个方法会在服务端渲染或者 build 时被调用
+// 当使用了 serverless 函数、开启 revalidate 并且接受到新的请求时也会被重新调用
+export async function getStaticProps() {
+  const res = await fetch('https://.../posts')
+  const posts = await res.json()
+  return {
+    props: {
+      posts,
+    },
+    
+    // Next 将会尝试重新生成页面:
+    // - 接受到新的请求
+    // - 每隔最多十秒钟
+    revalidate: 10, // 单位为秒
+  }
+}
+```
+
+## SPA
+
+### 优点
+
+- 有良好的交互体验，避免了页面的重新加载；
+- 前后端分离，单页Web应用可以和 RESTful 规约一起使用，通过 REST API 提供接口数据，并使用 Ajax 异步获取，这样有助于分离客户端和服务器端工作。
+- 减轻服务器压力
+- 共用一套后端程序代码，不用修改后端程序代码就可以同时用于 Web 界面、手机、平板等多种客户端
+
+### 缺点
+
+- SEO
+- 首屏渲染时间长
+
 # 打包工具原理
 
 ### webpack

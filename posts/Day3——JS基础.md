@@ -349,8 +349,8 @@ console.log(obj2 + ""); //"true"
 
 ### 全局（不依赖浏览器环境）函数
 
-- decodeURI(encodedURI) 返回一个给定编码统一资源标识符 (URI) 的未编码版本的新字符串。 
-- encodeURI(URI)上个函数的逆过程
+- decodeURI(encodedURI) 返回一个给定编码统一资源标识符 (URI) 的未编码版本的新字符串，只会编解码query
+- decodeURIComponent(encodeURIComponent)对整个URL进行编解码 
 - eval(string)执行string代码
 - isFinite和isNaN
 - parseInt(string, radix)、parseFloat(string)，注意radix如果为0则假定为10，会自动截断非数字字符，除非没参数或者第一个字符就是非数字
