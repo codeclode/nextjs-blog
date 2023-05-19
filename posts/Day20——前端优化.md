@@ -1072,7 +1072,7 @@ console.log(records[0].duration);
   - 如果要设置dom，先甚至为display：none或者绝对定位脱离文档流再设置
   - 增加dom可以先创建documentFragment在它上面操作，最后再把它添加到文档中。
   - 尽量在DOM的叶子上进行修改 
-  - 一些引起回流的属性和方法
+  - 一些引起回流的属性和方法，这些属性都是只读的，改的话不报错但没效果
     - clientWidth、clientHeight、clientTop、clientLeft
     - offsetWidth、offsetHeight、offsetTop、offsetLeft
     - scrollWidth、scrollHeight、scrollTop、scrollLeft
@@ -1080,6 +1080,7 @@ console.log(records[0].duration);
     - window.getComputedStyle()
     - getBoundingClientRect()
     - scrollTo()
+    - 如果改变style.left这种，只会在整个代码之后回流1次，毕竟这个东西不是计算出来的只读属性
 
 # 自动化测试
 

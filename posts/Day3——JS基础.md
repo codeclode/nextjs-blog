@@ -269,6 +269,14 @@ date: "2023-01-11"
   - String(Symbol('s'))          // "Symbol(s)"，就是没有引号的哦
   - 对于Object类，取决于他们的toString方法，比如[1,2]=>"1,2"
 
+- Boolean
+
+  - Boolean('')//false
+  - Boolean(null)//false
+  - Boolean(undefined)//false
+  - Boolean(0)//false
+  - 其他都是true
+
 - 隐式转换： **如果其中一个操作数是字符串；或者其中一个操作数是对象，且可以通过ToPrimitive操作转换为字符串，则执行字符串连接操作；其他情况执行加法操作。** 
 
 - **对于执行加法操作的情况，如果操作数有一边不是number，则执行ToNumber操作，将操作数转换为数字类型。** 

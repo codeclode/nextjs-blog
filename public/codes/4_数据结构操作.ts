@@ -85,15 +85,7 @@ function hump<T>(target: T) {
 }
 
 function trans(str: string): string {
-  let arr = str.split("_");
-  return arr
-    .map((v, i0) => {
-      return v
-        .split("")
-        .map((v, i) => {
-          return i0 !== 0 && i === 0 ? v.toUpperCase() : v;
-        })
-        .join("");
-    })
-    .join("");
+  return str.replaceAll(/_([a-z])/g, (...rest) => {
+    return rest[1].toUpperCase();
+  });
 }
