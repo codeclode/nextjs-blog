@@ -26,7 +26,21 @@ date: "2023-01-14"
   console.log(func); //=>函数
   ```
 
-- 如果函数重复定义，那么最后提升的是最后一次定义。
+- 如果函数重复定义，那么**最后提升的是最后一次定义**。
+
+- 函数被提升以后定义代码不会再执行
+
+  ```javascript
+  showName()
+  var showName = function(){
+      console.log(2)
+  }
+  showName()
+  function showName(){
+      console.log(1)
+  }
+  showName()//122
+  ```
 
 - 对于var，只要不是在函数中，无论块作用域是否被执行都会有提升
 

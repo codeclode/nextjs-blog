@@ -445,7 +445,7 @@ date: "2023-01-16"
 
 - 使用require和exports
 - 引入模块时，先查询文件模块缓存，再查询原生模块，再查询文件模块
-- 无路径模块查找顺序：内置模块->node_module->向外遍历直到硬盘层面找node_modules->node_path根目录->全局node_Modules
+- 无路径模块（非./,../路径）查找顺序：内置模块->node_module->向外遍历直到硬盘层面找node_modules->node_path根目录->全局node_Modules
 
 ### Buffer
 

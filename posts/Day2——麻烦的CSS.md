@@ -171,9 +171,21 @@ date: "2023-01-10"
 - 可以理解为一个容器，无论子元素如何翻腾都不会跑出这个容器
 - 特点
   - 垂直方向上，自上而下排列，和文档流的排列方式一致。
+  
   - 在BFC中上下相邻的两个容器的margin会重叠（不是BFC的话内部元素的margin会出圈）
+  
+    ```html
+    <div style="background: black;">
+        <div style="margin: 10px;padding: 10px;"></div>
+        <div style="margin: 10px;padding: 10px;"></div>
+    </div>
+    父div高50
+    ```
+  
   - 计算BFC的高度时，需要计算浮动元素的高度
+  
   - BFC区域不会与浮动的容器发生重叠
+  
   - BFC是独立的容器，容器内部元素不会影响外部元素
 - 用处
   - 解决margin重叠（包一层）

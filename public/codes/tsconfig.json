@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "ES2022",
+      "DOM",
+      "ES6"
+    ],
+    "types": [
+      "node"
+    ]
+  },
+}

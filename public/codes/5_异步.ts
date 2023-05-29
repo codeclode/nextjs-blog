@@ -179,7 +179,7 @@ class Scheduler {
     constructor(fn: Function) {
       function resolve(value) {
         if (value instanceof MyPromise) {
-          return value.then(this.resolve, this.reject);
+          return value.then(resolve, reject);
         }
         setTimeout(() => {
           if (this.state === Status.PENDING) {

@@ -291,7 +291,7 @@ git rebase <master>
 git push origin -d <branch-name>
 #删除远程分支
 git cherry-pick <hash>
-#指定一个后边的提交，复制这个提交用来从当前开启一个新分支，不过新分支的意思是分支名字依然是当前分支名字，只不过从原来的结点的下一个提交变成了hash的副本结点，并且hash副本结点变成了最新提交
+#指定一个后边的提交，复制这个提交用来改变当前分支走向，只不过从原来的HEAD结点的下一个提交变成了hash的副本结点，并且hash副本结点变成了最新提交，这样可以实现摘除一些错误的commit且不像reset把错误版本记录在案
 ```
 
 ### 撤销
@@ -343,8 +343,10 @@ git stash list
 #常看stash列表
 git stash clear
 #删除全部缓存
-git stash pop <stash@{ID}>
-#恢复改动
+git stash apply stash@{ID}
+#恢复改动,但此次改动仍然在栈中
+git stash pop
+#弹栈恢复改动
 git stash show
 #展现最新保存的stash和当前⽬录的差异
 ```

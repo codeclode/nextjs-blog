@@ -967,14 +967,34 @@ console.log(records[0].duration);
   <link rel="dns-prefetch" href="xxx.com">
   ```
 
+- prefetch标签闲时加载，preload马上加载，这个玩意和serverpush没啥关系
+
 - dns负载均衡，后端的活
 
 - 开启http2，后端的活
 
   - 二进制分帧，比1的文本好
+
   - 多路复用，仅需要一个 TCP 建立请求通道,请求与响应可以同时基于此通道进行双向通信，而 http1.x 每次请求需要建立 TCP，还有并发限制。
+
   - 头部压缩减少体积
+
   - 可以进行服务端推送，提前得到需要的资源
+
+    ```javascript
+    res.push('/styles.css', {
+          request: {
+            accept: 'text/css'
+          },
+          response: {
+            'content-type': 'text/css'
+          }
+        }, (err, stream) => {
+          if (err) return;
+          fs.createReadStream('styles.css').pipe(stream);
+    });
+    ```
+
   - 可以设置高优先级请求
 
 - 直接服务端渲染
@@ -1182,7 +1202,7 @@ CSRF通常从第三方网站发起，被攻击的网站无法防止攻击发生�
 - 提交时要求附加本域才能获取的信息
 
   - CSRF token：攻击者只能冒用cookie而无法窃取信息，那么我们利用这一点用用户信息或者随机生成一个token来区分正常请求和攻击，当然，token不能放在cookie里。
-  - 双重cookie：访问网页时向请求域名注入一个Cookie，前端向后端发起请求时取出Cookie添加到URL参数中，后端接口验证Cookie中的字段与URL参数中的字段是否一致，不一致则拒绝。就是前端保存另一个Cookie，这样不会带着这个Cookie到其他网页。
+  - 双重cookie：访问网页时向请求域名注入一个Cookie，前端向后端发起请求时取出Cookie添加到URL参数中，后端接口验证Cookie中的字段与URL参数中的字段是否一致，不一致则拒绝。这个要求我们开启HttpOnly，保证其他人不能获取到cookie，只能利用它。就是前端保存另一个Cookie，这样不会带着这个Cookie到其他网页。
   
 - 最好的方法：反正这玩意损失的大部分是用户而不是网站本身，那我就直接写个免责声明（反正用户不大可能看），或者是提前告知外链风险（比如掘金的站外链接），让用户自己决定。
 
