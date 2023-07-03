@@ -4,7 +4,7 @@ function myNew(fn, ...args) {
   } else {
     let ret = Object.create(fn.prototype);
     let result = fn.call(ret, ...args);
-    if (result !== undefined && (result instanceof Object)) {
+    if (result !== null && (result instanceof Object)) {
       return result;
     }
     return ret;

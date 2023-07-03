@@ -534,6 +534,7 @@ const config = {
 ### 树摇
 
 - webpack 默认支持，需要在 .bablerc 里面设置 model：false，即可在生产环境下默认开启
+- 或者添加optimization中的usedExports为true
 
 ```javascript
 module.exports = {

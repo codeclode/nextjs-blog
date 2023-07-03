@@ -74,8 +74,8 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 - DNS迭代查询
   - 个人电脑
   - 猫
-  - local ISP   互联网服务提供商
-  - regional ISP   经过多个主干网络
+  - local ISP互联网服务提供商
+  - regional ISP经过多个主干网络
   - NSP   网络服务提供商  大型网络  卖带宽给ISP
   - NAP   每个NSP连接到至少三个网络访问点
   - ISP  NSP 所有网络提供都携带路由器，每个路由有当前子网络ip的路由表，当底层向上层发送数据时候，找不到会依次向上找，可能由一个主干网络跳到另外一个主干网络。 
@@ -197,9 +197,11 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 
 文档解析模式：在严格模式下浏览器根据W3C标准进行解析并渲染，这也是默认模式，而在混杂模式下浏览器会用自己的渲染方式解析并渲染。
 
-### base规定页面相对地址的目标 
+### base的href属性规定页面相对地址的目标 
 
-### HREF="mailto:xxx" 这个a标签可以直接打开设备的邮件应用 
+### HREF="mailto:xxx" 这个a标签可以直接打开设备的邮件应用
+
+### title定义标签标题
 
 ### meta
 
@@ -279,3 +281,9 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 - iframe 会阻塞主页面的 onload 事件
 - 无法被一些搜索引擎索识别
 - 会产生很多页面，不容易管理
+
+# target属性
+
+- a标签，定义\_blank、\_self等
+- iframe中的target定义name然后a的target指向name可以在对应iframe中打开
+- form同a标签

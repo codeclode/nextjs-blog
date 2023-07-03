@@ -417,6 +417,8 @@ function SuperType(){
 
 - 函数体的this基于有没有点，如果有.就是.前边的东西
 
+- 全局下的let和const不会挂载window上
+
 - 自执行函数和全局一样，注意，就算他是对象里边的自执行函数也和全局一样
 
 - 回调函数里的this一般情况下是window，除非是DOM事件this是元素本身

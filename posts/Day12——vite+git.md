@@ -402,3 +402,85 @@ git checkout
 |          **git push** -u          | 推送当前分支参数–u,表示与远程分支建立关联，第一次执行的时候用，后面就不需要了 |
 | git push [remote] [branch]\|-all? | 推送本地当前分支到远程仓库的指定分支,-all的话会推送所有分支  |
 
+# 相对安全的Git操作
+
+## 背景
+
+- 因为我在以前一直是一个人干整个组的活，所以永远在master上动代码，git的分支操作完全没有，导致上星期拉代码和提交时搞出了哄堂大笑的操作，因此今天我决定在GitHub上搞个演练场搅和一下git的分支。
+- 但是其实本人并不是完全不知道git的分支和远端操作，只是对某些操作和规范处于含糊的状态，也就是这些含糊的状态导致“我和mt面对git命令行，互相不知道对方在干啥”（简称对牛弹琴，我是牛）的情况。
+- 为了防止真的因为我的原因导致超级问题，我决定写一下文字备忘，至少有一个相对安全的操作流程。
+
+## 准备工作
+
+- ~~一台能联网的电脑~~
+- 一个能稳定登录GitHub的加速器
+- 本地的git
+- 在GitHub上 new 一个名字叫做git-playground的仓库
+
+## 指令
+
+- git add .
+- git commit -m "commit"
+- git pull
+- git merge
+- git push origin 本地:远程
+- git branch
+- git checkout
+
+## 还算安全的操作
+
+- git clone "https://github.com/xxx/git-playground.git"
+- 现在的状态是，本地的任何东西都和远程一样，但是请注意不要混淆本地分支和远程分支，本地分支仅有main
+- 现在我们在本地进行改动，commit后push，啥问题没有。
+- 现在我们在GitHub网页里新建一个分支test并且修改文件。
+- 那么现在我们要如何处理呢，我的策略是首先进行git fetch，然后看一眼branch -r，就看见一个test的分支，为了符合git规范（本地和远程对应），首先跳到这个远程test分支上，然后基于这个分支checkout -b test新建对应的本地分支。
+- 当然，在这个分支上的修改，第一次push要push -u origin test:test
+
+## 优化一下
+
+- 刚才的操作，是取缔了像git pull这种fetch+merge一系列自动化操作保证不会出现问题的操作，所以会比较麻烦。
+
+- git branch -u origin/xxx，不push，先绑定好
+
+- 拉代码的时候，不使用fetch而是pull，本地直接和远程合并（我不是很喜欢这样😢）
+
+- 对于远程的新分支，可以git checkout -b newBranch origin/newBranch自动拉取绑定。
+
+- 或者自定义指令，这个指令意思是自动推到远程同名分支上
+
+  ```bash
+  git config --global alias.pa "push -u origin HEAD"
+  ```
+
+## 问题
+
+> 我一定要在第一次git push -u（或者git branch -u）吗
+
+不一定哦，优化一下那里写了
+
+> 如果我的本地分支和远程分支名称不一致，如何查看关联
+
+```bash
+git branch -vv
+```
+
+> git checkout origin/xxx
+
+这个指令不会真的切到远程，而是建立一个指向远程分支的HEAD（分离HEAD状态）
+
+>  The upstream branch of your current branch does not match the name of your current branch. 
+
+解决办法有2个
+1. 要不采取上面给出的建议，执行 git push origin :dev即可，这是创建了一个新远程分支
+2. 可以重新指定与远程同名的分支（推荐这种方式，执行之后以后就可以git push了）
+git push -u origin test
+
+## 总结建议
+
+周五临下班因为onesId的问题和mt处理了快10分钟，急死我了，希望工程性能（应该是这个吧，舍友在这个组）搞一个mit|mGit命令行工具🥰
+
+一个测试的网站，缺点是不能模拟远程新建分支：https://learngitbranching.js.org/?locale=zh_CN&NODEMO=
+
+对于各种分支合纵连横的超级大项目，可以下一个sourcetree进行分支可视化（感觉GitLens不如sourcetree。。。直观）
+
+🤮🤮🤮🤮🤮🤮🤮🤮🤮🤮🤮🤮🤮🤮🤮

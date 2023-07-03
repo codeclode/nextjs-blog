@@ -1731,6 +1731,21 @@ function computed(fn) {
 
 # 经典问题
 
+## 样式scope和穿透
+
+vue组件编译后，会将 template 中的每个元素加入 [data-v-xxxx] 属性来确保 style scoped 仅本组件的元素而不会污染全局，**默认只会对组件的最外层（div）加入这个 [data-v-xxxx] 属性，但第二层开始就没有效果了。** 所以，如果你期待通过如下方式修改 weui-cells 的样式。是没有任何效果的：
+
+```vue
+<style scoped>
+    .fuck .weui-cells {
+        // ...
+    }
+    <!--编译成.fuck[data-v-17bb9a05] .weui-cells[data-v-17bb9a05]-->
+</style>
+```
+
+为了解决这个问题，vue提出>>>(css)深度作用选择器来穿透样式，如果使用scss等则用/deep/代替>>>
+
 ## 生命周期父子局
 
 ### 加载渲染过程

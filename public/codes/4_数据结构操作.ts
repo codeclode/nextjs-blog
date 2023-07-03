@@ -1,5 +1,5 @@
 function deep_clone(target: any, map = new WeakMap()) {
-  if (typeof target !== "object") {
+  if (typeof target !== "object" || target === null) {
     return target;
   } else {
     if (map.has(target)) {
