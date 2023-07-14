@@ -131,7 +131,7 @@ function getTimeFromStr(str: string = "yyyy-mm-dd", date: Date = new Date()) {
 //洗牌
 function shuffle(arr: number[]) {
   for (let i = arr.length - 1; i >= 1; i--) {
-    let r = Math.floor(Math.random() * i);
+    let r = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[r]] = [arr[r], arr[i]];
   }
 }

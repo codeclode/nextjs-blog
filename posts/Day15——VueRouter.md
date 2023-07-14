@@ -50,7 +50,6 @@ const routes = [
   { path: '/:pathMatch(.*)*', component: NotFound },
   // 将匹配以 `/user-` 开头的所有内容，并将其放在 `$route.params.afterUser` 下
   { path: '/user-:afterUser(.*)', component: UserGeneric },
-  
 ]
 //默认不区分大小写，除非定义sensitive:true,默认尾斜线任意，除非定义strict:true
 const router = createRouter({
@@ -271,7 +270,7 @@ const router = createRouter({
 
 ## 路由守卫
 
-beforeEach 前置守卫->beforeEnter 独享守卫->beforeRouteEnter 组件守卫->beforeResolve 解析守卫->afterEach 路由后置守卫 
+beforeEach 前置守卫->beforeEnter 独享守卫->beforeRouteEnter 组件守卫->beforeResolve 解析守卫->afterEach 路由后置守卫
 
 ### 全局
 
@@ -448,12 +447,9 @@ export default {
 ```javascript
 const UserDetails = () => import('./views/UserDetails.vue')
 const router = createRouter({
-  // ...
   routes: [{ path: '/users/:id', component: UserDetails }],
 })
 ```
-
-
 
 ## 检测导航故障
 

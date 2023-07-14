@@ -624,7 +624,7 @@ function App() {
 
 ### React.lazy
 
- 定义一个动态加载的组件。这有助于缩减 bundle 的体积，并延迟加载在初次渲染时未用到的组件。 
+定义一个动态加载的组件。这有助于缩减 bundle 的体积，并延迟加载在初次渲染时未用到的组件。 
 
 ```jsx
 const SomeComponent = React.lazy(() => import('./SomeComponent'));

@@ -573,7 +573,7 @@ Vue.filter('capitalize', function (value) {
   - el
   - template
   - render，自定义渲染函数
-  - renderError： 当 render函数遭遇错误时，提供另外一种渲染输出。其错误将会作为第二个参数传递到 renderError。
+  - renderError：当 render函数遭遇错误时，提供另外一种渲染输出。其错误将会作为第二个参数传递到 renderError。
 
 - 组件选项/资源
 
@@ -1517,10 +1517,10 @@ export default {
   name: 'debounce',
   abstract: true, //标记为抽象组件
   render() {
-  let vnode = this.$slots.default[0]; // 子组件的vnode
-  if (vnode) {
-    let event = get(vnode, `data.on.click`); // 子组件绑定的click事件
-    if (typeof event === 'function') {
+    let vnode = this.$slots.default[0]; // 子组件的vnode
+    if (vnode) {
+      let event = get(vnode, `data.on.click`); // 子组件绑定的click事件
+      if (typeof event === 'function') {
         set(vnode, `data.on.click`, debounce(event, 1000));
       }
     }
@@ -1798,6 +1798,112 @@ vue组件编译后，会将 template 中的每个元素加入 [data-v-xxxx] 属�
 
 - 使用的是LRU
 - 缓存的是vue实例
+
+## 双向绑定
+
+### V2
+
+#### sync方式
+
+使用 `.sync` 修饰符修饰一个单项绑定到组件的属性，会默认绑定一个 `update:myPropName` 的事件，`myPropName` 是绑定的属性名，支持多个数据。
+
+```vue
+<template>
+  <!-- 监听input事件，提交.sync修饰符提供的update:<myPropName>事件 -->
+  <input :value="value" @input="$emit('update:value',$event.target.value)">
+  <input :value="name" @input="$emit('update:name',$event.target.value)">
+</template>
+<script>
+export default {
+  props: ['value','name']
+}
+</script>
+<New :value.sync="query" :name.sync="string"/>
+```
+
+#### modal方式一
+
+```vue
+<template>    
+<input type="checkbox" v-bind:checked="checked" v-on:change="$emit('change', $event.target.checked)">
+</template>
+<script>
+Vue.component('base-checkbox', {
+  model: {
+    prop: 'checked',//v-modal映射成名字叫checked的prop
+    event: 'change'//自定义方法名字交change
+  },
+  props: {
+    checked: Boolean
+  },
+})
+</script>
+<base-checkbox v-model="lovingVue"></base-checkbox>
+```
+
+#### modal方式二
+
+```vue
+<template>    
+<input type="value" v-bind:checked="checked" v-on:change="$emit('input', $event.target.checked)">
+</template>
+<script>
+Vue.component('base-checkbox', {
+  props: {
+    value: Boolean//默认value值和input事件
+  },
+})
+</script>
+<base-checkbox v-model="lovingVue"></base-checkbox>
+```
+
+### V3
+
+```vue
+<template>
+  <input type="text" :value="modelValue" @input="emitValue" />
+</template>
+<script setup>
+    const props = defineProps({
+      modelValue: String,
+      modelModifiers: { default: () => ({}) }
+    })
+    const emit = defineEmits(['update:modelValue'])
+    function emitValue(e) {
+      let value = e.target.value
+      // 检查 modelModifiers 对象的键，并编写一个处理函数来改变抛出的值
+      if (props.modelModifiers.capitalize) {
+        value = value.charAt(0).toUpperCase() + value.slice(1)
+      }
+      emit('update:modelValue', value)
+    }
+</script>
+
+<MyComponent v-model.capitalize="myText" />
+```
+
+```vue
+
+<template>
+  <input
+    type="text"
+    :value="title"
+    @input="$emit('update:title', $event.target.value)"
+  />
+  <input
+    type="text"
+    :value="author"
+    @input="$emit('update:author', $event.target.value)"
+  />
+<!--多个modal(需要自定义名字)的情况-->
+</template>
+<script setup>
+    defineProps(['title',"author"])
+    defineEmits(['update:title','update:author'])
+</script>
+
+<MyComponent v-model:title="bookTitle" v-model:author="author" />
+```
 
 # V2V3到底有啥区别
 
