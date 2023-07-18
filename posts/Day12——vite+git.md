@@ -136,11 +136,27 @@ export default defineConfig({//这样也可以有提示
 - vite-plugin-compression（压缩成gzip格式，配合nginx） 
 - unplugin-auto-import自动导入
 - unplugin-vue-components导入vue组件 
+- vite-plugin-esbuild使用esbuild打包而非rollup
 
 ### 选项
 
 ```typescript
 type config={
+    build:{
+        target:string[]//需要兼容的浏览器版本
+        outDir:string//结果路径
+        assetsDir:string//静态资源打包路径
+        assetsInlineLimit:number//xxkb为界限使用base64
+        sourcemap:boolean | 'inline' | 'hidden'//'hidden' 的工作原理与 true 相似，只是 bundle 文件中相应的注释将不被保留。
+        lib:{
+            entry: string | string[] | {
+                [entryAlias: string]: string 
+            }, 
+            name?: string, 
+            formats?: ('es' | 'cjs' | 'umd' | 'iife')[],
+            fileName?: string | ((format: ModuleFormat, entryName: string) => string)
+        }
+    }
     root:string;//项目根目录
     base:string;//开发或生产环境服务的公共基础路径。默认是/
     mode:string;//指定环境development、production
@@ -167,15 +183,22 @@ type config={
 	logLevel:'info' | 'warn' | 'error' | 'silent'//控制台输出级别
 	envDir//如其名
     envPrefix:string|string[]//以 envPrefix 开头的环境变量会通过 import.meta.env 暴露在你的客户端源码中。默认VITE_
+    appType:'spa' | 'mpa' | 'custom'//应用类型,mpa是使用了html中间件的多页面应用
 	server: {
-   	 host: true, // 监听所有地址
-   	 proxy: {
-		'api':{
-            target: 'http://jsonplaceholder.typicode.com',
-    	    changeOrigin: true,
-    	    rewrite: (path) => path.replace(/api/, '')
-        }
-	}
+        hmr:true,
+   	    host: true, // 监听所有地址，
+   	    proxy: {
+		    'api':{
+                target: 'http://jsonplaceholder.typicode.com',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/api/, '')
+            }    
+	    },
+        watch: {
+            ignored: ['!**/node_modules/your-package-name/**'],
+        },
+        cors:true//运行所有访问源,这个东西和Access-controle-allow-origin一样
+    }
 }
 ```
 
@@ -389,18 +412,18 @@ git checkout
 
 ### 远程操作
 
-|               指令                |                           meaning                            |
-| :-------------------------------: | :----------------------------------------------------------: |
-|          git clone 地址           |                             克隆                             |
-|           git remote -v           |           查看所有远程仓库，不带参数`-v`只显示名称           |
-|     git remote show [remote]      |                    显示某个远程仓库的信息                    |
-|    git remote add [name] [url]    |                 增加一个新的远程仓库，并命名                 |
-|   git remote rename [old] [new]   |                       修改远程仓库名称                       |
-|  **git pull [remote] [branch]**   |             取回远程仓库的变化，并与本地版本合并             |
-|           **git pull**            |                              -                               |
-|        git fetch [remote]         |        获取远程仓库的所有变动到本地仓库，不会自动合并        |
+|               指令                |                                    meaning                                    |
+| :-------------------------------: | :---------------------------------------------------------------------------: |
+|          git clone 地址           |                                     克隆                                      |
+|           git remote -v           |                   查看所有远程仓库，不带参数`-v`只显示名称                    |
+|     git remote show [remote]      |                            显示某个远程仓库的信息                             |
+|    git remote add [name] [url]    |                         增加一个新的远程仓库，并命名                          |
+|   git remote rename [old] [new]   |                               修改远程仓库名称                                |
+|  **git pull [remote] [branch]**   |                     取回远程仓库的变化，并与本地版本合并                      |
+|           **git pull**            |                                       -                                       |
+|        git fetch [remote]         |                获取远程仓库的所有变动到本地仓库，不会自动合并                 |
 |          **git push** -u          | 推送当前分支参数–u,表示与远程分支建立关联，第一次执行的时候用，后面就不需要了 |
-| git push [remote] [branch]\|-all? | 推送本地当前分支到远程仓库的指定分支,-all的话会推送所有分支  |
+| git push [remote] [branch]\|-all? |          推送本地当前分支到远程仓库的指定分支,-all的话会推送所有分支          |
 
 # 相对安全的Git操作
 

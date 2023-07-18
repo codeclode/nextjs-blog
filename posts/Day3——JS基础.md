@@ -382,6 +382,36 @@ console.log(obj2 + ""); //"true"
   - innerText和innerHtml
   - nodeType（1->元素结点，2->属性结点，3->文本结点）
   - style样式
+
+- DOM遍历
+    
+    - 有俩，TreeWalker和NodeIterator，TreeWalker高级一点。
+    - document.createNodeIterator||createTreeWalker
+    - NodeFilter的枚举
+      - NodeFilter.SHOW_ALL：显示所有类型 的节点
+      - NodeFilter.SHOW_ELEMENT：显示元素节点
+      - NodeFilter.SHOW_TEXT：显示文本节点
+      - NodeFilter.SHOW_COMMENT：显示注释节点
+      - NodeFilter.SHOW_DOCUMENT：显示文档节点
+      - NodeFilter.SKIP用来在filter中放回，跳过此节点
+      - NodeFilter.SKIP用来在filter中放回，接下此节点
+      - NodeFilter.REJECT用来在filter中放回，跳过此节点，在TreeWalker中跳过此节点及其所有后代
+    ```javascript
+    var filter = function(node){
+      return node.tagName.toLowerCase() == 'p' ?
+      NodeFilter.FILTER_ACCEPT:
+      NodeFilter.FILTER_SKIP;
+    }
+
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, filter, false);
+
+    var node = walker.nextNode();
+
+    while(node !== null){
+      console.log( node.tagName );
+      node = walker.nextNode();
+    }
+    ```
 - DOM原型链
   - Object <EventTarget< Node < Element < HTMLElement < (e.g., HTML*Element)
   - Object <EventTarget < Node < Attr (this is deprecated in DOM4)

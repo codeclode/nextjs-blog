@@ -512,7 +512,7 @@ const list: Record<Names, PersonType> = {
 
 ```typescript
 type Exclude<T, U> = T extends U ? never : T;
-type Omit = Pick<T, Exclude<keyof T, K>>;
+type Omit<T,K> = Pick<T, Exclude<keyof T, K>>;
 
 interface CarType {
   name: string;
@@ -527,7 +527,7 @@ const C2: Omit<CarType, "color"> = {//移除color属性
   name: "Car1",
   type: "mini",
 };
-const C: Exclude<EXC,CarType> = {//CarType减EXC
+const C: Exclude<CarType,EXC> = {//CarType减EXC
   color:"green"
 };
 ```
