@@ -20,7 +20,7 @@ Model和View之间不进行通讯，都是通过Presenter完成。Controller和V
 
 ## 两个核心
 
-组件系统和数据驱动 
+组件系统和数据驱动
 
 # Vue2
 
@@ -160,6 +160,7 @@ var vm = new Vue({
 
   <!--对应的鼠标修饰符.left\.right\.middle-->
   <!--对应的键盘修饰符.ctrl\.alt\.shift\.meta-->
+  <div @="{click:method1,mouseDown:method2}"<!--多个事件绑定-->
 </template>
 
 <script>

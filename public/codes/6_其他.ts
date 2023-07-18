@@ -99,12 +99,12 @@ function fromURLToQuery(urlStr: string) {
 //正则表达式形态
 function getURLParams(url) {
   var ret = {};
-  var regex = /[?&]+([^=&]+)=?([^&]+)/g;
+  var regex = /[?&]+([^=&]+)(?:=([^&]+))?/g;
   var match;
   while ((match = regex.exec(url)) !== null) {
     var key = decodeURIComponent(match[1]);
     var value: string | boolean = decodeURIComponent(match[2]);
-    if (!value) value = true;
+    if (!value || !match[2]) value = true;
     if (key in ret) {
       if (Array.isArray(ret[key])) {
         ret[key] = [...ret[key], value];

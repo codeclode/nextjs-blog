@@ -61,7 +61,7 @@
         }).catch(() => {
           errCount++;
           if (errCount === promises.length) {
-            resolve("all error");
+            reject("all error");
           }
         });
       });
