@@ -1035,11 +1035,8 @@ console.log(records[0].duration);
         case "li2":
           location.href = "http://www.baidu.com";
           break;
-  })
+    })
     //会有点问题，如果子元素里边还有子元素，理论上点击孙元素应该也可以触发，但是这种写法无法触发
-    ```
-    
-  - ```javascript
     function delegate(element, eventType, selector, fn) {
       element.addEventListener(eventType, e => {
         let el = e.target
