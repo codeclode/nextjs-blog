@@ -230,7 +230,7 @@ TLS实际用的是两种算法的混合加密。通过非对称加密算法交�
   - ntp网络同步
   - dhcp动态ip
 - 都可以
-  - dns
+  - dns(和源交换用tcp，解析udp)
   - arp
   - dhcp
 
