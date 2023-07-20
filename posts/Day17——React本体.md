@@ -16,7 +16,7 @@ root.render(<h1>Hello, world!</h1>);
 
 ### JSX
 
-JavaScript 的语法扩展。可以描述 UI 应该呈现出它应有交互的本质形式。 
+JavaScript 的语法扩展。可以描述 UI 应该呈现出它应有交互的本质形式。
 
 ```react
 const name = 'Josh Perez';
@@ -85,7 +85,7 @@ const MyContext = React.createContext(defaultValue);//创建一个环境
 
 ### unmountComponentAtNode(container)
 
-从 DOM 中卸载组件，会将其事件处理器（event handlers）和 state 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 true，如果没有组件可被移除将会返回 false。 
+从 DOM 中卸载组件，会将其事件处理器（event handlers）和 state 一并清除。如果指定容器上没有对应已挂载的组件，这个函数什么也不会做。如果组件被移除将会返回 true，如果没有组件可被移除将会返回 false。
 
 ### createPortal(child,container)
 
@@ -124,7 +124,7 @@ string type
 
 注意，在事件中，SyntheticEvent类型的event参数是合并而来的，也就是说他可能被重用，而且在事件回调函数被调用后，所有的属性都会无效。出于性能考虑，你不能通过异步访问事件。 如果希望异步访问事件属性，需在事件上调用 event.persist() 保留对事件的引用。
 
-这玩意叫合成事件，React 实现了一个**合成事件层**，就是这个事件层，把 IE 和 W3C 标准之间的兼容问题给消除了。 
+这玩意叫合成事件，React 实现了一个**合成事件层**，就是这个事件层，把 IE 和 W3C 标准之间的兼容问题给消除了。
 
 - React 上注册的事件最终会绑定在`document`这个 DOM 上，而不是 React 组件对应的 DOM(减少内存开销就是因为所有的事件都绑定在 document 上，其他节点没有绑定事件)
 - React 自身实现了一套事件冒泡机制，所以这也就是为什么我们 `event.stopPropagation()` 无效的原因。
@@ -268,9 +268,9 @@ render(){
   const isLoggedIn = this.state.isLoggedIn;
   let button;
   if (isLoggedIn) {
-	button = <LogoutButton onClick={this.handleLogoutClick} />;
+ button = <LogoutButton onClick={this.handleLogoutClick} />;
  } else {
-	button = <LoginButton onClick={this.handleLoginClick} />;
+ button = <LoginButton onClick={this.handleLoginClick} />;
   }
   return <div>{button}</div>
 }
@@ -394,18 +394,18 @@ class FileInput extends React.Component {
 ### 挂载阶段
 
 - constructor(props)
-- static getDerivedStateFromProps(props,state) 在调用 render 方法之前调用，并且在初始挂载及后续更新时都会被调用。它应返回一个对象来更新 state，如果返回null则不更新任何内容，为了防止某些人在这里被setState所以是static方法。 
+- static getDerivedStateFromProps(props,state) 在调用 render 方法之前调用，并且在初始挂载及后续更新时都会被调用。它应返回一个对象来更新 state，如果返回null则不更新任何内容，为了防止某些人在这里被setState所以是static方法。
 - render()
 - componentDidMount()可以使用setState，一般在这里进行初始的网络请求等内容
 
 ### 更新阶段
 
-- static getDerivedStateFromProps(props,state) 
+- static getDerivedStateFromProps(props,state)
 - shouldComponentUpdate(nextProps, nextState)如果返回false那么取消本次更新
-  - React.Component 并未实现 shouldComponentUpdate()，而 `React.PureComponent` 中以浅层对比 prop 和 state 的方式来实现了该函数。 
+  - React.Component 并未实现 shouldComponentUpdate()，而 `React.PureComponent` 中以浅层对比 prop 和 state 的方式来实现了该函数。
 - render()
 - getSnapshotBeforeUpdate(prevProps, prevState)拍快照，返回值就是生成的快照传给下边那个周期
-- componentDidUpdate(prevProps,prevState,snapshot)在更新后会被立即调用。首次渲染不会执行此方法。 
+- componentDidUpdate(prevProps,prevState,snapshot)在更新后会被立即调用。首次渲染不会执行此方法。
 
 ### 卸载
 
@@ -413,7 +413,7 @@ class FileInput extends React.Component {
 
 ### 出错
 
-- static getDerivedStateFromError(err) 后代组件抛出错误后被调用。 
+- static getDerivedStateFromError(err) 后代组件抛出错误后被调用。
 - componentDidCatch(err,info)用来记录错误信息
 
 # 函数（Hook）式组件
@@ -439,7 +439,7 @@ const [count,setCount] = useState(0)
 useEffect(() => {
   document.title = `You clicked ${count} times`; 
   return clear(){
-	//如果需要进行组件卸载的清理工作就返回一个函数进行清理
+ //如果需要进行组件卸载的清理工作就返回一个函数进行清理
   }
 });//新打开和更新时都执行
 useEffect(() => {
@@ -502,11 +502,11 @@ const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
 const memoizedCallback = useCallback(() => {doSomething(a, b);},[a, b]);
 ```
 
-类似vue的计算属性，useMemo获取的值是fn里的返回值，如果没有改变就始终返回缓存值，但是一旦a，b改变就创建新的结果。而useCallback(fn,deps)则相当于 useMemo(() => fn, deps)，函数只会在deps改变时更新。 
+类似vue的计算属性，useMemo获取的值是fn里的返回值，如果没有改变就始终返回缓存值，但是一旦a，b改变就创建新的结果。而useCallback(fn,deps)则相当于 useMemo(() => fn, deps)，函数只会在deps改变时更新。
 
 ## useLayoutEffect
 
-参数和useEffect一样，但是在所有的 DOM 变更之后同步调用 effect。 
+参数和useEffect一样，但是在所有的 DOM 变更之后同步调用 effect。
 
 和useEffect不一样的地方是，useEffect是异步的，浏览器先渲染好了才会触发，而useLayoutEffect则是会阻塞渲染，等自己执行完才能继续。
 
@@ -624,7 +624,7 @@ function App() {
 
 ### React.lazy
 
-定义一个动态加载的组件。这有助于缩减 bundle 的体积，并延迟加载在初次渲染时未用到的组件。 
+定义一个动态加载的组件。这有助于缩减 bundle 的体积，并延迟加载在初次渲染时未用到的组件。
 
 ```jsx
 const SomeComponent = React.lazy(() => import('./SomeComponent'));
@@ -674,8 +674,8 @@ function classHOC(WrapComponent){
             return <WrapComponent { ...this.props }  { ...this.state }   />
         }
     }
-	//函数式组件也可以
-	return function Index(props){
+ //函数式组件也可以
+ return function Index(props){
         const [ state , setState ] = useState({ name :'alien'  })       
         return  <WrapComponent { ...props }  { ...state }   />
     }
@@ -738,10 +738,11 @@ function logProps(WrappedComponent) {
 - 兄弟节点之间通过`key`进行唯一标识。
 - 如果新旧的`节点类型`不相同，那么它认为就是一个新的结构，无论嵌套了多深也会全部`丢弃`重新创建。
 - 注意，react都是显示地更新state(setState或setxxx)，因此对于状态变化是我们告诉他的，而状态一旦变化就是触发vdom重新渲染。
+- 当React比较新旧虚拟DOM树的时候，它会先把新旧虚拟DOM树中的所有元素按照key值进行排序，然后再依次比较它们的属性和子元素。这个排序过程是通过一种叫做“key index”的算法来实现的。这个算法会先遍历新虚拟DOM树中的所有元素，把它们的key值和位置信息存储到一个哈希表中。然后再遍历旧虚拟DOM树中的所有元素，对于每个元素，都会在哈希表中查找对应的key值和位置信息。如果找到了，就说明这个元素在新虚拟DOM树中还存在，React会把它的属性和子元素更新到新的虚拟DOM树中；如果没找到，就说明这个元素在新虚拟DOM树中已经被删除了，React会把它从旧的虚拟DOM树中删除。这个算法的时间复杂度是O(n)。
 
 ### fiber
 
-React16以前，更新是通过深度优先遍历完成的，当树的层级深就会产生栈的层级过深时页面渲染速度变慢，为了解决这个问题引入了fiber，React fiber就是虚拟DOM，它是一个链表结构（因此可以随时中断，记录下当前位置即可），返回了return、children、siblings，分别代表父fiber，子fiber和兄弟fiber，**随时可中断**，这样就实现增量渲染，增量渲染指的是把一个渲染任务分解为多个渲染任务，而后将其分散到多个帧里。 
+React16以前，更新是通过深度优先遍历完成的，当树的层级深就会产生栈的层级过深时页面渲染速度变慢，为了解决这个问题引入了fiber，React fiber就是虚拟DOM，它是一个链表结构（因此可以随时中断，记录下当前位置即可），返回了return、children、siblings，分别代表父fiber，子fiber和兄弟fiber，**随时可中断**，这样就实现增量渲染，增量渲染指的是把一个渲染任务分解为多个渲染任务，而后将其分散到多个帧里。
 
 **workInProgress**:正在内存中构建的fiber树叫workInProgress fiber，在第一次更新时，所有的更新都发生在workInProgress树，在第一次更新后，workInProgress树上的状态是最新状态，它会替换current树
 
@@ -751,7 +752,7 @@ React16以前，更新是通过深度优先遍历完成的，当树的层级深�
 
 # 三种模式
 
-React官方一开始就是把setState设计成了异步模式，但是为了现实中的一些业务，在**Legacy模式**下，脱离React上下文环境的情况就出现同步模式，但是在**concurrent模式**下是肯定都是异步的。 
+React官方一开始就是把setState设计成了异步模式，但是为了现实中的一些业务，在**Legacy模式**下，脱离React上下文环境的情况就出现同步模式，但是在**concurrent模式**下是肯定都是异步的。
 
 ### legacy流行模式
 
