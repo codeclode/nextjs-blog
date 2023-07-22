@@ -147,6 +147,45 @@ class Scheduler {
 }
 //手写promise
 {
+  function resolvePromise(promise2, x, resolve, reject) {
+    //x是调用then两函数之一以后得到的结果,resolve\reject对应promise2创建时的俩回调
+    // 循环引用报错
+    if (x === promise2) {
+      // reject报错
+      return reject(new TypeError("Chaining cycle detected for promise"));
+    }
+    // 防止多次调用
+    let called;
+    // x不是null 且x是对象或者函数
+    if (x instanceof MyPromise) {
+      try {
+        x.then(
+          (y) => {
+            // 成功和失败只能调用一个
+            if (called) return;
+            called = true;
+            // resolve的结果依旧是promise 那就继续解析
+            resolvePromise(promise2, y, resolve, reject);
+          },
+          (err) => {
+            // 成功和失败只能调用一个
+            if (called) return;
+            called = true;
+            reject(err); // 失败了就失败了
+          }
+        );
+      } catch (e) {
+        // 也属于失败
+        if (called) return;
+        called = true;
+        // 取then出错了那就不要在继续执行了
+        reject(e);
+      }
+    } else {
+      resolve(x);
+    }
+  }
+
   enum Status {
     PENDING,
     FUFILLED,
@@ -163,21 +202,31 @@ class Scheduler {
 
     rejectedCallbacks: Array<Function> = [];
 
-    then(resolve, reject) {
-      if (typeof resolve === "function") {
-        if ((this.state = Status.FUFILLED)) {
-          resolve(this.value);
-        } else if ((this.state = Status.PENDING)) {
-          this.resolvedCallbacks.push(resolve);
+    then(onFulfilled, onRejected) {
+      // 声明返回的promise2
+      let promise2 = new MyPromise((resolve, reject) => {
+        if (this.state === Status.FUFILLED) {
+          let x = onFulfilled(this.value);
+          // resolvePromise函数，处理自己return的promise和默认的promise2的关系
+          resolvePromise(promise2, x, resolve, reject);
         }
-      }
-      if (typeof reject === "function") {
-        if ((this.state = Status.REJECTED)) {
-          reject(this.value);
-        } else if ((this.state = Status.PENDING)) {
-          this.rejectedCallbacks.push(reject);
+        if (this.state === Status.REJECTED) {
+          let x = onRejected(this.value);
+          resolvePromise(promise2, x, resolve, reject);
         }
-      }
+        if (this.state === Status.PENDING) {
+          this.resolvedCallbacks.push(() => {
+            let x = onFulfilled(this.value);
+            resolvePromise(promise2, x, resolve, reject);
+          });
+          this.rejectedCallbacks.push(() => {
+            let x = onRejected(this.value);
+            resolvePromise(promise2, x, resolve, reject);
+          });
+        }
+      });
+      // 返回promise，完成链式
+      return promise2;
     }
 
     constructor(fn: Function) {

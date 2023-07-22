@@ -371,6 +371,8 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
 
 - then方法接受的参数是函数，而如果传递的并非是一个函数（Promise也不行），它实际上会将其解释为then(null)，这就会导致前一个Promise的结果会传递下面。 
 
+- resolve一个promise，会等到这个promise结束时传给.then
+
   ```javascript
   let x = new Promise((resolve)=>{
       return
@@ -411,6 +413,14 @@ new Date(year, monthIndex [, day [, hours [, minutes [, seconds [, milliseconds]
       console.log(res)
   })
   //1233
+  new Promise((resolve)=>{
+      resolve(new Promise((resolve)=>{
+          setTimeout(resolve,1000,3)
+      }))
+  }).then(v=>{
+      console.log(v)
+  })
+  //1s后输出3,如果传入的promise rejected了，那就报错或走catch
   ```
 
 ### 静态方法
