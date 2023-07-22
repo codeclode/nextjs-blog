@@ -1326,16 +1326,15 @@ const { x, y } = useMouse()
         console.log(this.message) // 'hello'
       }
     }
-    
     ```
-
-  - app.component()\\app.directive()\\app.use\\app.mixin()注册全局服务
-
-  - app.config.MergeStrategies|compilerOptions同v2
-
-  - app.config.globalProperties
-
-    ```javascript
+    
+- app.component()\\app.directive()\\app.use\\app.mixin()注册全局服务
+  
+- app.config.MergeStrategies|compilerOptions同v2
+  
+- app.config.globalProperties
+  
+  ```javascript
     app.config.globalProperties.msg = 'hello'
     //组件
     export default {
@@ -1517,7 +1516,7 @@ import {get, debounce, set} from 'lodash';
 export default {
   name: 'debounce',
   abstract: true, //标记为抽象组件
-  render() {
+  render(h) {//h函数创建虚拟node
     let vnode = this.$slots.default[0]; // 子组件的vnode
     if (vnode) {
       let event = get(vnode, `data.on.click`); // 子组件绑定的click事件
@@ -1525,7 +1524,10 @@ export default {
         set(vnode, `data.on.click`, debounce(event, 1000));
       }
     }
-    return vnode;
+    return h('div',[vnode]);
+    return h(Component,{
+        props:xxx,
+    },[childrens...]);
   }
 };
 </script>
@@ -1923,7 +1925,5 @@ V3用ts写的，更加支持ts
 proxy代替definedefineProperty
 
 增加 patchFlag 字段，帮助 diff 时区分静态节点，以及不同类型的动态节点，一定程度地减少节点本身及其属性的比对。 
-
-V3可以多个根节点
 
 diff:V2:头头->尾尾->头尾->尾头->n2,V3:头头->尾尾->最长递增子序列（把新key映射到原keyindex，找到最长的递增子序列，一起移动以减少代价）

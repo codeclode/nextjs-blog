@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    div {
+      display: flex;
+    }
+
+    @keyframes blink {
+      0% {
+        color: red;
+      }
+
+      50% {
+        color: transparent
+      }
+    }
+
+    .highlight {
+      animation: blink 1s infinite steps(1);
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+  <template id="mybutton">
+    <button id="btn">Add</button>
+    <p>
+      <slot name="my-text">Default</slot>
+    </p>
+  </template>
+  <my-button text="button" color="green">
+    <p slot="my-text">111</p>
+    <p>default</p>
+  </my-button>
+  <my-button text="button" color="red">
+    <p slot="my-text">111</p>
+  </my-button>
+  <my-button text="button" color="blue">321</my-button>
+</body>
+<script>
+  class MyButton extends HTMLElement {
+    constructor() {
+      super();
+      const shadowRoot = this.attachShadow({ mode: 'open' })//影子根
+      const template = document.getElementById('mybutton');//克隆模板结点
+      const content = template.content.cloneNode(true);
+      const text = this.getAttribute('text')
+      const color = this.getAttribute('color')
+      const button = content.querySelector("#btn")
+      button.innerText = text;
+      button.addEventListener('click', (evt) => {
+        this.onClick("Hello from within the Custom Element");
+      })
+      shadowRoot.innerHTML = `
+    <style>
+      p {
+        color: ${color/*样式隔离*/};
+      }
+    </style>`
+      shadowRoot.appendChild(content);
+    }
+  }
+  window.customElements.define("my-button", MyButton)//注册自定义组件
+  document.querySelectorAll('my-button').forEach((v) => {//自定义函数
+    v.onClick = value => {
+      console.log(value);
+    }
+  })
+</script>
+<script src="./JSON.js"></script>
+
+</html>

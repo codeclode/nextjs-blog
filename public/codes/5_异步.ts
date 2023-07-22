@@ -136,6 +136,10 @@ class Scheduler {
           console.log(content);
           resolve(null);
         }, delay);
+        //return new Promise((resolve,reject)=>{
+        //  this.running++;
+        //  axios.get(url).finally(resolve)
+        //})
       });
     });
     this.start();

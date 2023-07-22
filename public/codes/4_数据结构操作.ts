@@ -86,6 +86,7 @@ function hump<T>(target: T) {
 
 function trans(str: string): string {
   return str.replaceAll(/_([a-z])/g, (...rest) => {
+    //rest就是正则exec得到的那个数组(匹配,括号1,括号2...,下标,整个字符串)
     return rest[1].toUpperCase();
   });
 }

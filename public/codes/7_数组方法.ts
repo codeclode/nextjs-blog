@@ -10,6 +10,30 @@ function flatten(arr: Array<any>, depth: number = 1): Array<any> {
   });
   return ret;
 }
+function flattenD(arr: Array<any>, depth: number = 1): Array<any> {
+  let ret: Array<any> = [];
+  arr.forEach((v) => {
+    if (Array.isArray(v) && depth !== 0) {
+      let tempDepth = depth;
+      let tempRet1 = [v];
+      let tempRet2 = [];
+      while (tempDepth > 0) {
+        tempRet1.forEach((v) => {
+          if (Array.isArray(v)) {
+            tempRet2.push(...v);
+          } else tempRet2.push(v);
+        });
+        tempRet1 = [...tempRet2];
+        tempRet2 = [];
+        tempDepth--;
+      }
+      ret.push(...tempRet1);
+    } else {
+      ret.push(v);
+    }
+  });
+  return ret;
+}
 //reduce
 function reduce(arr: Array<any>, callback: Function, initValue: any) {
   if (arr.length) {

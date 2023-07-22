@@ -102,8 +102,8 @@ function getURLParams(url) {
   var regex = /[?&]+([^=&]+)(?:=([^&]+))?/g;
   var match;
   while ((match = regex.exec(url)) !== null) {
-    var key = decodeURIComponent(match[1]);
-    var value: string | boolean = decodeURIComponent(match[2]);
+    var key = match[1];
+    var value: string | boolean = match[2];
     if (!value || !match[2]) value = true;
     if (key in ret) {
       if (Array.isArray(ret[key])) {
@@ -115,7 +115,6 @@ function getURLParams(url) {
       ret[key] = value;
     }
   }
-
   return ret;
 }
 

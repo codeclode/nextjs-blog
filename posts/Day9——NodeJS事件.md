@@ -32,6 +32,13 @@ date: "2023-01-17"
 
 - **fork** spawn()的特殊形式，用于在子进程中运行的模块，如 fork('./son.js') 相当于 spawn('node', ['./son.js']) 。与spawn方法不同的是，fork会在父进程与子进程之间，建立一个通信管道，用于进程之间的通信。
 
+- ```javascript
+  process.on('message',()=>{
+  })//子进程监听消息
+  process.send("XXX")
+  childProcess.send({data:"XXX"})//fork出来的东西如此交互
+  ```
+
 ### 多线程
 
 Node 10.5.0 的发布，给出了一个实验性质的模块 worker_threads 给 Node 提供真正的多线程能力

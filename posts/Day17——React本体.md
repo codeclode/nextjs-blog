@@ -23,7 +23,7 @@ const name = 'Josh Perez';
 const element = <h1>Hello, {name}</h1>;
 ```
 
- React DOM 在渲染所有输入内容之前，默认会进行转义。 本质上是React.createElement()的语法糖。
+React DOM 在渲染所有输入内容之前，默认会进行转义。 本质上是React.createElement()的语法糖。
 
 ### 元素渲染
 
