@@ -220,7 +220,7 @@ const routes = [
 
 ## 滚动行为
 
-**只在支持 history.pushState 的浏览器中可用。** 
+**只在支持 history.pushState 的浏览器中可用。**
 
 ```javascript
 const router = createRouter({
@@ -228,9 +228,9 @@ const router = createRouter({
   routes: [...],
   scrollBehavior (to, from, savedPosition) {
     // return 期望滚动到哪个的位置
-	// 如果返回savedPosition，则和浏览器的原生表现一样
-	return {top:0,behavior: 'smooth'}
-	return {el:to.hash}//指定锚点
+ // 如果返回savedPosition，则和浏览器的原生表现一样
+ return {top:0,behavior: 'smooth'}
+ return {el:to.hash}//指定锚点
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve({ left: 0, top: 0 })
@@ -253,7 +253,7 @@ const router = createRouter({
 })
 ```
 
-在内部传递的实际 URL 之前使用了一个哈希字符（#）。由于这部分 URL 从未被发送到服务器，所以它不需要在服务器层面上进行任何特殊处理。 
+在内部传递的实际 URL 之前使用了一个哈希字符（#）。由于这部分 URL 从未被发送到服务器，所以它不需要在服务器层面上进行任何特殊处理。
 
 ### history模式
 
@@ -477,20 +477,19 @@ else if(failure){
 
 - router.hasRouter()检测路由是否存在
 
-- router.getRouters()获取一个包含所有路由记录的数组。 
+- router.getRouters()获取一个包含所有路由记录的数组。
 
 - const removethis = router.addRoute({...})
 
 - 如果是导航守卫环境，router.addRoute(generateRoute(to))
 
-- 切换： 通过添加一个名称冲突的路由。如果添加与现有途径名称相同的途径，会先删除路由，再添加路由 
+- 切换： 通过添加一个名称冲突的路由。如果添加与现有途径名称相同的途径，会先删除路由，再添加路由
 
 - 删除：上面的removethis()。如果路由有名字，也可以router.removeRoute('name')
 
-- 
+-
   嵌套：router.addRoute('admin', { path: 'settings', component: AdminSettings })
   
-
 ## API
 
 ### 内部类
@@ -498,14 +497,14 @@ else if(failure){
 #### Router
 
 - currentRouter 当前路由地址。只读的
-- options，创建 Router 时传递的原始配置对象。只读 
+- options，创建 Router 时传递的原始配置对象。只读
 - addRouter(name,route:RouteRecordRaw)\\removeRouter(name)
 - afterEach((to,from,failure)=>{xxx})
 - back()\\forward()\\go(n)类似history
 - beforeEach()\\beforeResolve()：守卫
-- getRoutes()：获取所有路由记录的完整列表。 
-- hasRouter(name):boolean 确认是否存在指定名称的路由。 
-- isReady():Promise\<void\> 当路由器完成初始化导航时，返回一个 Promise，这意味着它已经解析了所有与初始路由相关的异步输入钩子和异步组件。 
+- getRoutes()：获取所有路由记录的完整列表。
+- hasRouter(name):boolean 确认是否存在指定名称的路由。
+- isReady():Promise\<void\> 当路由器完成初始化导航时，返回一个 Promise，这意味着它已经解析了所有与初始路由相关的异步输入钩子和异步组件。
 - onError(handler: (error: any, to: RouteLocationNormalized, from: RouteLocationNormalized) => any): () => void,router的错误处理程序
 - push(to:RouteLocationRaw)|replace(to:RouteLocationRaw)
 - resolve(to: RouteLocationRaw): RouteLocation & {href: string}解析
@@ -544,7 +543,7 @@ class RouteRecodeRaw = {
 - fullPath
 - hash
 - query
-- matched 与给定路由地址匹配的RouteRecordNormalized数组。 
+- matched 与给定路由地址匹配的RouteRecordNormalized数组。
 - meta
 - name
 - params
@@ -582,7 +581,7 @@ createRouter({
     - to
     - replace:boolean，使用replace进行导航而不是push
     - active-class,默认全局的options的linkActiveClass
-    - custom:boolean,  router-link是否应该将其内容包裹在 a 元素中。  默认情况下，routerlink会将其内容包裹在 a 元素中，即使使用 v-slot 也是如此。传递 custom=true，可以去除这种行为。 
+    - custom:boolean,  router-link是否应该将其内容包裹在 a 元素中。  默认情况下，routerlink会将其内容包裹在 a 元素中，即使使用 v-slot 也是如此。传递 custom=true，可以去除这种行为。
     - exact-active-class
   - v-slot:作用域插槽，暴露href、router、navigate、isActive, isExactActive来方便扩展link
 
@@ -590,9 +589,10 @@ createRouter({
 
   - name：命名视图
 
-  - slot：如果希望配置过渡和空状态，route参数是RouteLocationNormalized对象 
+  - slot：如果希望配置过渡和空状态，route参数是RouteLocationNormalized对象
 
     ```html
+
   <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'fade'" mode="out-in">
         <keep-alive>
@@ -609,7 +609,6 @@ createRouter({
       </transition>
     </router-view>
     ```
-
 
 # 原理
 
@@ -678,7 +677,7 @@ window.history.replaceState(stateObject,title,url)
 
 那么历史模式就和哈希模式没有啥区别，我们只是需要修改方法的一些细节而已。
 
-添加对修改浏览器地址栏URL的监听popstate是直接在构造函数中执行的 
+添加对修改浏览器地址栏URL的监听popstate是直接在构造函数中执行的
 
 ```javascript
 window.addEventListener('popstate', e => {
@@ -697,6 +696,6 @@ window.addEventListener('popstate', e => {
 
 ## Router-View
 
-routerView是一个函数式组件，函数式组件没有data，没有组件实例。因此使用了父组件中的$createElement函数，用以渲染组件（h函数）。 
+routerView是一个函数式组件，函数式组件没有data，没有组件实例。因此使用了父组件中的$createElement函数，用以渲染组件（h函数）。
 
 这玩意借助的是$route的matched属性，这个属性是一个数组，因为router-view有个depth属性用来记录嵌套路由深度，matched[depth]就是这个层次匹配到的组件，router-View直接用h(matched[depth],data,children)用来渲染真正需要的组件。而缓存则基于history.current，看看cache[name]有没有缓存，有就直接读缓存数据渲染。
