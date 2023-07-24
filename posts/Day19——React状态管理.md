@@ -30,6 +30,16 @@ function logger({ getState, dispatch }) {
     return returnValue
   }
 }
+function createThunkMiddleware(extraArgument) {
+  return ({ dispatch, getState }) => next => action => {
+    if (typeof action === 'function') {
+      return action(dispatch, getState, extraArgument);
+    }
+
+    return next(action);
+  };
+}
+const thunk = createThunkMiddleware();
 
 const reducer = (state = {count: 0}, action) => {
   switch (action.type){

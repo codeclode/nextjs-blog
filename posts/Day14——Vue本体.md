@@ -8,7 +8,7 @@ Model->数据层、View->视图层
 
 ## MVC
 
-c->controller，controller和view并没有解耦，业务逻辑被放置在model层 
+c->controller，controller和view并没有解耦，业务逻辑被放置在model层,controller更新modal，然后通知view去获取modal。 
 
 ## MVP
 
@@ -1327,7 +1327,7 @@ const { x, y } = useMouse()
       }
     }
     ```
-    
+  
 - app.component()\\app.directive()\\app.use\\app.mixin()注册全局服务
   
 - app.config.MergeStrategies|compilerOptions同v2
@@ -1342,7 +1342,7 @@ const { x, y } = useMouse()
         console.log(this.msg) // 'hello'
       }
     }
-    ```
+  ```
 
 ### 组合式API
 

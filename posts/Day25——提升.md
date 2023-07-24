@@ -155,6 +155,7 @@ DOM->compute style->layout->分层->paint->分块->光栅化->合成
   - ES6 中，词法环境组件和变量环境的一个不同就是前者被用来存储函数声明和变量（let 和 const）绑定，而后者只用来存储 var 变量绑定。
 - this value：this 值。
 > 三种上下文
+>
 > > 全局、函数、eval
 ### ES2018
 - lexical environment：词法环境，当获取变量或者 this 值时使用。
@@ -173,6 +174,7 @@ DOM->compute style->layout->分层->paint->分块->光栅化->合成
 - js的字符串放在堆里，栈保持引用，这点很重要！
 - 对于数字，嘴上说是64位，但是v8不这样做，只要没有双精度就放在栈里并且位数不高，如果非要当成双精度才会放在堆里并且提升成64位
 - 数字有smi和HeapNumber之分，smi就是32位且直接放在栈内存里，而heapNumber则是以指针形式指向堆内存的64位区域
+- Number的最大安全整数为2**53-1
 - smi就是小整数，而heapnumber则是浮点数、大整数、NaN以及Infinite等
 
 ### 数据结构
@@ -211,6 +213,11 @@ DOM->compute style->layout->分层->paint->分块->光栅化->合成
 # 多端原理
 
 ## 两种方式
+
+ JSBridge是Native代码与JS代码的通信桥梁。
+
+- 劫持URL形：H5触发url scheme->Native捕获url scheme->原生分析,执行->原生调用h5。
+- 注入形：客户端为 webview 做定制开发，通过webview提供的接口，向 JavaScript 的 Context（window）中注入对象或者方法，让 JavaScript 调用时，直接执行相应的 Native 代码逻辑，达到 JavaScript 调用 Native 的目的。
 
 ### web-view
 
