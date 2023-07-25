@@ -566,6 +566,20 @@ type p3=Parameters<typeof fun1>
 // [x: number, y: number, z: number]
 ```
 
+### 自定义
+```typescript
+type FilteredType<T, U> = Pick<T, {
+    [K in keyof T]: T[K] extends U ? K :never//如果T[K]类型继承U就被选中的到键名，否则被过滤（never）
+}[keyof T]>;//使用keyof T得到不是never的键名
+// 测试代码
+interface Person {
+  name: string;
+  age: number;
+  email: string;
+}
+type c = FilteredType<Person,number>
+```
+
 # 响应式
 
 ## 区分RWD和AWD
