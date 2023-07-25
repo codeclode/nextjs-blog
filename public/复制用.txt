@@ -1,0 +1,40 @@
+李傲松   13853849013   PeterLi12138@aliyun.com   370921200211220072
+美团 前端开发实习生 2023/06-至今
+实习内容：会员营销侧（移动端及后台）业务，动态支持内部动效平台业务
+实习产出：阅读总结会员页项目及发布流程，实现商补后台操作记录页面，负责动效平台自定义遮罩开关以及平台nodejs后台bug修复。
+亮点一：后台操作记录上游变动使得json字段名称无法预先确定，为降低修改成本、提高可扩展性，使用TS工具类（Omit、Pick）实现类型定义，在联调出现bug时30分钟内实现类型更正。
+亮点二：后端使用Java，联调时提出Java的Long和JS的number转换时可能出现精度丢失问题bug，在JS侧用BigInt进行参数解析后使用string与后端交互，实现数字精度安全。
+
+
+chartGenerator
+平台可以读取用户选择的csv文件并进行分析，通过用户选项生成和导出svg或png格式的可视化图表，同时提供了基本图形（矩形、圆形、导入的svg）绘制功能，登陆后也可以保存预设置的颜色以供图表使用。
+担任职责：全栈，实现全部前后端功能。
+技术栈：tRPC+React+D3+svg+prisma+mongodb
+项目难点：
+1、利用canvas和svg手动封装了hsl的colorPicker组件以及渐变色选择器组件。
+2、实现图表控件和图表双向绑定以及图表控件transform-origin位置修正。
+3、使用MutationObserver以及手动触发WheelEvent实现画布缩放调节控件。
+4、使用canvas作为”中间层“，实现svg导出为svg或png文件。
+
+掘银低代码平台
+平台提供定义好的组件，用户拖动组件到渲染区域即可，平台还允许用户单击渲染区域组件并为其绑定事件或自定义css。
+担任职责：实现结果预览、组件拖拽以及代码导出功能，提供标签的增删选操作，并且给组件样式编辑模块提供接口。
+技术栈：ReactJs+antd+Redux+ts
+难点：利用React-dnd封装的drag事件得到当前拖拽的结点标签，模仿Vue模板编译源码，封装结点树，最后转换为ReactNode进行递归渲染。
+
+嘉晚饭在线点餐
+技术栈：Vue2+uniapp小程序端，Vue3+Vuex+NaiveUI后台，SpringBoot+Mybatis后端
+担任职责：实现前后端全部功能以及技术文档书写
+移动端实现用户点餐、骑手配送等功能，PC后台实现超级管理员审核菜品和管理骑手，食堂员工接受订单等功能。
+解决的技术问题：NaiveUI表格分页无法使用Count自动分页，为了减少无用数据引起流量消耗，在项目中使用类似虚拟列表的思路，使用空数据占位表格不可见部分。
+
+前端基础：熟悉HTML常见标签，CSS常用属性和布局，掌握JavaScript运行流程、常用的内置对象、方法及其常见的设计模式，了解chrome内核以及Google V8。
+NodeJS：熟悉NodeJs的常用内置模块，熟悉Express、tRPC框架，了解Koa、NestJs框架。
+工程化工具：熟悉webpack及其优化以及Vite的基本使用，熟悉npm包管理以及脚手架的基本开发，了解babel插件开发流程、ESLint以及Prettier基本配置。
+前端框架：熟悉Vue、ReactJs及其常用的路由、状态管理、UI组件库工具链。
+前端应用：熟悉数据可视化（canvas、svg）基础以及D3JS、ThreeJs、gsap框架，了解WebGL、WebGIS、ECharts、highCharts等应用。
+其他工具：熟悉git、Sass、axios、TypeScript、NextJs，熟悉uniapp、原生微信小程序，了解electron、Nuxt以及Chrome插件开发。
+
+2022美赛数学建模H奖，2022稀土掘金×asoul编程挑战赛优秀提名奖
+喜好阅读和技术手册（极客时间、掘金小册等），擅长引导式总结。
+学习过matlab、python爬虫和数学分析、C++和C#基础以及Java后端，学习能力较强。
