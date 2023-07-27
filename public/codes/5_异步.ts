@@ -147,119 +147,101 @@ class Scheduler {
 }
 //手写promise
 {
-  function resolvePromise(promise2, x, resolve, reject) {
-    //x是调用then两函数之一以后得到的结果,resolve\reject对应promise2创建时的俩回调
-    // 循环引用报错
-    if (x === promise2) {
-      // reject报错
-      return reject(new TypeError("Chaining cycle detected for promise"));
-    }
-    // 防止多次调用
-    let called;
-    // x不是null 且x是对象或者函数
-    if (x instanceof MyPromise) {
-      try {
-        x.then(
-          (y) => {
-            // 成功和失败只能调用一个
-            if (called) return;
-            called = true;
-            // resolve的结果依旧是promise 那就继续解析
-            resolvePromise(promise2, y, resolve, reject);
-          },
-          (err) => {
-            // 成功和失败只能调用一个
-            if (called) return;
-            called = true;
-            reject(err); // 失败了就失败了
-          }
-        );
-      } catch (e) {
-        // 也属于失败
-        if (called) return;
-        called = true;
-        // 取then出错了那就不要在继续执行了
-        reject(e);
-      }
-    } else {
-      resolve(x);
-    }
-  }
-
   enum Status {
     PENDING,
     FUFILLED,
     REJECTED,
   }
   class MyPromise {
-    self = this;
-
     state: Status;
-
     value: any;
+    error: any;
+    onFulfilledCallbacks: Function[];
+    onRejectedCallbacks: Function[];
+    constructor(executor) {
+      this.state = Status.PENDING;
+      this.value = undefined;
+      this.error = undefined;
+      this.onFulfilledCallbacks = [];
+      this.onRejectedCallbacks = [];
 
-    resolvedCallbacks: Array<Function> = [];
-
-    rejectedCallbacks: Array<Function> = [];
-
-    then(onFulfilled, onRejected) {
-      // 声明返回的promise2
-      let promise2 = new MyPromise((resolve, reject) => {
-        if (this.state === Status.FUFILLED) {
-          let x = onFulfilled(this.value);
-          // resolvePromise函数，处理自己return的promise和默认的promise2的关系
-          resolvePromise(promise2, x, resolve, reject);
-        }
-        if (this.state === Status.REJECTED) {
-          let x = onRejected(this.value);
-          resolvePromise(promise2, x, resolve, reject);
-        }
+      const resolve = (value) => {
         if (this.state === Status.PENDING) {
-          this.resolvedCallbacks.push(() => {
-            let x = onFulfilled(this.value);
-            resolvePromise(promise2, x, resolve, reject);
-          });
-          this.rejectedCallbacks.push(() => {
-            let x = onRejected(this.value);
-            resolvePromise(promise2, x, resolve, reject);
-          });
+          this.state = Status.FUFILLED;
+          this.value = value;
+          this.onFulfilledCallbacks.forEach((callback) => callback(this.value));
         }
-      });
-      // 返回promise，完成链式
-      return promise2;
+      };
+
+      const reject = (error) => {
+        if (this.state === Status.PENDING) {
+          this.state = Status.REJECTED;
+          this.error = error;
+          this.onRejectedCallbacks.forEach((callback) => callback(this.error));
+        }
+      };
+
+      try {
+        executor(resolve, reject);
+      } catch (error) {
+        reject(error);
+      }
     }
 
-    constructor(fn: Function) {
-      function resolve(value) {
-        if (value instanceof MyPromise) {
-          return value.then(resolve, reject);
+    then(onFulfilled, onRejected) {
+      onFulfilled =
+        typeof onFulfilled === "function" ? onFulfilled : (value) => value;
+      onRejected =
+        typeof onRejected === "function"
+          ? onRejected
+          : (error) => {
+              throw error;
+            };
+
+      return new MyPromise((resolve, reject) => {
+        const handleFulfilled = () => {
+          setTimeout(() => {
+            try {
+              const result = onFulfilled(this.value);
+              if (result instanceof MyPromise) {
+                result.then(resolve, reject);
+              } else {
+                resolve(result);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          });
+        };
+
+        const handleRejected = () => {
+          setTimeout(() => {
+            try {
+              const result = onRejected(this.error);
+              if (result instanceof MyPromise) {
+                result.then(resolve, reject);
+              } else {
+                resolve(result);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          });
+        };
+
+        if (this.state === Status.FUFILLED) {
+          handleFulfilled();
+        } else if (this.state === Status.REJECTED) {
+          handleRejected();
+        } else if (this.state === Status.PENDING) {
+          this.onFulfilledCallbacks.push(handleFulfilled);
+          this.onRejectedCallbacks.push(handleRejected);
         }
-        setTimeout(() => {
-          if (this.state === Status.PENDING) {
-            this.state = Status.FUFILLED;
-            this.value = value;
-            this.resolvedCallbacks.forEach((v) => {
-              v(value);
-            });
-          }
-        }, 0);
-      }
-      function reject(err) {
-        setTimeout(() => {
-          if (this.state === Status.PENDING) {
-            this.state = Status.REJECTED;
-            this.value = err;
-            this.rejectedCallbacks.forEach((v) => {
-              v(err);
-            });
-          }
-        }, 0);
-      }
-      try {
-        fn(resolve, reject);
-      } catch (e) {
-        reject(e);
-      }
+      });
+    }
+
+    catch(onRejected) {
+      return this.then(undefined, onRejected);
     }
   }
 }
