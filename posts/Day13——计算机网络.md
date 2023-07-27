@@ -117,11 +117,13 @@ date: "2023-01-21"
   - 任意数据类型
   - GET、POST、HEAD
   - 无法复用TCP连接(长连)
+  - 仅有强缓存Expires
 - http1.1
   - 引入更多请求方法，put、patch、delete、options、trace、connect
   - 引入长连接，就是请求头connect:keep-alive，建立SOCKET连接后不管是否使用都保持连接，但安全性较差。 如果长时间不关闭会浪费服务端资源。
   - 并行的请求限制在6~8个
   - 丰富的请求响应头信息。以header中的Last-Modified/If-Modified-Since和Expires作为缓存标识
+  - 强缓存引入cache-control
   - 强化缓存管理和控制支持分块传输，利用请求头Range实现
   - 使用虚拟网络，一台服务器多个虚拟机共享IP
   - 队头阻塞：顺序发送的请求序列中的一个请求因为某种原因被阻塞时，在后面排队的所有请求也一并被阻塞，会导致客户端迟迟收不到数据。
