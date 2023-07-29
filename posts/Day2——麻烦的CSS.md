@@ -55,6 +55,65 @@ date: "2023-01-10"
 - 表格和列表的布局属性（caption-side、border-collapse、table-layout、list-style）
 - cursor
 
+# @
+
+## font-face
+
+```css
+@font-face {
+  font-family: "Open Sans";
+  src:
+    url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),
+    url("/fonts/OpenSans-Regular-webfont.woff") format("woff");
+}
+```
+
+## media
+
+```css
+@media screen and (min-width: 900px) {
+  article {
+    padding: 1rem 3rem;
+  }
+}
+```
+
+## supports
+
+```css
+@supports (display: grid) {
+  div {
+    display: grid;
+  }
+}
+```
+
+## import
+
+```css
+@import 'xxx.css'
+```
+
+## keyframe
+
+```css
+@keyframes identifier {
+  0% {
+    top: 0;
+  }
+  50% {
+    top: 30px;
+    left: 20px;
+  }
+  50% {
+    top: 10px;/*以本次定义为准*/
+  }
+  100% {
+    top: 0;
+  }
+}
+```
+
 # 伪类与伪元素
 
 ### 区分方式

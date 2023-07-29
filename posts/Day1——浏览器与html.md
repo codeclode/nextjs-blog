@@ -30,6 +30,7 @@ date: "2023-01-09"
 - 计时器线程：负责处理setInterval和setTimeout。
 - 异步http请求线程：XMLHttpRequest连接后浏览器开的一个线程，负责处理请求后的回调函数（只负责添加到执行队列，执行依然靠JS进程）
 - 事件触发线程：用来控制事件环
+- 合成线程：负责渲染中的分块+位图生成+合成+drawQuad
 
 # W3C万维网联盟标准
 
@@ -48,9 +49,9 @@ date: "2023-01-09"
 
 ### 概念
 
- URL（Uniform Resource Locator），统一资源定位符，用于定位互联网上资源，俗称网址。 
+URL（Uniform Resource Locator），统一资源定位符，用于定位互联网上资源，俗称网址。 
 
-```
+```markdown
 scheme: // host.domain:port / path / filename ? abc = 123 # 456789
 scheme       - 定义因特网服务的类型。常见的协议有 http、https、ftp、file，
                其中最常见的类型是 http，而 https 则是进行加密的网络传输。
@@ -233,7 +234,7 @@ fragment     - 即 # 后的hash值，一般用来定位到某个位置
 ### link标签的特殊rel
 
 - prefetch 用于在浏览器的空闲时间请求资源，以后可能用到，浏览器要是没事就先拿到缓存起来再说
-- preload 用于提前加载在页面初始化加载（page load）时用到的资源， 强制将它的请求优先级提到前面 
+- preload 用于提前加载在页面初始化加载（page load）时用到的资源， 强制将它的请求优先级提到前面
 - preconnect 用于提前和一个网站建立起连接
 - 如果使用了特殊rel，那么需要as属性指定元素类型
 

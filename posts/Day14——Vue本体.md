@@ -653,7 +653,7 @@ Vue.filter('capitalize', function (value) {
 
   - $children 当前实例的直接子组件。 
 
-  - $slots
+  - $slots，是vNode
 
     ```javascript
     Vue.component('blog-post', {
@@ -991,6 +991,27 @@ export default {
     console.log(context.expose)
   }
 }
+```
+
+语法糖环境
+
+```vue
+<script setup lang="ts">
+import MyComponent from './MyComponent.vue'
+const vMyDirective = {
+  beforeMount: (el) => {
+    // 在元素上做些操作
+  }
+}
+defineProps({foo: String});
+defineEmits(["event"])
+defineExpose({
+  a,
+  b
+})
+const slots = useSlots()//$slots
+const attrs = useAttrs()//$attrs
+</script>
 ```
 
 ### prop
@@ -1343,6 +1364,21 @@ const { x, y } = useMouse()
       }
     }
   ```
+  
+- $watch，选项API里的
+
+  ```javascript
+  const unwatch = this.$watch(
+    // 每一次这个 `this.a + this.b` 表达式生成一个
+    // 不同的结果，处理函数都会被调用
+    // 这就好像我们在侦听一个计算属性
+    // 而不定义计算属性本身。
+    () => this.a + this.b,
+    (newVal, oldVal) => {}
+  )//和watch不一样的是可以自己决定啥时候监听，比如按钮点击以后才监听
+  ```
+
+- $emit触发事件
 
 ### 组合式API
 
@@ -1378,7 +1414,7 @@ const { x, y } = useMouse()
 
   - readonly() 接受一个对象 (不论是响应式还是普通的) 或是一个 ref，返回一个原值的只读代理。 
 
-  - watchEffect(): 立即运行一个函数，同时响应式地追踪其依赖，并在依赖更改时重新执行。 依赖自动收集
+  - watchEffect(): 立即运行一个函数，同时响应式地追踪其依赖，并在依赖更改时重新执行。**依赖自动收集**
 
     ```typescript
     function watchEffect(
@@ -1397,13 +1433,52 @@ const { x, y } = useMouse()
 
   - watchPostEffect()|watchSyncEffect(),默认flush为post|sync的副作用器
 
-  - watch(source,cb,options)不再细说
+  - watch(source,cb,options)
+
+    - ```typescript
+      interface WatchOptions extends WatchEffectOptions {
+        immediate?: boolean // 默认：false
+        deep?: boolean // 默认：false
+        flush?: 'pre' | 'post' | 'sync' // 默认：'pre'
+        onTrack?: (event: DebuggerEvent) => void
+        onTrigger?: (event: DebuggerEvent) => void
+      }
+      type WatchCallback<T> = (
+        value: T,
+        oldValue: T,
+        onCleanup: (cleanupFn: () => void) => void
+      ) => void
+      ```
+
+    - **`immediate`**：在侦听器创建时立即触发回调。第一次调用时旧值是 
+
+    - 和watchEffect不一样的是，它要指定监听什么
+
+    - 懒执行副作用；
+
+    - 更加明确是应该由哪个状态触发侦听器重新执行；
+
+    - 可以访问所侦听状态的前一个值和当前值。
+
+    - onCleanUp负责如果出现异步任务，可以给cleanUp这个类似生命周期的东西注册回调取消异步任务
+
+    - ```javascript
+      watch(id, async (newId, oldId, onCleanup) => {
+        const { response, cancel } = doAsyncWork(newId)
+        // 当 `id` 变化时，`cancel` 将被调用，
+        // 取消之前的未完成的请求
+        onCleanup(cancel)
+        data.value = await response
+      })
+      ```
 
 - 响应式工具
 
   - isRef()
 
   - unref() 如果参数是 ref，则返回内部值，否则返回参数本身。 
+
+  - toValue() 如果参数是 ref，则返回内部值，如果是getter函数，就返回函数执行得到的结果，否则返回参数本身。 
 
   - toRef()基于响应式对象上的一个属性，创建一个对应的 ref。这样创建的 ref 与其源属性保持同步：改变源属性的值将更新 ref 的值，反之亦然。 
 
@@ -1535,6 +1610,59 @@ export default {
 <debounce>
     <button @click="clickHandler">测试</button>
 </debounce>
+```
+
+h函数
+
+```javascript
+// 完整参数签名
+function h(
+  type: string | Component,
+  props?: object | null,
+  children?: Children | Slot | Slots
+): VNode
+
+// 省略 props
+function h(type: string | Component, children?: Children | Slot): VNode
+
+type Children = string | number | boolean | VNode | null | Children[]
+
+type Slot = () => Children
+
+type Slots = { [name: string]: Slot }
+
+h('div')
+h('div', { id: 'foo' })
+// attribute 和 property 都能在 prop 中书写
+h('div', { class: 'bar', innerHTML: 'hello' })
+// 像 `.prop` 和 `.attr` 这样的的属性修饰符
+// 可以分别通过 `.` 和 `^` 前缀来添加
+h('div', { '.name': 'some-name', '^width': '100' })
+// 事件监听器应以 onXxx 的形式书写
+h('div', { onClick: () => {} })
+h('div', { id: 'foo' }, 'hello')
+// 第二个参数可以直接是子组件
+h('div', 'hello')
+// children 数组可以同时包含 vnodes 与字符串
+h('div', ['hello', h('span', 'hello')])
+//自定义组件,第三个参数应该是插槽Slot类型
+import Foo from './Foo.vue'
+h(Foo, {
+  // 等价于 some-prop="hello"
+  someProp: 'hello',
+  // 等价于 @update="() => {}"
+  onUpdate: () => {}
+})
+// 传递单个默认插槽
+h(Foo, () => 'default slot')
+// 传递具名插槽
+// 注意，需要使用 `null` 来避免
+// 插槽对象被当作是 prop
+h(MyComponent, null, {
+  default: () => 'default slot',
+  foo: () => h('div', 'foo'),
+  bar: () => [h('span', 'one'), h('span', 'two')]
+})
 ```
 
 # 原理
@@ -1734,7 +1862,9 @@ function computed(fn) {
 
 # 经典问题
 
-## 样式scope和穿透
+## css问题
+
+### 穿透
 
 vue组件编译后，会将 template 中的每个元素加入 [data-v-xxxx] 属性来确保 style scoped 仅本组件的元素而不会污染全局，**默认只会对组件的最外层（div）加入这个 [data-v-xxxx] 属性，但第二层开始就没有效果了。** 所以，如果你期待通过如下方式修改 weui-cells 的样式。是没有任何效果的：
 
@@ -1747,7 +1877,21 @@ vue组件编译后，会将 template 中的每个元素加入 [data-v-xxxx] 属�
 </style>
 ```
 
-为了解决这个问题，vue提出>>>(css)深度作用选择器来穿透样式，如果使用scss等则用/deep/代替>>>
+为了解决这个问题，vue提出>>>(css)或:deep深度作用选择器来穿透样式，如果使用scss等则用/deep/代替>>>
+
+### 全局
+
+```vue
+<style scoped>
+:global(.red) {
+  color: red;
+}
+</style>
+```
+
+这个样式会全局应用
+
+
 
 ## 生命周期父子局
 
@@ -1775,11 +1919,18 @@ vue组件编译后，会将 template 中的每个元素加入 [data-v-xxxx] 属�
 ## V2V3
 
 - 响应式实现方式不一样
+- V3可以多个根节点（app.use和Vue.use）
 - 自定义v-model和.sync
 - 组合式API出现
 - 需要定义emit
+- V3取缔了filter，指令的生命周期大改
+- v-memo
+- teleport和suspense组件
+- 响应式原理区别
+- 更支持TS
+- 兼容性可能不如V2
 - 虚拟dom优化
-  - V3变成了头比头，尾比尾，最后基于最长递增子序列进行移动/添加/删除
+  - diff:V2:头头->尾尾->头尾->尾头->n2,V3:头头->尾尾->最长递增子序列（把新key映射到原keyindex，找到最长的递增子序列，一起移动以减少代价）
   - 静态标记，跳过不会变化的结点
   - Vue3 中会把这个不参与更新的元素保存起来，只创建一次，之后在每次渲染的时候不停地复用
   - 缓存不变的事件。
@@ -1800,7 +1951,38 @@ vue组件编译后，会将 template 中的每个元素加入 [data-v-xxxx] 属�
 ## keep-alive
 
 - 使用的是LRU
+
 - 缓存的是vue实例
+
+- ```vue
+  <KeepAlive :max="10">
+    <component :is="view"></component>
+  </KeepAlive>
+  
+  <KeepAlive>
+    <comp-a v-if="a > 1"></comp-a>
+    <comp-b v-else></comp-b>
+  </KeepAlive>
+  
+  <!-- 用逗号分隔的字符<KeepAlive>
+    <comp-a v-if="a > 1"></comp-a>
+    <comp-b v-else></comp-b>
+  </KeepAlive>
+  串 -->
+  <KeepAlive include="a,b">
+    <component :is="view"></component>
+  </KeepAlive>
+  
+  <!-- 正则表达式 (使用 `v-bind`) -->
+  <KeepAlive :include="/a|b/">
+    <component :is="view"></component>
+  </KeepAlive>
+  
+  <!-- 数组 (使用 `v-bind`) -->
+  <KeepAlive :include="['a', 'b']">
+    <component :is="view"></component>
+  </KeepAlive>
+  ```
 
 ## 双向绑定
 
@@ -1907,23 +2089,3 @@ Vue.component('base-checkbox', {
 
 <MyComponent v-model:title="bookTitle" v-model:author="author" />
 ```
-
-# V2V3到底有啥区别
-
-生命周期：其实没区别。。。setup接替了beforeCreate和created而已，还有destory->unmount
-
-V3支持多个根节点
-
-组合式API，这不废话吗
-
-Suspense组件，#fallback空白时渲染
-
-Teleport组件，to="css选择器"
-
-V3用ts写的，更加支持ts
-
-proxy代替definedefineProperty
-
-增加 patchFlag 字段，帮助 diff 时区分静态节点，以及不同类型的动态节点，一定程度地减少节点本身及其属性的比对。 
-
-diff:V2:头头->尾尾->头尾->尾头->n2,V3:头头->尾尾->最长递增子序列（把新key映射到原keyindex，找到最长的递增子序列，一起移动以减少代价）

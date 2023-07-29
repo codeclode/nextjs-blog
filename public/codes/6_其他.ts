@@ -31,13 +31,13 @@ class EventBus {
 let timeIntervals = {};
 function interval(fn, time) {
   let key = Symbol();
-  var execute = function (fn, time) {
+  var execute = function () {
     timeIntervals[key] = setTimeout(function () {
       fn();
-      execute(fn, time);
+      execute();
     }, time);
   };
-  execute(fn, time);
+  execute();
   return key;
 }
 function clearMyInterval(key) {
