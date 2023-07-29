@@ -512,12 +512,14 @@ function SuperType(){
 - queue队列
 - heap堆
 
-### 两种任务
+### 四种任务
 
 - macroTask宏任务，包括全部代码，定时器，IO，UI绘制，RAF有时候也可以认为是
 - microTask微任务， Process.nextTick（Node独有）、Promise、Object.observe(废弃)、MutationObserver
 - 这里的MutationObserver可用异步的监听DOM的增删改，从而减少一些在DOM上频繁操作导致无用的重排问题
 - 第一个 await 之前的代码和new Promise里的函数代码会同步执行，await之后的代码会异步执行，看作微任务。
+- RAF
+- RIC
 
 ### 本体
 
@@ -527,6 +529,8 @@ function SuperType(){
 - 执行栈在执行完**同步任务**后，就会去检查**微任务**(`microTask`)队列是否为空，如果为空的话，就执行`Task`（宏任务），否则就一次性执行完所有微任务。每次**单个宏任务**执行完毕后，检查**微任务**(`microTask`)队列是否为空，如果不为空的话，会按照**先入先**出的规则全部执行完**微任务**(`microTask`)后，设置**微任务**(`microTask`)队列为`null`，然后再执行**宏任务**，如此循环。
 - 可以认为，所有的同步代码是一个宏任务。
 - RAF，这个东西不是微任务也不是宏任务，要把它理解为下一次重绘**之前**更新动画帧所调用的函数，页面不可见就不执行
+- RIC，下一次重绘**之后**更新动画帧所调用的函数
+- 宏任务->微任务->RAF->绘制->RIC
 - async函数里到第一个await都是同步的，接下来就是异步了
 - 对于async
   - async的返回值

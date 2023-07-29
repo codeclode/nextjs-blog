@@ -60,6 +60,36 @@ function compose(...funcs: Array<Function>) {
   }
 }
 
+//koa compose
+function composeKoa(middleware: Function[]) {
+  if (!Array.isArray(middleware))
+    throw new TypeError("Middleware stack must be an array!");
+  for (const fn of middleware) {
+    if (typeof fn !== "function")
+      throw new TypeError("Middleware must be composed of functions!");
+  }
+
+  return function (context, next) {
+    let index = -1;
+    return dispatch(0);
+    //调用middleware[0]
+    function dispatch(i) {
+      //index只能向上走，如果回退说明二次调用了
+      if (i <= index)
+        return Promise.reject(new Error("next() called multiple times"));
+      index = i;
+      let fn = middleware[i];
+      if (i === middleware.length) fn = next;//该跳出去了
+      if (!fn) return Promise.resolve();
+      try {
+        return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));//传给中间件的next函数就是是下一个中间件
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    }
+  };
+}
+
 //柯里化函数
 function curry(fn) {
   let argArr: Array<any> = [];
