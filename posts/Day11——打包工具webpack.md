@@ -978,9 +978,9 @@ module.exports = merge(baseConfig, {
 #### plugin
 
 - 打包性能
-  - clean-webpack-plugin目录清理  
-  - webpack-bundle-analyzer可视化 Webpack 输出文件的体积  
-  - speed-measure-webpack-plugin可以看到每个 Loader 和 Plugin 执行耗时 
+  - clean-webpack-plugin目录清理
+  - webpack-bundle-analyzer可视化 Webpack 输出文件的体积
+  - speed-measure-webpack-plugin可以看到每个 Loader 和 Plugin 执行耗时
 - 文件生成
   - html-webpack-plugin简化 HTML 文件创建 
 - 结果优化

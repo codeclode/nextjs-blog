@@ -52,13 +52,16 @@ function arrToTree(arr: Array<TreeNode>) {
   return ret;
 }
 
-function treeToArr(rootArr: Array<TreeNode>): Array<TreeNode> {
+function treeToArr(
+  rootArr: Array<TreeNode>,
+  pid: number = -1
+): Array<TreeNode> {
   let ret: Array<TreeNode> = [];
   rootArr.forEach((v) => {
     if (v.children && v.children.length) {
-      ret.push(...treeToArr(v.children as Array<TreeNode>));
+      ret.push(...treeToArr(v.children as Array<TreeNode>, v.pid));
     }
-    ret.push({ id: v.id, pid: v.pid, children: [] });
+    ret.push({ id: v.id, pid: pid, children: [] });
   });
   return ret;
 }
@@ -72,7 +75,7 @@ function hump<T>(target: T) {
       ret[k] = hump(target[k]);
     }
     return ret;
-  } else if (typeof target === "object") {
+  } else if (typeof target === "object" && target !== null) {
     let keys = Object.keys(target);
     let ret = {};
     keys.forEach((v) => {
