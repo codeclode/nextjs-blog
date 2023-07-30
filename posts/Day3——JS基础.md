@@ -384,7 +384,7 @@ console.log(obj2 + ""); //"true"
   - style样式
 
 - DOM遍历
-    
+  
     - 有俩，TreeWalker和NodeIterator，TreeWalker高级一点。
     - document.createNodeIterator||createTreeWalker
     - NodeFilter的枚举
@@ -393,9 +393,9 @@ console.log(obj2 + ""); //"true"
       - NodeFilter.SHOW_TEXT：显示文本节点
       - NodeFilter.SHOW_COMMENT：显示注释节点
       - NodeFilter.SHOW_DOCUMENT：显示文档节点
-      - NodeFilter.SKIP用来在filter中放回，跳过此节点
-      - NodeFilter.SKIP用来在filter中放回，接下此节点
-      - NodeFilter.REJECT用来在filter中放回，跳过此节点，在TreeWalker中跳过此节点及其所有后代
+      - NodeFilter.SKIP用来在filter中返回，跳过此节点
+      - NodeFilter.SKIP用来在filter中返回，接下此节点
+      - NodeFilter.REJECT用来在filter中返回，跳过此节点，在TreeWalker中跳过此节点及其所有后代
     ```javascript
     var filter = function(node){
       return node.tagName.toLowerCase() == 'p' ?
