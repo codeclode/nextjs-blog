@@ -494,7 +494,37 @@ export default myContext = createContext(value)
 const value = useContext(myContext)
 //当然，对于contextvalue的修改依然通过其本身提供的方法
 ```
+## useSyncExternalStore
+```react
 
+const store = {
+    currentState:{data:0},
+    listeners:[],
+    reducer(action){
+        switch(action.type) {
+            case 'ADD':
+                return {data:store.currentState.data+1}
+            default:
+                return store.state
+        }
+    },
+    subscribe(l){
+        store.listeners.push(l)
+    },
+    getSnapshot() {
+        return store.currentState
+    },
+    dispatch(action) {
+        store.currentState = store.reducer(action)
+        store.listeners.forEach(l=>l())//执行所有订阅者，也就是重新渲染订阅的组件
+        return action;
+    }
+} 
+function Button(){
+  const todos = useSyncExternalStore(store.subscribe, store.getSnapshot);
+  return xxx;
+}
+```
 ## useCallback和useMemo
 
 ```react
