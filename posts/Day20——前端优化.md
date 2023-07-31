@@ -1113,6 +1113,8 @@ console.log(records[0].duration);
     - scrollTo()
     - 如果改变style.left这种，只会在整个代码之后回流1次，毕竟这个东西不是计算出来的只读属性
 
+- 老浏览器：取缔尾递归，新浏览器：递归尽量放尾巴，因为V8做了个优化，尾递归会尽早释放，只会出现一个函数调用栈。
+
 # 自动化测试
 
 ### TDD：Test-Driven Development（测试驱动开发）

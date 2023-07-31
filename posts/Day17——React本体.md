@@ -93,9 +93,12 @@ const MyContext = React.createContext(defaultValue);//创建一个环境
 
 ```react
 render() {
-  return ReactDOM.createPortal(
+  return <>
+  <h1>123</h1> 
+    {ReactDOM.createPortal(
     this.props.children,
-    this.el
+    this.el} 
+    <>
   );
 }
 ```
