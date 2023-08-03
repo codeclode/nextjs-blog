@@ -27,6 +27,7 @@ url.toJSON()//等同于toString，返回href
 URL.createObjectURL(Blob)
 URL.revokeObjectURL(url)//创建和释放objectUrl
 ```
+URL.createObjectURL得到的是类似blob:xxx的dataurl，而有别于data:xxx/xxx;content的dataurl。data:image/xxx 是一种特殊的 Data URL，用于将图片等二进制数据嵌入到 HTML 或 CSS 中。其中，xxx 表示图片的 MIME 类型，例如 data:image/png 表示 PNG 格式的图片。使用 data:image/xxx 可以避免浏览器向服务器发送额外的请求，从而提高页面的加载速度，blob:xxx 是一种 Blob URL，用于将二进制数据转换为 URL。Blob URL 的格式为 blob:<origin>/<uuid>，其中 <origin> 表示 URL 的源，<uuid> 是一个唯一标识符。Blob URL 可以用于将二进制数据传递给其他页面或者下载文件等操作。Data URL 和 Blob URL 都可以用于将二进制数据转换为 URL，但Data URL 适用于将小型的图片或者其他二进制数据嵌入到 HTML 或 CSS 中，但是如果数据量过大，会导致页面加载速度变慢。Blob URL 适用于将大型的二进制数据传递给其他页面或者下载文件等操作，但是需要注意 Blob URL 只在当前浏览器会话中有效，如果关闭浏览器或者打开新的标签页，Blob URL 就会失效。
 
 # Web worker
 
