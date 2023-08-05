@@ -66,6 +66,7 @@ if (isMainThread) {
   const worker = new Worker(__filename);
   const subChannel = new MessageChannel();
   worker.postMessage({ hereIsYourPort: subChannel.port1 }, [subChannel.port1]);
+  //可以使用信道，与可以直接给worker添加on和使用postMessage
   subChannel.port2.on('message', (value) => {
     console.log('received:', value);
   });

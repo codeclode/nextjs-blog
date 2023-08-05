@@ -176,6 +176,7 @@ DOM->compute style->layout->分层->paint->分块->光栅化->合成
 - 数字有smi和HeapNumber之分，smi就是32位且直接放在栈内存里，而heapNumber则是以指针形式指向堆内存的64位区域
 - Number的最大安全整数为2**53-1
 - smi就是小整数，而heapnumber则是浮点数、大整数、NaN以及Infinite等
+- BigInt是一块很大的二进制内存，不是字符串，如果想搞成es5倒是可以，不过我推荐使用ArrayBuffer
 
 ### 数据结构
 
