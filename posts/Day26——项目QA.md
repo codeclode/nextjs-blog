@@ -114,3 +114,13 @@ date: "2023-08-05"
 - 实现方案：类似微积分思想，canvas为渐变色的圆，通过用D3不断的新建H从0-360为渐变的stop，当鼠标点击时，把鼠标坐标映射到canvas坐标并getImageData得到RGB颜色，再利用D3转换回H
 - 渐变色：利用svg即可，导出时导出的是通过D3处理得到的映射函数
 
+> NoSSR
+```javascript
+import dynamic from "next/dynamic";
+
+const NoSsr: React.FC = ({ children }) => <>{children}</>;
+
+export default dynamic(() => Promise.resolve(NoSsr), {
+  ssr: false,
+});
+```
