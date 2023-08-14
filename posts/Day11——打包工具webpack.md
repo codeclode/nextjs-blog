@@ -423,7 +423,7 @@ module.exports = BLoader;
 
 **Pitching** 阶段: Loader 上的 pitch 方法，按照 `后置(post)、行内(inline)、普通(normal)、前置(pre)` 的顺序调用。
 
-**Normal** 阶段: Loader 上的 常规方法，按照 `前置(pre)、普通(normal)、行内(inline)、后置(post)` 的顺序调用。模块源码的转换， 发生在这个阶段，**loader从右往左执行，先执行写在最后边的。**
+**Normal**阶段: Loader 上的 常规方法，按照 `前置(pre)、普通(normal)、行内(inline)、后置(post)` 的顺序调用。模块源码的转换， 发生在这个阶段，**loader从右往左执行，先执行写在最后边的。**
 
 在Loader的运行过程中，如果发现该 Loader 上有pitch属性，会先执行 pitch 阶段，再执行 normal 阶段，当一个 Loader 的 pitch 阶段有返回值时，将跳过后续 Loader 的 pitch 阶段，直接进行到该 Loader上一个loader 的 normal 阶段（相当于不再解析文件而是直接返回content）。 
 
@@ -533,7 +533,7 @@ const config = {
 
 ### 树摇
 
-- webpack 默认支持，需要在 .bablerc 里面设置 model：false，即可在生产环境下默认开启
+- webpack 默认支持，需要在 .bablerc 里面设置 module：false，即可在生产环境下默认开启
 - 或者添加optimization中的usedExports为true
 
 ```javascript

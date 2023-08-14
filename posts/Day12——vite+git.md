@@ -11,7 +11,7 @@ date: "2023-01-20"
 
 - Vite不会遍历整个应用程序，只是转换当时正在使用的文件/模块（屏幕上没有就不构建）。 
 
-- Vite 以原生 ESM 方式提供源码（压根就没有打包）。这实际上是让浏览器接管了打包程序的部分工作：Vite 只需要在浏览器请求源码时进行转换并按需提供源码。根据情景动态导入代码，即只在当前屏幕上实际使用时才会被处理。 
+- Vite 以原生 ESM 方式提供源码（压根就没有打包）。这实际上是让浏览器接管了打包程序的部分工作：Vite 只需要在浏览器请求源码时进行转换并按需提供源码。根据情景动态导入代码，即只在当前屏幕上实际使用时才会被处理。
 
   ```html
   <script type="module" src="xxx">
@@ -19,7 +19,7 @@ date: "2023-01-20"
   </script>
   ```
 
-- 支持了动态模块热替换，vite的HMR 是在原生 ESM 上执行的。  当编辑一个文件时，Vite 只需要精确地使已编辑的模块与其最近的 HMR 边界之间的链失活（大多数时候只是模块本身），使得无论应用大小如何，HMR 始终能保持快速更新。 
+- 支持了动态模块热替换，vite的HMR 是在原生 ESM 上执行的。  当编辑一个文件时，Vite 只需要精确地使已编辑的模块与其最近的 HMR 边界之间的链失活（大多数时候只是模块本身），使得无论应用大小如何，HMR 始终能保持快速更新。
 
 - 同时利用 HTTP 头来加速整个页面的重新加载 ，使用强缓存
 
@@ -171,12 +171,12 @@ type config={
     }
 	css:{
         modules:CSSModulesOption//css模块化的行为
-        postcss:string | (postcss.ProcessOptions & { plugins?: postcss.AcceptedPlugin[] })//内联的 PostCSS 配置或者一个（默认基于项目根目录的）自定义的 PostCSS 配置路径。
+        postcss:string | (postcss.ProcessOptions & { plugins?: postcss.AcceptedPlugin[] 		})//内联的 PostCSS 配置或者一个（默认基于项目根目录的）自定义的 PostCSS 配置路径。
         devSourcemap:boolean//在开发过程中是否启用 sourcemap。
     }
     json:{
         namedExports:boolean//默认true，是否支持json按名导入
-        stringify:boolean//若设置为 true，导入的 JSON 会被转换为 export default JSON.parse("...")，这样会比转译成对象字面量性能更好，尤其是当 JSON 文件较大的时候。会禁用按名导入。
+        stringify:boolean//若设置为 true，导入的 JSON 会被转换为 export default 						JSON.parse("...")，这样会比转译成对象字面量性能更好，尤其是当 JSON 文件较大的时候。会禁用按名		  导入。
     }
 	assetsInclude:string | RegExp | (string | RegExp)[]//指定额外的 picomatch 模式 作为静态资源处理.
 	assetsDir:"assets"//默认asstes,指定生成静态资源的存放目录。

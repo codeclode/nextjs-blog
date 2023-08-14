@@ -97,7 +97,7 @@ render() {
   <h1>123</h1> 
     {ReactDOM.createPortal(
     this.props.children,
-    this.el} 
+    this.el}
     <>
   );
 }
@@ -146,7 +146,7 @@ string type
 onCompositionEnd onCompositionStart onCompositionUpdate
 ```
 
- 利用compositionstart和compositionend可以知道中文输入什么时候开始和结束，比如说用输入法输入中文汉字，使用onInput会出现输入拼音就进行提示的情况，而复合事件则是中文真正落在input里才触发。
+利用compositionstart和compositionend可以知道中文输入什么时候开始和结束，比如说用输入法输入中文汉字，使用onInput会出现输入拼音就进行提示的情况，而复合事件则是中文真正落在input里才触发。
 
 ## State
 
@@ -593,7 +593,7 @@ function TextInputWithFocusButton() {
 const deferredValue = useDeferredValue(value);
 ```
 
- 让我们延迟渲染不紧急的部分，value可以是一个state，可以帮我们实现防抖。
+让我们延迟渲染不紧急的部分，value可以是一个state，可以帮我们实现防抖。
 
 ## useImperativeHandle
 

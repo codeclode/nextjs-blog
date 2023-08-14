@@ -64,7 +64,7 @@ date: "2023-01-21"
     - 状态码
     - Access-Control-Allow-Origin，允许跨域
     - Access-Control-Allow-Credentials响应报头指示的请求的响应是否可以暴露于该页面。当`true`值返回时它可以被暴露。
-    - keep-alive 有两个参数，它们是以逗号分隔的参数列表，每个参数由一个标识符和一个由等号 = 分隔的值组成。 timeout= 空闲连接必须保持打开状态的最短时间 ，max= 指示在关闭连接之前可以在此连接上发送的最大请求数。 
+    - keep-alive 有两个参数，它们是以逗号分隔的参数列表，每个参数由一个标识符和一个由等号 = 分隔的值组成。 timeout = 空闲连接必须保持打开状态的最短时间 ，max= 指示在关闭连接之前可以在此连接上发送的最大请求数。 
     - server：服务器系统信息
     - set-Cookie，鉴权讲
     - Transfer-Encoding 规定了传输报文主体时采用的编码方式。 

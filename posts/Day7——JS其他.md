@@ -645,7 +645,6 @@ function asyncTest(fn) {
   //这里相当于与给参数的generator函数套了一层
   return function () {
     return new Promise((resolve, reject) => {
-      let gen = fn()
       function next(ret) {
         if (ret.done) {
           return resolve(ret.value)
@@ -663,6 +662,7 @@ function asyncTest(fn) {
         }
         next(ret)
       }
+      let gen = fn()
       onFullFilled()
     })
   }

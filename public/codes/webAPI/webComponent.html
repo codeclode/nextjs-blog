@@ -48,7 +48,7 @@
   class MyButton extends HTMLElement {
     constructor() {
       super();
-      const shadowRoot = this.attachShadow({ mode: 'open' })//影子根
+      const shadowRoot = this.attachShadow({ mode: 'open' });//影子根
       const template = document.getElementById('mybutton');//克隆模板结点
       const content = template.content.cloneNode(true);
       const text = this.getAttribute('text')
@@ -59,11 +59,12 @@
         this.onClick("Hello from within the Custom Element");
       })
       shadowRoot.innerHTML = `
-    <style>
-      p {
-        color: ${color/*样式隔离*/};
-      }
-    </style>`
+        <style>
+          p {
+            color: ${color/*样式隔离*/};
+          }
+        </style>
+      `
       shadowRoot.appendChild(content);
     }
   }

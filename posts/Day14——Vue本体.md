@@ -2068,7 +2068,6 @@ Vue.component('base-checkbox', {
 ```
 
 ```vue
-
 <template>
   <input
     type="text"
