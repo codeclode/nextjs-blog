@@ -542,6 +542,7 @@ function SuperType(){
     - 非thenable，会立即向微任务队列添加一个微任务`then`
     - thenable，等1个then再马上加入微任务队列
     - promise，表现和非thenable一样。
+    - await返回的东西是类似unref后的东西（是promise则拆包，不是则原样返回）
   - async里的promise如果抛出错误或者没有resolve都不会继续执行
 - 事件属于同步任务
 
